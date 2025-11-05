@@ -1,0 +1,123 @@
+# ============================================
+# Django / Python
+# ============================================
+
+# Arquivos compilados do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambiente virtual
+.env
+venv/
+venv*/ 
+ENV/
+.env.bak
+.venv/
+
+# Configurações locais
+*.local
+*.secret
+*.cfg
+*.ini
+*.toml
+
+# Banco de dados SQLite (opcional)
+db.sqlite3
+db.sqlite3-journal
+
+# Logs
+*.log
+*.pot
+*.mo
+*.py,cover
+*.log
+*.pot
+
+# Arquivos temporários
+*.pid
+*.seed
+*.cover
+*.tmp
+*.temp
+
+# ============================================
+# Django / DRF específicos
+# ============================================
+
+# Mídia e estáticos gerados
+/media/
+staticfiles/
+static/
+collected_static/
+
+# Backup e migrações automáticas
+*.bak
+migrations/__pycache__/
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Se quiser ignorar todas as migrações (exceto __init__.py), descomente:
+# */migrations/*
+# !*/migrations/__init__.py
+
+# ============================================
+# IDEs e Editores
+# ============================================
+
+# VSCode
+.vscode/
+.history/
+
+# PyCharm
+.idea/
+*.iml
+
+# Jupyter / Spyder
+.ipynb_checkpoints
+.spyproject
+__pypackages__/
+
+# ============================================
+# Sistema operacional
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================
+# Outros
+# ============================================
+
+# Arquivos de build
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+
+# Backup de editores
+*~
+
+# Arquivos de ambiente
+.envrc
+*.env
+.env.*
+
+# ============================================
+# Docker / Deployment (se usar)
+# ============================================
+
+docker-compose.override.yml
+.docker/
+*.pid
