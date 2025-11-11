@@ -16,7 +16,6 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
-
 class Subcategoria(models.Model):
     nome = models.CharField(max_length=100, unique=True)
     categoria = models.ForeignKey(Categoria, related_name="subcategorias", on_delete=models.CASCADE)
@@ -29,10 +28,9 @@ class Subcategoria(models.Model):
     def __str__(self):
         return self.nome
 
-
 class ProdutoUnitario(models.Model):
     subcategoria = models.ForeignKey(Subcategoria, related_name="produtos_unitarios", on_delete=models.CASCADE)
-    foto = models.ImageField(upload_to='img/produtos/unitarios/', blank=True, null=True)
+    foto = models.ImageField(upload_to='img/produto/unitario/', blank=True, null=True)
     nome = models.CharField(max_length=100)
     quantidade_minima = models.PositiveIntegerField()
 
@@ -48,14 +46,12 @@ class ProdutoUnitario(models.Model):
     def __str__(self):
         return self.nome
 
-
 class Item(models.Model):
-    produto = models.ForeignKey(ProdutoUnitario, related_name="itens", on_delete=models.CASCADE)
+    produto = models.ForeignKey(ProdutoUnitario, related_name="itens", on_delete=models.PROTECT)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     codigo = models.CharField(max_length=30, unique=True, editable=False)
     foto = models.ImageField(upload_to='img/itens', blank=True, null=True)
 
-    # se você quer armazenar o nome do produto no item (histórico), mantenha esse campo
     nome = models.CharField(max_length=100)
 
     eh_do_cnatmaker = models.BooleanField()  # True(É do CNAT Maker) False(É do IFRN)
@@ -67,24 +63,19 @@ class Item(models.Model):
     class Meta:
         verbose_name = "Item"
         verbose_name_plural = "Itens"
-        ordering = ["nome"]  # agora existe o campo 'nome'
+        ordering = ["nome"] 
 
     def save(self, *args, **kwargs):
-        # copia o nome do produto (preserva histórico)
         if self.produto and not self.nome:
             self.nome = self.produto.nome
 
-        # gera um código único se não existir
         if not self.codigo:
-            # exemplo simples com uuid curto; troque se quiser esquema sequencial
             self.codigo = f"ITM-{uuid.uuid4().hex[:10].upper()}"
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        # exibe nome salvo + código para ajudar identificação
         return f"{self.nome} ({self.codigo})"
-
 
 class ProdutoFracionado(models.Model):
     UNIDADES_DE_MEDIDA = [
@@ -95,6 +86,7 @@ class ProdutoFracionado(models.Model):
         ('m', 'Metro'),
         ('cm', 'Centímetro'),
     ]
+    subcategoria = models.ForeignKey(Subcategoria, related_name="produtos_fracionados", on_delete=models.PROTECT)
     foto = models.ImageField(upload_to='img/produto/fracionado', blank=True, null=True)
     nome = models.CharField(max_length=100)
     unidade_de_medida = models.CharField(max_length=10, choices=UNIDADES_DE_MEDIDA)
@@ -116,8 +108,8 @@ class ProdutoFracionado(models.Model):
             .filter(Q(data_validade__isnull=True) | Q(data_validade__gte=hoje))
             .aggregate(total=Sum('quantidade'))['total']
         )
-        return total if total is not None else Decimal('0')
-
+        return total
+    
 class Lote(models.Model):
     foto = models.ImageField(upload_to='img/produto/fracionado', blank=True, null=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
@@ -135,11 +127,9 @@ class Lote(models.Model):
         ordering = ["-data_entrada"]
 
     def save(self, *args, **kwargs):
-        # copia o nome do produto (para histórico)
         if self.produto and not self.nome:
             self.nome = self.produto.nome
 
-        # gera um código único se não existir
         if not self.codigo:
             self.codigo = f"LOT-{uuid.uuid4().hex[:10].upper()}"
 
@@ -150,6 +140,7 @@ class Lote(models.Model):
 
 class Solicitante(models.Model):
     nome = models.CharField(max_length=100)
+    matricula = models.CharField(unique=True)
     telefone = models.CharField(max_length=15, blank=True, null=True)
 
     class Meta:
@@ -188,6 +179,60 @@ class Emprestimo(models.Model):
     def __str__(self):
         return f"Empréstimo ({self.id}) - {self.solicitante}"
 
+class Devolucao(models.Model):
+    emprestimo = models.ForeignKey(Emprestimo, related_name='devolucoes', on_delete=models.CASCADE)
+    itens = models.ManyToManyField(Item, related_name='devolucoes')
+    data_devolucao = models.DateTimeField(auto_now_add=True)
+    observacao = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Devolução"
+        verbose_name_plural = "Devoluções"
+        ordering = ["-data_devolucao"]
+
+    def clean(self):
+        # Evita devolver item que não pertence ao empréstimo
+        for item in self.itens.all():
+            if item not in self.emprestimo.itens.all():
+                raise ValidationError(f"O item {item} não pertence a este empréstimo.")
+
+    def __str__(self):
+        return f"Devolução #{self.id} do Empréstimo #{self.emprestimo.id}"
+
+
+class Saida(models.Model):
+    item = models.ForeignKey('Item', on_delete=models.PROTECT, null=True, blank=True,
+    related_name='saidas')
+
+    lote = models.ForeignKey('Lote', on_delete=models.PROTECT, null=True, blank=True,related_name='saidas')
+
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('1.00'),
+    help_text="Usado apenas se a saída for de lote (produto fracionado).")
+
+    data_saida = models.DateTimeField(default=timezone.now)
+    responsavel = models.CharField(max_length=100)
+    observacao = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Saída"
+        verbose_name_plural = "Saídas"
+        ordering = ["-data_saida"]
+
+    def clean(self):
+        if not self.item and not self.lote:
+            raise ValidationError("A saída deve estar vinculada a um item ou a um lote.")
+
+        if self.item and self.lote:
+            raise ValidationError("A saída deve estar vinculada a apenas um item ou um lote, não ambos.")
+
+        if self.lote and self.quantidade <= Decimal('0'):
+            raise ValidationError("A quantidade deve ser maior que zero.")
+
+    def __str__(self):
+        if self.item:
+            return f"Saída de {self.item.nome} ({self.item.codigo})"
+        else:
+            return f"Saída de {self.lote.nome} ({self.lote.codigo})"
 
 class MovimentacaoEstoque(models.Model):
     TIPO_MOVIMENTACAO = [
@@ -197,13 +242,13 @@ class MovimentacaoEstoque(models.Model):
         ('devolucao', 'Devolução'),
     ]
 
-    # vincule a um item (unitário) ou a um lote (fracionado)
-    item = models.ForeignKey('Item', null=True, blank=True, on_delete=models.SET_NULL, related_name='movimentacoes')
-    lote = models.ForeignKey('Lote', null=True, blank=True, on_delete=models.SET_NULL, related_name='movimentacoes')
+    item = models.ForeignKey('Item', null=True, blank=True, on_delete=models.PROTECT, related_name='movimentacoes')
+    lote = models.ForeignKey('Lote', null=True, blank=True, on_delete=models.PROTECT, related_name='movimentacoes')
+    saida = models.ForeignKey('Saida', null=True, blank=True, on_delete=models.PROTECT, related_name='movimentacoes', help_text="Saída que originou esta movimentação, se aplicável.")
+    emprestimo = models.ForeignKey('Emprestimo', null=True, blank=True, on_delete=models.PROTECT, related_name='movimentacoes')
+    devolucao = models.ForeignKey('Devolucao', null=True, blank=True, on_delete=models.PROTECT, related_name='movimentacoes', help_text="Devolução que originou esta movimentação, se aplicável.")
 
-    # snapshot do nome do produto no momento da movimentação (útil para histórico)
     produto_nome = models.CharField(max_length=200, blank=True)
-
     tipo_movimentacao = models.CharField(max_length=20, choices=TIPO_MOVIMENTACAO)
     quantidade = models.DecimalField(max_digits=10, decimal_places=2)
     data_movimentacao = models.DateTimeField(default=timezone.now)
@@ -216,10 +261,8 @@ class MovimentacaoEstoque(models.Model):
     def clean(self):
         if not self.item and not self.lote:
             raise ValidationError("A movimentação deve estar vinculada a um item ou a um lote.")
-
         if self.item:
             self.quantidade = Decimal('1')
-
         elif self.lote and self.quantidade <= Decimal('0'):
             raise ValidationError("A quantidade deve ser maior que zero.")
 
@@ -231,4 +274,20 @@ class MovimentacaoEstoque(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.get_tipo_movimentacao_display()} de {self.quantidade} ({self.produto_nome}) em {self.data_movimentacao}"
+        origem = []
+        if self.saida:
+            origem.append(f"Saída #{self.saida.id}")
+        if self.emprestimo:
+            origem.append(f"Empréstimo #{self.emprestimo.id}")
+        if self.devolucao:
+            origem.append(f"Devolução #{self.devolucao.id}")
+
+        origem_str = f" ({', '.join(origem)})" if origem else ""
+
+        return (
+            f"{self.get_tipo_movimentacao_display()} "
+            f"de {self.quantidade} ({self.produto_nome}) "
+            f"em {self.data_movimentacao:%d/%m/%Y %H:%M}{origem_str}"
+        )
+
+
