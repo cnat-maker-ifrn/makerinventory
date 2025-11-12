@@ -24,6 +24,14 @@ DATABASES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ]
+}
+
 INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
