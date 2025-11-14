@@ -1,14 +1,9 @@
-
-import Aside from "./components/base/Aside"
-import Header from "./components/base/Header"
-import Body from "./components/base/Body"
+import Base from "./components/base/Base"
 
 export default function App() {
   return (
     <>
-      <Body />
-      <Header />
-      <Aside />
+      <Base />
     </>
   );
 }
