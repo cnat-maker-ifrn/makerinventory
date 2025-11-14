@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import (
@@ -44,6 +45,8 @@ class SubcategoriaViewSet(viewsets.ModelViewSet):
 class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
     queryset = ProdutoUnitario.objects.prefetch_related("itens").all()
     serializer_class = ProdutoUnitarioSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['nome', 'descricao']
 
     @action(detail=True, methods=["get"], url_path="itens")
     def itens(self, request, pk=None):
