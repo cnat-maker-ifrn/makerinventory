@@ -1,9 +1,14 @@
-import CategoriaModal from "./components/categorias/SelectCategoria"
+
+import Aside from "./components/base/Aside"
+import Header from "./components/base/Header"
+import Body from "./components/base/Body"
 
 export default function App() {
   return (
     <>
-      <CategoriaModal />
+      <Body />
+      <Header />
+      <Aside />
     </>
   );
 }
