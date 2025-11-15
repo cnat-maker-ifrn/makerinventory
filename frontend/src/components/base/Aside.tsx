@@ -6,38 +6,57 @@ import {
     MdCompareArrows
 } from "react-icons/md";
 
+import { NavLink } from "react-router-dom";
 
 export default function Aside() {
     return (
         <aside className="w-[279px] h-screen bg-[#29854A] rounded-md shadow-md">
             <nav>
                 <ul className="text-white text-[25px]">
-                    <li className="hover:bg-[#246f3f] p-8 flex items-center gap-4 cursor-pointer">
+
+                    <NavLink 
+                        to="/" 
+                        end
+                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
+                    >
                         <MdDashboard size={28} />
                         Dashboard
-                    </li>
+                    </NavLink>
 
-                    <li className="hover:bg-[#246f3f] p-8 flex items-center gap-4 cursor-pointer">
+                    <NavLink 
+                        to="/produtos"
+                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
+                    >
                         <MdInventory size={28} />
                         Produtos
-                    </li>
+                    </NavLink>
 
-                    <li className="hover:bg-[#246f3f] p-8 flex items-center gap-4 cursor-pointer">
+                    <NavLink 
+                        to="/saidas"
+                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
+                    >
                         <MdExitToApp size={28} />
                         Saídas
-                    </li>
+                    </NavLink>
 
-                    <li className="hover:bg-[#246f3f] p-8 flex items-center gap-4 cursor-pointer">
+                    <NavLink 
+                        to="/emprestimos"
+                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
+                    >
                         <MdAssignmentReturn size={28} />
                         Empréstimos
-                    </li>
+                    </NavLink>
 
-                    <li className="hover:bg-[#246f3f] p-8 flex items-center gap-4 cursor-pointer">
+                    <NavLink 
+                        to="/movimentacoes"
+                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
+                    >
                         <MdCompareArrows size={28} />
                         Movimentações
-                    </li>
+                    </NavLink>
+
                 </ul>
             </nav>
         </aside>
-    )
+    );
 }

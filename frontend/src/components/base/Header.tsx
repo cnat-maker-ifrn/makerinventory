@@ -8,9 +8,9 @@ export default function Header() {
           alt="Logo Inventário Maker"
         />
 
-        <h1 className="text-[30px] leading-tight">
-          <p>Inventário</p>
-          <p>Maker</p>
+        <h1 className="text-[30px] flex flex-col items-start leading-tight logo-font">
+          <span className="font-light">Inventário</span>
+          <span className="font-bold ml-5">Maker</span>
         </h1>
       </div>
     </header>
