@@ -1,7 +1,7 @@
 import AddItem from "../components/utils/AddItem"
 import AddLote from "../components/utils/AddLote"
 import Filter from "../components/utils/Filter"
-import TableProduto from "../components/produtos/TableProduto"
+import TableProduto from "../components/produto/TableProduto"
 
 export default function Produto() {
     return(

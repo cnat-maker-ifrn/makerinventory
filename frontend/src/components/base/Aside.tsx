@@ -1,56 +1,98 @@
+import { useState } from "react";
+
 import {
     MdDashboard,
     MdInventory,
     MdExitToApp,
     MdAssignmentReturn,
-    MdCompareArrows
+    MdCompareArrows,
+    MdArrowDropDown,
 } from "react-icons/md";
 
 import { NavLink } from "react-router-dom";
 
 export default function Aside() {
+
+    const [openProdutos, setOpenProdutos] = useState(false);
+
+    const baseStyle =
+        "p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]";
+
     return (
         <aside className="w-[279px] h-screen bg-[#29854A] rounded-md shadow-md">
             <nav>
                 <ul className="text-white text-[25px]">
 
-                    <NavLink 
-                        to="/" 
-                        end
-                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
-                    >
+                    <NavLink to="/" end className={baseStyle}>
                         <MdDashboard size={28} />
                         Dashboard
                     </NavLink>
 
-                    <NavLink 
-                        to="/produtos"
-                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
-                    >
-                        <MdInventory size={28} />
-                        Produtos
-                    </NavLink>
+                    {/* Produtos + seta */}
+                    <li className="relative">
 
-                    <NavLink 
-                        to="/saidas"
-                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
-                    >
+                        <div className="flex items-center">
+
+                            {/* Link principal */}
+                            <NavLink
+                                to="/produtos"
+                                className={`${baseStyle} flex-1`}
+                            >
+                                <MdInventory size={28} />
+                                Produtos
+                            </NavLink>
+
+                            {/* BOTÃO DA SETA */}
+                            <button
+                                onClick={() => setOpenProdutos(!openProdutos)}
+                                className="w-10 h-10 flex items-center justify-center mr-6
+                                hover:bg-[#246f3f] rounded-full transition-colors cursor-pointer"
+                            >
+                                <MdArrowDropDown
+                                    size={32}
+                                    className={`transition-transform duration-300 ${
+                                        openProdutos ? "rotate-180" : "rotate-0"
+                                    }`}
+                                />
+                            </button>
+                        </div>
+
+                        {/* DROPDOWN */}
+                        {openProdutos && (
+                            <ul className="text-[20px] bg-[#246f3f] overflow-hidden">
+
+                                <NavLink
+                                    to="/produtos/itens"
+                                    className="block px-16 py-4 hover:bg-[#1f5e35]"
+                                >
+                                    Itens
+                                </NavLink>
+
+                                <NavLink
+                                    to="/produtos/lotes"
+                                    className="block px-16 py-4 hover:bg-[#1f5e35]"
+                                >
+                                    Lotes
+                                </NavLink>
+
+                            </ul>
+                        )}
+                    </li>
+
+                    {/* Saídas */}
+                    <NavLink to="/saidas" className={baseStyle}>
                         <MdExitToApp size={28} />
                         Saídas
                     </NavLink>
 
-                    <NavLink 
-                        to="/emprestimos"
-                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
-                    >
+                    {/* Empréstimos */}
+                    <NavLink to="/emprestimos" className={baseStyle}>
                         <MdAssignmentReturn size={28} />
                         Empréstimos
                     </NavLink>
 
-                    <NavLink 
-                        to="/movimentacoes"
-                        className="p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]"
-                    >
+                    {/* Movimentações */}
+                    <NavLink to="/movimentacoes" className={baseStyle}>
                         <MdCompareArrows size={28} />
                         Movimentações
                     </NavLink>
