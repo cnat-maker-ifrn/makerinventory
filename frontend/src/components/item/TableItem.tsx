@@ -2,7 +2,7 @@ import { MdEdit } from "react-icons/md";
 
 export default function TableItem() {
   return (
-    <div className="overflow-x-auto mt-4 shadow-md rounded-lg">
+    <div className="overflow-x-auto shadow-md rounded-lg">
       <table className="min-w-full rounded-lg overflow-hidden">
         <thead className="bg-[#29854A] text-white">
           <tr>

@@ -1,23 +1,25 @@
-// Base.tsx (copiar inteiro)
 import Aside from "./Aside";
 import Header from "./Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 export default function Base() {
+
+  const { pathname } = useLocation();
+
+  const mainClass =
+    pathname === "/"
+      ? "flex-1 ml-3"
+      : "flex-1 p-8";
+
   return (
     <div className="flex flex-col h-screen">
-
       <Header />
 
-      {/* min-h-0 evita que children overflow quebre o layout */}
-      <div className="flex flex-1 gitmin-h-0">
-
+      <div className="flex">
         <Aside />
 
-        <main className="flex-1 px-4 overflow-auto">
-          <div className="w-full">
-            <Outlet />
-          </div>
+        <main className={mainClass}>
+          <Outlet />
         </main>
 
       </div>

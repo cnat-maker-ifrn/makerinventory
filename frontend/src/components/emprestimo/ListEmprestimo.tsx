@@ -74,7 +74,7 @@ export default function ListEmprestimo() {
     );
 
     return (
-        <div className="p-6">
+        <div>
             <h1 className="text-3xl font-bold mb-6 text-[#29854A]">
                 Empréstimos
             </h1>

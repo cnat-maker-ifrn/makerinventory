@@ -57,7 +57,7 @@ export default function AddSaida() {
     };
 
     return (
-        <div className="p-6">
+        <div>
             <h1 className="text-3xl font-bold text-[#29854A] mb-6">
                 Registrar Saída
             </h1>

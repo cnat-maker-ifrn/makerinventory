@@ -41,7 +41,7 @@ export default function ListMovimentacao() {
     );
 
     return (
-        <div className="p-6">
+        <div>
             <h1 className="text-3xl font-bold text-[#29854A] mb-6">
                 Movimentações
             </h1>
