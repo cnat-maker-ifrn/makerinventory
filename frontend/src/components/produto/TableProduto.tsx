@@ -8,6 +8,7 @@ export default function TableProduto() {
           <tr>
             <th className="px-4 py-2 text-left">Foto</th>
             <th className="px-4 py-2 text-left">Nome</th>
+            <th className="px-4 py-2 text-left">Tipo</th>
             <th className="px-4 py-2 text-left">Subcategoria</th>
             <th className="px-4 py-2 text-left">Quantidade</th>
             <th className="px-4 py-2 text-left">Qtd. mínima</th>
@@ -19,6 +20,7 @@ export default function TableProduto() {
           <tr className="hover:bg-gray-50">
             <td className="px-4 py-2">Foto</td>
             <td className="px-4 py-2">Arduino Uno</td>
+            <td className="px-4 py-2">Unitário</td>
             <td className="px-4 py-2">Eletrônica</td>
             <td className="px-4 py-2 text-left">15</td>
             <td className="px-4 py-2 text-left">5</td>

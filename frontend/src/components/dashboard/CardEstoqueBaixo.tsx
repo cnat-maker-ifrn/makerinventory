@@ -25,7 +25,7 @@ export default function CardEstoqueBaixo() {
   const hasScroll = produtosBaixos.length > 3;
 
   return (
-    <div className="relative bg-[#FFE3E3] w-[705px] p-4 rounded-md shadow-md overflow-hidden">
+    <div className="relative bg-[#FFE3E3] w-[100%] p-4 rounded-md shadow-md overflow-hidden">
 
       {/* Título */}
       <h2 className="flex text-[#DF0A0A] items-center gap-2 mb-4 text-xl font-semibold">

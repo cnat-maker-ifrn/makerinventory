@@ -10,7 +10,7 @@ export default function TableItem() {
             <th className="px-4 py-2 text-left">Nome</th>
             <th className="px-4 py-2 text-left">Código</th>
             <th className="px-4 py-2 text-left">Produto</th>
-            <th className="px-4 py-2 text-left">Origem</th>
+            <th className="px-4 py-2 text-left">Proprietário</th>
             <th className="px-4 py-2 text-left">Disponível</th>
             <th className="px-4 py-2 text-left">Quebrado</th>
             <th className="px-4 py-2 text-left">Emprestado</th>
@@ -36,7 +36,7 @@ export default function TableItem() {
             <td className="px-4 py-2">ITM-123ABC8901</td>
 
             {/* Produto unitário pai */}
-            <td className="px-4 py-2">Arduino (Produto Unitário)</td>
+            <td className="px-4 py-2">Arduino</td>
 
             {/* Origem */}
             <td className="px-4 py-2">CNAT Maker</td>

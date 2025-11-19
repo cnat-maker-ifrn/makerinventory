@@ -172,7 +172,7 @@ export default function CardGraficoEntradaSaida() {
   }
 
   return (
-    <div className="relative bg-white p-4 rounded-md shadow-md w-[705px] h-[350px]">
+    <div className="relative bg-white p-4 rounded-md shadow-sm w-[880px] h-[350px]">
       <h2 className="text-xl font-semibold mb-4 text-[#29854A]">
         Entradas x Saídas (Últimos 12 meses)
       </h2>
