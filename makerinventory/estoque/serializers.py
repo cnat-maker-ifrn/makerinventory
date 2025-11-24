@@ -13,6 +13,7 @@ class SubcategoriaSerializer(serializers.ModelSerializer):
 
 class ProdutoUnitarioSerializer(serializers.ModelSerializer):
     quantidade_em_estoque = serializers.ReadOnlyField()
+    subcategoria = SubcategoriaSerializer(read_only=True)
 
     class Meta:
         model = ProdutoUnitario
@@ -23,10 +24,12 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = "__all__"
+        read_only_fields = ["codigo", "nome", "disponibilidade", "eh_emprestado"]
 
 class ProdutoFracionadoSerializer(serializers.ModelSerializer):
     quantidade_em_estoque = serializers.ReadOnlyField()
+    subcategoria = SubcategoriaSerializer(read_only=True)
 
     class Meta:
         model = ProdutoFracionado
