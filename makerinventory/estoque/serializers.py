@@ -20,13 +20,12 @@ class ProdutoUnitarioSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ItemSerializer(serializers.ModelSerializer):
-    produto_nome = serializers.CharField(source='produto.nome', read_only=True)
+    produto = ProdutoUnitarioSerializer(read_only=True)
 
     class Meta:
         model = Item
         fields = "__all__"
         read_only_fields = ["codigo", "disponibilidade", "eh_emprestado"]
-        depth = 1
 
 class ProdutoFracionadoSerializer(serializers.ModelSerializer):
     quantidade_em_estoque = serializers.ReadOnlyField()
@@ -37,7 +36,7 @@ class ProdutoFracionadoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class LoteSerializer(serializers.ModelSerializer):
-    produto_nome = serializers.CharField(source='produto.nome', read_only=True)
+    produto = ProdutoFracionadoSerializer(read_only=True)
 
     class Meta:
         model = Lote
