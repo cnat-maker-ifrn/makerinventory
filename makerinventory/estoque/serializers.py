@@ -25,7 +25,8 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = "__all__"
-        read_only_fields = ["codigo", "nome", "disponibilidade", "eh_emprestado"]
+        read_only_fields = ["codigo", "disponibilidade", "eh_emprestado"]
+        depth = 1
 
 class ProdutoFracionadoSerializer(serializers.ModelSerializer):
     quantidade_em_estoque = serializers.ReadOnlyField()

@@ -88,17 +88,17 @@ export default function TableProduto() {
           {produtos.map((p) => (
             <tr key={p.id} className="hover:bg-gray-50">
               <td className="px-4 py-2">
-                <div className="w-14 h-14 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
-                  {p.foto ? (
-                    <img
-                      src={p.foto}
-                      alt={p.nome}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    "Foto"
-                  )}
-                </div>
+                {p.foto ? (
+                  <img
+                    src={p.foto}
+                    className="w-14 h-14 object-cover rounded-md"
+                    alt={p.nome}
+                  />
+                ) : (
+                  <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center text-sm text-gray-600">
+                    Foto
+                  </div>
+                )}
               </td>
 
               <td className="px-4 py-2">{p.nome}</td>

@@ -16,10 +16,10 @@ export default function Aside() {
     const [openProdutos, setOpenProdutos] = useState(false);
 
     const baseStyle =
-        "p-8 flex items-center gap-4 cursor-pointer hover:bg-[#246f3f]";
+        "p-8 flex items-center gap-4 cursor-pointer hover:bg-[#1A855E]";
 
     return (
-        <aside className="w-[279px] h-screen bg-[#29854A] rounded-md shadow-md">
+        <aside className="w-[279px] h-screen bg-[#1A955E] rounded-md shadow-md">
             <nav>
                 <ul className="text-white text-[25px]">
 
@@ -46,7 +46,7 @@ export default function Aside() {
                             <button
                                 onClick={() => setOpenProdutos(!openProdutos)}
                                 className="w-10 h-10 flex items-center justify-center mr-6
-                                hover:bg-[#246f3f] rounded-full transition-colors cursor-pointer"
+                                hover:bg-[#1A855E] rounded-full transition-colors cursor-pointer"
                             >
                                 <MdArrowDropDown
                                     size={32}
@@ -59,18 +59,18 @@ export default function Aside() {
 
                         {/* DROPDOWN */}
                         {openProdutos && (
-                            <ul className="text-[20px] bg-[#246f3f] overflow-hidden">
+                            <ul className="text-[20px] bg-[#1A855E] overflow-hidden">
 
                                 <NavLink
                                     to="/produtos/itens"
-                                    className="block px-16 py-4 hover:bg-[#1f5e35]"
+                                    className="block px-16 py-4 hover:bg-[#1A755E]"
                                 >
                                     Itens
                                 </NavLink>
 
                                 <NavLink
                                     to="/produtos/lotes"
-                                    className="block px-16 py-4 hover:bg-[#1f5e35]"
+                                    className="block px-16 py-4 hover:bg-[#1A755E]"
                                 >
                                     Lotes
                                 </NavLink>

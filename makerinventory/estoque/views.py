@@ -63,19 +63,6 @@ class ItemViewSet(viewsets.ModelViewSet):
         itens = self.queryset.filter(disponibilidade=True, eh_emprestado=False)
         serializer = self.get_serializer(itens, many=True)
         return Response(serializer.data)
-    
-    def perform_create(self, serializer):
-        item = serializer.save()
-
-        produto = item.produto
-        produto.quantidade_em_estoque = produto.itens.filter(disponibilidade=True).count()
-        produto.save()
-
-    def perform_destroy(self, instance):
-        produto = instance.produto
-        instance.delete()
-        produto.quantidade_em_estoque = produto.itens.filter(disponibilidade=True).count()
-        produto.save()
 
 class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
     queryset = ProdutoFracionado.objects.prefetch_related("lotes").all()
