@@ -75,7 +75,7 @@ export default function ListEmprestimo() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-6 text-[#29854A]">
+            <h1 className="text-3xl font-bold mb-6 text-[#1A955E]">
                 Empréstimos
             </h1>
 
@@ -94,7 +94,7 @@ export default function ListEmprestimo() {
             {/* Tabela */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-[#29854A] text-white text-[18px]">
+                    <thead className="bg-[#1A955E] text-white text-[18px]">
                         <tr>
                             <th className="p-4">Solicitante</th>
                             <th className="p-4">Empréstimo</th>

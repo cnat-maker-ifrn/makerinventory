@@ -72,7 +72,7 @@ export default function TableProduto() {
   return (
     <div className="overflow-x-auto mt-4 shadow-md rounded-lg">
       <table className="min-w-full rounded-lg overflow-hidden">
-        <thead className="bg-[#29854A] text-white">
+        <thead className="bg-[#1A955E] text-white">
           <tr>
             <th className="px-4 py-2 text-left">Foto</th>
             <th className="px-4 py-2 text-left">Nome</th>

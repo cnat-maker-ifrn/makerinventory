@@ -9,6 +9,7 @@ export default function Movimentacao() {
 
     return (
         <>
+            <h1 className="text-3xl font-bold text-[#1A955E] mb-6">Movimentações</h1>
             <SearchBar
                 value={busca}
                 onChange={setBusca}

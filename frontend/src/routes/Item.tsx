@@ -8,7 +8,7 @@ export default function Item(){
     const [busca, setBusca] = useState("");
     return(
         <>
-            <h1 className="text-3xl font-bold text-[#29854A] mb-6">Itens</h1>
+            <h1 className="text-3xl font-bold text-[#1A955E] mb-6">Itens</h1>
             <SearchBar
                 value={busca}
                 onChange={setBusca}

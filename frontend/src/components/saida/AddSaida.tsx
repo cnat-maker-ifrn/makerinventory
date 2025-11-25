@@ -58,7 +58,7 @@ export default function AddSaida() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold text-[#29854A] mb-6">
+            <h1 className="text-3xl font-bold text-[#1A955E] mb-6">
                 Registrar Saída
             </h1>
 
@@ -160,7 +160,7 @@ export default function AddSaida() {
 
                 <button
                     type="submit"
-                    className="flex items-center justify-center gap-2 bg-[#29854A] text-white py-3 rounded-lg hover:bg-[#1e6a3d]"
+                    className="flex items-center justify-center gap-2 bg-[#1A955E] text-white py-3 rounded-lg hover:bg-[#1A855E]"
                 >
                     <MdCheck size={24} />
                     Registrar Saída

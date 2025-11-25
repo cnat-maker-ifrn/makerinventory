@@ -9,7 +9,7 @@ export default function AddLoteButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="bg-[#29854A] text-white rounded-md px-4 py-2 flex items-center gap-2 hover:bg-[#246f3f] transition cursor-pointer"
+        className="bg-[#1A955E] text-white rounded-md px-4 py-2 flex items-center gap-2 hover:bg-[#1A855E] transition cursor-pointer"
       >
         <MdAdd size={22} />
         Novo Lote

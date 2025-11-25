@@ -15,7 +15,7 @@ export default function ListMovimentacao({ dados }: ListMovimentacaoProps) {
     return (
         <div className="bg-white rounded-lg shadow overflow-hidden">
             <table className="w-full text-left">
-                <thead className="bg-[#29854A] text-white text-[18px]">
+                <thead className="bg-[#1A955E] text-white text-[18px]">
                     <tr>
                         <th className="p-4">Produto</th>
                         <th className="p-4">Tipo</th>

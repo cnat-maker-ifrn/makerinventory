@@ -39,7 +39,7 @@ export default function TableItem() {
   }
 
   return ( 
-    <div className="overflow-x-auto shadow-md rounded-lg"> <table className="min-w-full rounded-lg overflow-hidden"> <thead className="bg-[#29854A] text-white"> <tr> <th className="px-4 py-2 text-left">Foto</th> <th className="px-4 py-2 text-left">Nome</th> <th className="px-4 py-2 text-left">Código</th> <th className="px-4 py-2 text-left">Produto</th> <th className="px-4 py-2 text-left">Proprietário</th> <th className="px-4 py-2 text-left">Disponível</th> <th className="px-4 py-2 text-left">Quebrado</th> <th className="px-4 py-2 text-left">Emprestado</th> <th className="px-4 py-2 text-left">Preço</th> <th className="px-4 py-2 text-left">Entrada</th> <th className="px-4 py-2 text-left">Ações</th> </tr> </thead>
+    <div className="overflow-x-auto shadow-md rounded-lg"> <table className="min-w-full rounded-lg overflow-hidden"> <thead className="bg-[#1A955E] text-white"> <tr> <th className="px-4 py-2 text-left">Foto</th> <th className="px-4 py-2 text-left">Nome</th> <th className="px-4 py-2 text-left">Código</th> <th className="px-4 py-2 text-left">Produto</th> <th className="px-4 py-2 text-left">Proprietário</th> <th className="px-4 py-2 text-left">Disponível</th> <th className="px-4 py-2 text-left">Quebrado</th> <th className="px-4 py-2 text-left">Emprestado</th> <th className="px-4 py-2 text-left">Preço</th> <th className="px-4 py-2 text-left">Entrada</th> <th className="px-4 py-2 text-left">Ações</th> </tr> </thead>
         <tbody className="bg-white">  
           {itens.map((item) => (  
             <tr key={item.id} className="hover:bg-gray-50">  

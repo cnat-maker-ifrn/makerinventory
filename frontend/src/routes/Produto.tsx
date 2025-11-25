@@ -16,7 +16,7 @@ export default function Produto() {
 
     return(
         <>
-            <h1 className="text-3xl font-bold text-[#29854A] mb-6">Produtos</h1>
+            <h1 className="text-3xl font-bold text-[#1A955E] mb-6">Produtos</h1>
             <SearchBar
                 value={busca}
                 onChange={setBusca}
