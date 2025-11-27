@@ -1,70 +1,8 @@
-import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
-
-interface ProdutoUnificado {
-  id: number;
-  nome: string;
-  tipo: "unitario" | "fracionado";
-  subcategoria: string;
-  foto: string | null;
-  quantidade: number | string;
-  quantidade_minima: number | string;
-}
+import { useProdutos } from "../../hooks/produto/useProdutos";
 
 export default function TableProduto() {
-  const [produtos, setProdutos] = useState<ProdutoUnificado[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState("");
-
-  useEffect(() => {
-    async function carregarProdutos() {
-      try {
-        const [unitResp, fracResp] = await Promise.all([
-          fetch("http://localhost:8000/api/produtos-unitarios/"),
-          fetch("http://localhost:8000/api/produtos-fracionados/"),
-        ]);
-
-        if (!unitResp.ok || !fracResp.ok) {
-          throw new Error("Erro ao buscar produtos do servidor.");
-        }
-
-        const unitarios = await unitResp.json();
-        const fracionados = await fracResp.json();
-
-        // Normaliza os dados em uma estrutura unificada
-        const unificados: ProdutoUnificado[] = [
-          ...unitarios.map((p: any) => ({
-            id: p.id,
-            nome: p.nome,
-            tipo: "unitario",
-            subcategoria: p.subcategoria_nome ?? p.subcategoria?.nome ?? "",
-            foto: p.foto ?? null,
-            quantidade: p.quantidade_em_estoque ?? 0,
-            quantidade_minima: p.quantidade_minima,
-          })),
-
-          ...fracionados.map((p: any) => ({
-            id: p.id,
-            nome: p.nome,
-            tipo: "fracionado",
-            subcategoria: p.subcategoria_nome ?? p.subcategoria?.nome ?? "",
-            foto: p.foto ?? null,
-            quantidade: p.quantidade_em_estoque ?? "0",
-            quantidade_minima: p.quantidade_minima,
-          })),
-        ];
-
-        setProdutos(unificados);
-      } catch (err) {
-        console.error(err);
-        setErro("Não foi possível carregar os produtos.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    carregarProdutos();
-  }, []);
+  const { dados: produtos, loading, erro } = useProdutos();
 
   if (loading) return <p>Carregando produtos...</p>;
   if (erro) return <p className="text-red-600">{erro}</p>;
@@ -121,6 +59,7 @@ export default function TableProduto() {
             </tr>
           ))}
         </tbody>
+
       </table>
     </div>
   );

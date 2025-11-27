@@ -4,7 +4,6 @@ export interface Mov {
     tipo_movimentacao: string;
     quantidade: number;
     data_movimentacao: string;
-    origem: string;
 }
 
 interface ListMovimentacaoProps {
@@ -21,7 +20,6 @@ export default function ListMovimentacao({ dados }: ListMovimentacaoProps) {
                         <th className="p-4">Tipo</th>
                         <th className="p-4">Quantidade</th>
                         <th className="p-4">Data</th>
-                        <th className="p-4">Origem</th>
                     </tr>
                 </thead>
 
@@ -34,7 +32,6 @@ export default function ListMovimentacao({ dados }: ListMovimentacaoProps) {
                             <td className="p-4">
                                 {new Date(m.data_movimentacao).toLocaleString()}
                             </td>
-                            <td className="p-4">{m.origem}</td>
                         </tr>
                     ))}
                 </tbody>

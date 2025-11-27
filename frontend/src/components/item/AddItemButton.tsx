@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import AddItemModal from "./AddItemModal";
+import AddItemModal from "../item/AddItemModal";
 
 export default function AddItemButton() {
   const [open, setOpen] = useState(false);

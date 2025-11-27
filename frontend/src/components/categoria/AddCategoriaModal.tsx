@@ -3,9 +3,15 @@ import { useState } from "react";
 interface AddCategoriaModalProps {
   open: boolean;
   onClose: () => void;
+  onCreated?: (novaCategoria: Categoria) => void;
 }
 
-export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalProps) {
+export interface Categoria {
+  id: number;
+  nome: string;
+}
+
+export default function AddCategoriaModal({ open, onClose, onCreated }: AddCategoriaModalProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -17,16 +23,12 @@ export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalPr
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const payload = {
-      nome: form.get("nome"),
-    };
+    const payload = { nome: form.get("nome") };
 
     try {
       const resp = await fetch("http://localhost:8000/api/categorias/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -35,7 +37,9 @@ export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalPr
         throw new Error(msg || "Erro ao salvar categoria");
       }
 
-      onClose(); // fecha o modal após salvar
+      const novaCategoria: Categoria = await resp.json();
+      onCreated?.(novaCategoria); // chama callback se houver
+      onClose();
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Erro inesperado");
     } finally {
@@ -49,8 +53,6 @@ export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalPr
         <h2 className="text-xl font-semibold mb-4">Cadastrar nova categoria</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
-          {/* Nome */}
           <div>
             <label className="block mb-1 font-semibold">Nome da categoria</label>
             <input
@@ -61,12 +63,8 @@ export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalPr
             />
           </div>
 
-          {/* Exibir erro */}
-          {erro && (
-            <p className="text-red-600 text-sm">{erro}</p>
-          )}
+          {erro && <p className="text-red-600 text-sm">{erro}</p>}
 
-          {/* Botões */}
           <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
@@ -85,7 +83,6 @@ export default function AddCategoriaModal({ open, onClose }: AddCategoriaModalPr
               {loading ? "Salvando..." : "Salvar"}
             </button>
           </div>
-
         </form>
       </div>
     </div>

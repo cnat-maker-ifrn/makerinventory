@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import AddSubcategoriaModal from "./AddSubcategoriaModal";
+import AddLoteModal from "../lote/AddLoteModal";
 
-export default function AddSubcategoriaButton() {
+export default function AddLoteButton() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -12,10 +12,10 @@ export default function AddSubcategoriaButton() {
         className="bg-[#1A955E] text-white rounded-md px-4 py-2 flex items-center gap-2 hover:bg-[#1A855E] transition cursor-pointer"
       >
         <MdAdd size={22} />
-        Nova Subcategoria
+        Novo Lote
       </button>
 
-      <AddSubcategoriaModal open={open} onClose={() => setOpen(false)} />
+      <AddLoteModal open={open} onClose={() => setOpen(false)} />
     </>
   );
 }

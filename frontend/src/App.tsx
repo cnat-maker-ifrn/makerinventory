@@ -2,13 +2,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Base from "./components/base/Base";
 
-import Dashboard from "./routes/Dashboard"
-import Produtos from "./routes/Produto";
-import Item from "./routes/Item";
-import Lote from "./routes/Lote";
-import Emprestimo from "./routes/Emprestimo"
-import Saida from "./routes/Saida"
-import Movimentacao from "./routes/Movimentacao"
+import Dashboard from "./pages/Dashboard"
+import Produtos from "./pages/Produto";
+import Item from "./pages/Item";
+import Lote from "./pages/Lote";
+import Emprestimo from "./pages/Emprestimo"
+import Saida from "./pages/Saida"
+import Movimentacao from "./pages/Movimentacao"
 
 
 

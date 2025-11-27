@@ -1,32 +1,32 @@
 import { useState, useEffect } from "react";
-import ModalCadastro from "../utils/ModalCadastro";
-
-interface Categoria {
-  id: number;
-  nome: string;
-}
+import AddCategoriaModal, { type Categoria } from "./AddCategoriaModal";
+import { getCategorias } from "../../api/categoriaApi";
 
 export default function SelectCategoria() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>("");
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/categorias/")
-      .then((res) => res.json())
-      .then((data: Categoria[]) => setCategorias(data));
+    let ativo = true;
+    getCategorias()
+      .then((data) => { if (ativo) setCategorias(data); })
+      .catch(console.error);
+    return () => { ativo = false; };
   }, []);
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value;
+    if (value === "nova") setShowModal(true);
+    else setCategoriaSelecionada(value);
+  }
 
   return (
     <div className="p-4">
       <label className="block font-medium mb-2">Categoria:</label>
       <select
         value={categoriaSelecionada}
-        onChange={(e) =>
-          e.target.value === "nova"
-            ? setShowModal(true)
-            : setCategoriaSelecionada(e.target.value)
-        }
+        onChange={handleChange}
         className="border rounded p-2 w-64"
       >
         <option value="">Selecione...</option>
@@ -39,8 +39,8 @@ export default function SelectCategoria() {
       </select>
 
       {showModal && (
-        <ModalCadastro
-          tipo="categoria"
+        <AddCategoriaModal
+          open={showModal}
           onClose={() => setShowModal(false)}
           onCreated={(nova) => setCategorias([...categorias, nova])}
         />

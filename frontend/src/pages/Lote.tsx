@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import SearchBar from "../components/utils/SearchBar"
 import TableLote from "../components/lote/TableLote"
-import AddLoteButton from "../components/utils/AddLoteButton"
+import AddLoteButton from "../components/lote/AddLoteButton"
 
 export default function Lote() {
     const [busca, setBusca] = useState("");

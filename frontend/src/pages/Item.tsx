@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import SearchBar from "../components/utils/SearchBar"
 import TableItem from "../components/item/TableItem"
-import AddItemButton from "../components/utils/AddItemButton"
+import AddItemButton from "../components/item/AddItemButton"
 
 export default function Item(){
     const [busca, setBusca] = useState("");

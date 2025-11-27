@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import SearchBar from "../components/utils/SearchBar";
-import AddCategoriaButton from "../components/utils/AddCategoriaButton"
-import AddSubcategoriaButton from "../components/utils/AddSubcategoriaButton"
-import AddProdutoButton from "../components/utils/AddProdutoButton"
-import AddItemButton from "../components/utils/AddItemButton"
-import AddLoteButton from "../components/utils/AddLoteButton"
+import SearchBar from "../components/utils/SearchBar"
+import AddCategoriaButton from "../components/categoria/AddCategoriaButton"
+import AddSubcategoriaButton from "../components/subcategoria/AddSubcategoriaButton"
+import AddProdutoButton from "../components/produto/AddProdutoButton"
+import AddItemButton from "../components/item/AddItemButton"
+import AddLoteButton from "../components/lote/AddLoteButton"
 import Filter from "../components/utils/Filter"
 import TableProduto from "../components/produto/TableProduto"
 

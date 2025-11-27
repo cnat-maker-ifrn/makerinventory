@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import AddLoteModal from "./AddLoteModal";
+import AddProdutoModal from "../produto/AddProdutoModal";
 
-export default function AddLoteButton() {
+export default function AddProdutoButton() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -12,10 +12,10 @@ export default function AddLoteButton() {
         className="bg-[#1A955E] text-white rounded-md px-4 py-2 flex items-center gap-2 hover:bg-[#1A855E] transition cursor-pointer"
       >
         <MdAdd size={22} />
-        Novo Lote
+        Novo Produto
       </button>
 
-      <AddLoteModal open={open} onClose={() => setOpen(false)} />
+      <AddProdutoModal open={open} onClose={() => setOpen(false)} />
     </>
   );
 }
