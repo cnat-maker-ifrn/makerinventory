@@ -12,14 +12,14 @@ export interface ProdutoDetalhes {
 
 export interface ItemUnificado {
   id: number;
-  nome: string;                  // nome do ITEM
+  nome: string;                  
   codigo: string;
   foto: string | null;
   preco: number;
   data_entrada: string;
 
   produto: number;               // id do produto
-  produto_detalhes: ProdutoDetalhes | null; // detalhes do produto
+  produto_detalhes: ProdutoDetalhes | null; 
 
   eh_do_cnatmaker: boolean;
   disponibilidade: boolean;
