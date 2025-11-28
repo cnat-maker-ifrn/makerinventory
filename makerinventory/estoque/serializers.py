@@ -12,15 +12,23 @@ class SubcategoriaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProdutoUnitarioSerializer(serializers.ModelSerializer):
-    quantidade_em_estoque = serializers.ReadOnlyField()
-    subcategoria = SubcategoriaSerializer(read_only=True)
+    subcategoria_nome = serializers.CharField(source="subcategoria.nome", read_only=True)
+    quantidade_em_estoque = serializers.IntegerField(read_only=True)
+
+    subcategoria = serializers.PrimaryKeyRelatedField(
+        queryset=Subcategoria.objects.all()
+    )
 
     class Meta:
         model = ProdutoUnitario
-        fields = '__all__'
+        fields = "__all__"
 
 class ItemSerializer(serializers.ModelSerializer):
-    produto = ProdutoUnitarioSerializer(read_only=True)
+    produto = serializers.PrimaryKeyRelatedField(
+        queryset=ProdutoUnitario.objects.all()
+    )
+
+    produto_detalhes = ProdutoUnitarioSerializer(source="produto", read_only=True)
 
     class Meta:
         model = Item

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { type FormEvent } from "react";
+import { useCreateCategoria } from "../../hooks/categoria/useCreateCategoria";
 
 interface AddCategoriaModalProps {
   open: boolean;
@@ -12,47 +13,37 @@ export interface Categoria {
 }
 
 export default function AddCategoriaModal({ open, onClose, onCreated }: AddCategoriaModalProps) {
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
+  const { criar, loading, erro } = useCreateCategoria();
 
   if (!open) return null;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setErro("");
-    setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const payload = { nome: form.get("nome") };
+    const nome = form.get("nome")?.toString() ?? "";
+
+    if (!nome.trim()) return;
 
     try {
-      const resp = await fetch("http://localhost:8000/api/categorias/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const novaCategoria = await criar(nome); // ✔ chama o hook
 
-      if (!resp.ok) {
-        const msg = await resp.text();
-        throw new Error(msg || "Erro ao salvar categoria");
-      }
+      onCreated?.(novaCategoria); // notifica o pai
+      onClose();                  // fecha o modal
 
-      const novaCategoria: Categoria = await resp.json();
-      onCreated?.(novaCategoria); // chama callback se houver
-      onClose();
-    } catch (error) {
-      setErro(error instanceof Error ? error.message : "Erro inesperado");
-    } finally {
-      setLoading(false);
+    } catch {
+      // erro já está no hook → nada a fazer aqui
     }
   }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-4 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg">
+
         <h2 className="text-xl font-semibold mb-4">Cadastrar nova categoria</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
           <div>
             <label className="block mb-1 font-semibold">Nome da categoria</label>
             <input
@@ -83,6 +74,7 @@ export default function AddCategoriaModal({ open, onClose, onCreated }: AddCateg
               {loading ? "Salvando..." : "Salvar"}
             </button>
           </div>
+
         </form>
       </div>
     </div>

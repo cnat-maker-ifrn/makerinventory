@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { getSubcategorias, type Subcategoria } from "../../api/subcategoriaApi";
-import { createProdutoUnitario, createProdutoFracionado } from "../../api/produtoApi";
+import { useEffect, useState, type FormEvent } from "react";
+import { getSubcategorias } from "../../api/subcategoriaApi";
+import { useCreateProduto } from "../../hooks/produto/useCreateProduto";
 
 interface AddProdutoModalProps {
   open: boolean;
@@ -8,56 +8,49 @@ interface AddProdutoModalProps {
   onCreated?: (produto: any) => void;
 }
 
-export default function AddProdutoModal({ open, onClose, onCreated }: AddProdutoModalProps) {
+interface Subcategoria {
+  id: number;
+  nome: string;
+}
+
+export default function AddProdutoModal({
+  open,
+  onClose,
+  onCreated,
+}: AddProdutoModalProps) {
   const [tipo, setTipo] = useState<"unitario" | "fracionado">("unitario");
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
+
+  const { criar, loading, erro } = useCreateProduto();
 
   useEffect(() => {
     if (!open) return;
-    let ativo = true;
 
     getSubcategorias()
-      .then((data) => { if (ativo) setSubcategorias(data); })
+      .then((res) => setSubcategorias(res))
       .catch(console.error);
-
-    return () => { ativo = false; };
   }, [open]);
 
   if (!open) return null;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setErro("");
-    setLoading(true);
 
     const form = new FormData(e.currentTarget);
+
     const nome = form.get("nome");
     const subcategoria = form.get("subcategoria");
 
-    if (!nome || !subcategoria) {
-      setErro("Todos os campos são obrigatórios");
-      setLoading(false);
-      return;
-    }
+    if (!nome || !subcategoria) return;
 
     try {
-      let produtoCriado: any = null;
+      const novo = await criar(form, tipo);
 
-      if (tipo === "unitario") {
-        produtoCriado = await createProdutoUnitario(form);
-      } else {
-        produtoCriado = await createProdutoFracionado(form);
-      }
-
-      if (onCreated) onCreated(produtoCriado);
+      if (novo && onCreated) onCreated(novo);
 
       onClose();
-    } catch (error) {
-      setErro(error instanceof Error ? error.message : "Erro inesperado");
-    } finally {
-      setLoading(false);
+    } catch {
+      // erro já está no hook e exibido na tela
     }
   }
 
@@ -67,78 +60,66 @@ export default function AddProdutoModal({ open, onClose, onCreated }: AddProduto
         <h2 className="text-xl font-semibold mb-4">Cadastrar produto</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Tipo */}
+          {/* ------------------ TIPO ------------------ */}
           <div>
-            <label className="block mb-1 font-semibold">Tipo</label>
+            <label className="font-medium">Tipo do produto</label>
             <select
+              className="border px-3 py-2 rounded-md w-full"
               value={tipo}
-              onChange={(e) => setTipo(e.target.value as "unitario" | "fracionado")}
-              className="w-full border rounded-md p-2"
+              onChange={(e) =>
+                setTipo(e.target.value as "unitario" | "fracionado")
+              }
             >
-              <option value="unitario">Produto Unitário</option>
-              <option value="fracionado">Produto Fracionado</option>
+              <option value="unitario">Unitário</option>
+              <option value="fracionado">Fracionado</option>
             </select>
           </div>
 
-          {/* Subcategoria */}
+          {/* ------------------ NOME ------------------ */}
           <div>
-            <label className="block mb-1 font-semibold">Subcategoria</label>
-            <select name="subcategoria" required className="w-full border rounded-md p-2">
+            <label className="font-medium">Nome</label>
+            <input
+              name="nome"
+              required
+              className="border px-3 py-2 rounded-md w-full"
+            />
+          </div>
+
+          {/* ------------------ SUBCATEGORIA ------------------ */}
+          <div>
+            <label className="font-medium">Subcategoria</label>
+            <select
+              name="subcategoria"
+              required
+              className="border px-3 py-2 rounded-md w-full"
+            >
               <option value="">Selecione...</option>
               {subcategorias.map((s) => (
-                <option key={s.id} value={s.id}>{s.nome}</option>
+                <option key={s.id} value={s.id}>
+                  {s.nome}
+                </option>
               ))}
             </select>
           </div>
 
-          {/* Nome */}
-          <div>
-            <label className="block mb-1 font-semibold">Nome</label>
-            <input type="text" name="nome" required className="w-full border rounded-md p-2" placeholder="Nome do produto" />
-          </div>
+          {/* ------------------ ERRO ------------------ */}
+          {erro && <p className="text-red-600">{erro}</p>}
 
-          {/* Foto */}
-          <div>
-            <label className="block mb-1 font-semibold">Foto (opcional)</label>
-            <input type="file" name="foto" accept="image/*" />
-          </div>
-
-          {/* Campos específicos */}
-          {tipo === "unitario" && (
-            <div>
-              <label className="block mb-1 font-semibold">Quantidade mínima</label>
-              <input type="number" name="quantidade_minima" min={0} step={1} required className="w-full border rounded-md p-2" />
-            </div>
-          )}
-          {tipo === "fracionado" && (
-            <>
-              <div>
-                <label className="block mb-1 font-semibold">Unidade de medida</label>
-                <select name="unidade_de_medida" required className="w-full border rounded-md p-2">
-                  <option value="">Selecione...</option>
-                  <option value="kg">Quilograma</option>
-                  <option value="g">Grama</option>
-                  <option value="l">Litro</option>
-                  <option value="ml">Mililitro</option>
-                  <option value="m">Metro</option>
-                  <option value="cm">Centímetro</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-1 font-semibold">Quantidade mínima</label>
-                <input type="number" name="quantidade_minima" step={0.01} min={0} required className="w-full border rounded-md p-2" />
-              </div>
-            </>
-          )}
-
-          {erro && <p className="text-red-600 text-sm">{erro}</p>}
-
-          {/* Botões */}
-          <div className="flex justify-end gap-2 mt-4">
-            <button type="button" onClick={onClose} disabled={loading} className="px-4 py-2 border rounded-md">
+          {/* ------------------ AÇÕES ------------------ */}
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
+            >
               Cancelar
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-[#29854A] text-white rounded-md hover:bg-[#246f3f]">
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 disabled:opacity-70"
+            >
               {loading ? "Salvando..." : "Salvar"}
             </button>
           </div>
