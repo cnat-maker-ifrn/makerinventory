@@ -45,10 +45,15 @@ class ProdutoFracionadoSerializer(serializers.ModelSerializer):
 
 class LoteSerializer(serializers.ModelSerializer):
     produto = ProdutoFracionadoSerializer(read_only=True)
+    produto_id = serializers.PrimaryKeyRelatedField(
+        queryset=ProdutoFracionado.objects.all(),
+        source="produto",
+        write_only=True
+    )
 
     class Meta:
         model = Lote
-        fields = '__all__'
+        fields = "__all__"
 
 class SolicitanteSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,39 +1,11 @@
-import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
-
-interface Lote {
-  id: number;
-  codigo: string;
-  quantidade: number;
-  preco: number;
-  fornecedor: string;
-  data_validade: string;
-  data_entrada: string;
-  foto: string | null;
-  produto: { nome: string };
-}
+import { useLotes } from "../../hooks/lote/useLotes";
 
 export default function TableLotes() {
-  const [lotes, setLotes] = useState<Lote[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchLotes() {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/api/lotes/");
-        const data = await res.json();
-        setLotes(data);
-      } catch (error) {
-        console.error("Erro ao carregar lotes:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchLotes();
-  }, []);
+  const { dados: lotes, loading, erro } = useLotes();
 
   if (loading) return <div>Carregando lotes...</div>;
+  if (erro) return <div className="text-red-600">{erro}</div>;
 
   return (
     <div className="overflow-x-auto shadow-md rounded-lg">
@@ -41,9 +13,8 @@ export default function TableLotes() {
         <thead className="bg-[#1A955E] text-white">
           <tr>
             <th className="px-4 py-2 text-left">Foto</th>
-            <th className="px-4 py-2 text-left">Nome</th>
-            <th className="px-4 py-2 text-left">Código</th>
             <th className="px-4 py-2 text-left">Produto</th>
+            <th className="px-4 py-2 text-left">Código</th>
             <th className="px-4 py-2 text-left">Fornecedor</th>
             <th className="px-4 py-2 text-left">Quantidade</th>
             <th className="px-4 py-2 text-left">Preço</th>
@@ -63,7 +34,7 @@ export default function TableLotes() {
                   <img
                     src={lote.foto}
                     className="w-14 h-14 object-cover rounded-md"
-                    alt={lote.produto.nome}
+                    alt={lote.produto?.nome ?? "Produto"}
                   />
                 ) : (
                   <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center text-sm text-gray-600">
@@ -72,18 +43,14 @@ export default function TableLotes() {
                 )}
               </td>
 
-
-              {/* Nome do produto */}
-              <td className="px-4 py-2">{lote.produto.nome}</td>
+              {/* Produto */}
+              <td className="px-4 py-2">{lote.produto?.nome ?? "-"}</td>
 
               {/* Código */}
               <td className="px-4 py-2">{lote.codigo}</td>
 
-              {/* Produto */}
-              <td className="px-4 py-2">{lote.produto.nome}</td>
-
-              {/* Fornecedor */}
-              <td className="px-4 py-2">{lote.fornecedor}</td>
+              {/* Fornecedor (é string!) */}
+              <td className="px-4 py-2">{lote.fornecedor ?? "-"}</td>
 
               {/* Quantidade */}
               <td className="px-4 py-2">{lote.quantidade}</td>
@@ -93,12 +60,14 @@ export default function TableLotes() {
                 R$ {Number(lote.preco).toFixed(2).replace(".", ",")}
               </td>
 
-              {/* Data de validade */}
+              {/* Validade */}
               <td className="px-4 py-2">
-                {new Date(lote.data_validade).toLocaleDateString()}
+                {lote.data_validade
+                  ? new Date(lote.data_validade).toLocaleDateString()
+                  : "-"}
               </td>
 
-              {/* Data de entrada */}
+              {/* Entrada */}
               <td className="px-4 py-2">
                 {new Date(lote.data_entrada).toLocaleDateString()}
               </td>

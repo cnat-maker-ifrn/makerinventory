@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useCreateLote } from "../../hooks/lote/useCreateLote";
 
 interface AddLoteModalProps {
   open: boolean;
@@ -12,6 +13,8 @@ interface ProdutoFracionado {
 
 export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
   const [produtos, setProdutos] = useState<ProdutoFracionado[]>([]);
+  const { criar, loading, erro } = useCreateLote();
+
   const [form, setForm] = useState({
     produto: "",
     quantidade: "",
@@ -21,7 +24,7 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
     foto: null as File | null,
   });
 
-  // Buscar produtos fracionados
+  // Buscar produtos fracionados quando o modal abre
   useEffect(() => {
     if (open) {
       fetch("http://127.0.0.1:8000/api/produtos-fracionados/")
@@ -45,22 +48,16 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // FormData para enviar foto
-    const fd = new FormData();
-    fd.append("produto", form.produto);
-    fd.append("quantidade", form.quantidade);
-    fd.append("preco", form.preco);
-    fd.append("fornecedor", form.fornecedor);
-    fd.append("data_validade", form.validade);
-
-    if (form.foto) fd.append("foto", form.foto);
-
-    const response = await fetch("http://127.0.0.1:8000/api/lotes/", {
-      method: "POST",
-      body: fd,
+    const ok = await criar({
+      produto: Number(form.produto),
+      quantidade: form.quantidade,
+      preco: form.preco,
+      fornecedor: form.fornecedor,
+      data_validade: form.validade,
+      foto: form.foto,
     });
 
-    if (response.ok) {
+    if (ok) {
       alert("Lote cadastrado com sucesso!");
       setForm({
         produto: "",
@@ -171,6 +168,7 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
               type="button"
               onClick={onClose}
               className="px-4 py-2 border rounded-md"
+              disabled={loading}
             >
               Cancelar
             </button>
@@ -178,12 +176,19 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
             <button
               type="submit"
               className="px-4 py-2 bg-[#29854A] text-white rounded-md hover:bg-[#246f3f]"
+              disabled={loading}
             >
-              Salvar
+              {loading ? "Salvando..." : "Salvar"}
             </button>
           </div>
 
         </form>
+
+        {erro && (
+          <p className="text-red-600 text-sm mt-2">
+            {erro}
+          </p>
+        )}
       </div>
     </div>
   );
