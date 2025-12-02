@@ -1,34 +1,33 @@
 import { useEffect, useState } from "react";
 import { getMovimentacoes } from "../../api/movimentacaoApi";
-import type { Mov } from "../../components/movimentacao/ListMovimentacao";
+import { type Movimentacao } from "../../types/movimentacao";
 
-export function useMovimentacoes(busca: string = "") {
-    const [dados, setDados] = useState<Mov[]>([]);
+export function useMovimentacoes() {
+    const [dados, setDados] = useState<Movimentacao[]>([]);
     const [loading, setLoading] = useState(true);
-    const [erro, setErro] = useState<string | null>(null);
+    const [erro, setErro] = useState("");
 
     useEffect(() => {
-        let ativo = true;
+        async function carregar() {
+            try {
+                setLoading(true);
+                const movs = await getMovimentacoes();
 
-        setLoading(true);
-        setErro(null);
+                const normalizados: Movimentacao[] = movs.map((m: any) => ({
+                    ...m,
+                    quantidade: Number(m.quantidade),
+                }));
 
-        getMovimentacoes(busca)
-            .then(res => {
-                if (ativo) setDados(res);
-            })
-            .catch(err => {
-                if (ativo) setErro("Falha ao carregar movimentações");
-                console.error(err);
-            })
-            .finally(() => {
-                if (ativo) setLoading(false);
-            });
+                setDados(normalizados);
+            } catch (error) {
+                setErro("Erro ao carregar movimentações.");
+            } finally {
+                setLoading(false);
+            }
+        }
 
-        return () => {
-            ativo = false;
-        };
-    }, [busca]);
+        carregar();
+    }, []);
 
     return { dados, loading, erro };
 }

@@ -1,4 +1,4 @@
-import api from "./api"; // instância axios centralizada
+import api from "./api"; 
 
 export interface Categoria {
   id: number;
