@@ -1,36 +1,9 @@
 import { useEffect, useState } from "react";
 import { getLotes } from "../../api/loteApi";
-
-export interface ProdutoFracionadoDetalhes {
-  id: number;
-  nome: string;
-  unidade_de_medida: string;
-  quantidade_minima: number;
-  foto: string | null;
-  subcategoria: number;
-}
-
-export interface LoteUnificado {
-  id: number;
-  codigo: string;
-
-  quantidade: number;
-  preco: number;
-  fornecedor: string | null;
-
-  data_validade: string;
-  data_entrada: string;
-
-  foto: string | null;
-
-  produto: {
-    id: number;
-    nome: string;
-  };
-}
+import type { Lote } from "../../types/lote";
 
 export function useLotes() {
-  const [dados, setDados] = useState<LoteUnificado[]>([]);
+  const [dados, setDados] = useState<Lote[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
@@ -38,10 +11,9 @@ export function useLotes() {
     async function carregar() {
       try {
         setLoading(true);
-
         const lotes = await getLotes();
 
-        const normalizados: LoteUnificado[] = lotes.map((l: any) => ({
+        const normalizados: Lote[] = lotes.map((l: any) => ({
           id: l.id,
           codigo: l.codigo,
 

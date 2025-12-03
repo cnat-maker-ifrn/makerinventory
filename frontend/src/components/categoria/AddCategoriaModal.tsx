@@ -1,15 +1,12 @@
 import { type FormEvent } from "react";
 import { useCreateCategoria } from "../../hooks/categoria/useCreateCategoria";
+import { type Categoria } from "../../types/categoria";
+
 
 interface AddCategoriaModalProps {
   open: boolean;
   onClose: () => void;
   onCreated?: (novaCategoria: Categoria) => void;
-}
-
-export interface Categoria {
-  id: number;
-  nome: string;
 }
 
 export default function AddCategoriaModal({ open, onClose, onCreated }: AddCategoriaModalProps) {

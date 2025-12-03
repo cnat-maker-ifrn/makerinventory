@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { getEmprestimos } from "../../api/emprestimoApi";
-
-export interface Emprestimo {
-  id: number;
-  solicitante: string;
-  data_emprestimo: string;
-  previsao_entrega: string;
-  data_entrega?: string | null;
-}
+import { type Emprestimo } from "../../types/emprestimo";
 
 export function useEmprestimos() {
   const [dados, setDados] = useState<Emprestimo[]>([]);
@@ -20,13 +13,16 @@ export function useEmprestimos() {
         setLoading(true);
         const emprestimos = await getEmprestimos();
 
-        // Normalização (caso a API venha com algum campo inesperado)
+        // Normalização mínima caso a API venha com campos inesperados
         const normalizados: Emprestimo[] = emprestimos.map((e: any) => ({
           id: e.id,
           solicitante: e.solicitante,
+          solicitante_nome: e.solicitante_nome,
+          itens: e.itens ?? [],
           data_emprestimo: e.data_emprestimo,
           previsao_entrega: e.previsao_entrega,
           data_entrega: e.data_entrega ?? null,
+          responsavel: e.responsavel,
         }));
 
         setDados(normalizados);

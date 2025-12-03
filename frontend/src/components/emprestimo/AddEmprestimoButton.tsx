@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { MdAdd } from "react-icons/md";
-import AddSolicitanteModal from "./AddSolicitanteModal";
+import AddEmprestimoModal from "../emprestimo/AddEmprestimoModal";
 
-export default function AddSolicitanteButton() {
+export default function AddEmprestimoButton() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -12,10 +12,10 @@ export default function AddSolicitanteButton() {
         className="bg-[#1A955E] text-white rounded-md px-4 py-2 flex items-center gap-2 hover:bg-[#1A855E] transition"
       >
         <MdAdd size={22} />
-        Adicionar Solicitante
+        Novo Empréstimo
       </button>
 
-      <AddSolicitanteModal open={open} onClose={() => setOpen(false)} />
+      <AddEmprestimoModal open={open} onClose={() => setOpen(false)} />
     </>
   );
 }

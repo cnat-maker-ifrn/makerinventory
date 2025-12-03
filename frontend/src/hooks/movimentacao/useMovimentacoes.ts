@@ -1,33 +1,36 @@
 import { useEffect, useState } from "react";
 import { getMovimentacoes } from "../../api/movimentacaoApi";
-import { type Movimentacao } from "../../types/movimentacao";
+import type { Movimentacao } from "../../types/movimentacao";
 
 export function useMovimentacoes() {
-    const [dados, setDados] = useState<Movimentacao[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [erro, setErro] = useState("");
+  const [dados, setDados] = useState<Movimentacao[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState("");
 
-    useEffect(() => {
-        async function carregar() {
-            try {
-                setLoading(true);
-                const movs = await getMovimentacoes();
+  useEffect(() => {
+    async function carregar() {
+      try {
+        setLoading(true);
 
-                const normalizados: Movimentacao[] = movs.map((m: any) => ({
-                    ...m,
-                    quantidade: Number(m.quantidade),
-                }));
+        const movs = await getMovimentacoes();
 
-                setDados(normalizados);
-            } catch (error) {
-                setErro("Erro ao carregar movimentações.");
-            } finally {
-                setLoading(false);
-            }
-        }
+        // Normalização (conversão de campos numéricos)
+        const normalizados: Movimentacao[] = movs.map((m: Movimentacao) => ({
+          ...m,
+          quantidade: Number(m.quantidade),
+        }));
 
-        carregar();
-    }, []);
+        setDados(normalizados);
+      } catch (e: any) {
+        console.error("Erro ao carregar movimentações:", e);
+        setErro("Erro ao carregar movimentações.");
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    return { dados, loading, erro };
+    carregar();
+  }, []);
+
+  return { dados, loading, erro };
 }

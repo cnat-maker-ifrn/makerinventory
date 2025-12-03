@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { createCategoria, type Categoria } from "../../api/categoriaApi";
+import { createCategoria } from "../../api/categoriaApi";
+import { type Categoria } from "../../types/categoria";
 
 export function useCreateCategoria() {
   const [loading, setLoading] = useState(false);

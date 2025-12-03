@@ -2,10 +2,10 @@ import { useState } from "react";
 import { createLote } from "../../api/loteApi";
 
 export interface CreateLotePayload {
-  produto: number;
+  produto: number;            // id do produto fracionado
   quantidade: string;
   preco: string;
-  fornecedor?: string | null;
+  fornecedor: string;
   data_validade?: string | null;
   foto?: File | null;
 }
@@ -19,31 +19,26 @@ export function useCreateLote() {
     setErro("");
 
     try {
-      const form = new FormData();
-      
-      form.append("produto_id", String(data.produto));
-      form.append("quantidade", data.quantidade);
-      form.append("preco", data.preco);
+      const formData = new FormData();
 
-      if (data.fornecedor) {
-        form.append("fornecedor", data.fornecedor);
-      }
+      formData.append("produto_id", String(data.produto));   // <- CORRETO!
+      formData.append("quantidade", data.quantidade);
+      formData.append("preco", data.preco);
+      formData.append("fornecedor", data.fornecedor);
 
       if (data.data_validade) {
-        form.append("data_validade", data.data_validade);
+        formData.append("data_validade", data.data_validade);
       }
 
       if (data.foto) {
-        form.append("foto", data.foto);
+        formData.append("foto", data.foto);
       }
 
-      await createLote(form);
+      await createLote(formData);
       return true;
-
     } catch (e: any) {
-      setErro(e.message || "Erro ao criar lote.");
+      setErro(e.message || "Erro inesperado");
       return false;
-
     } finally {
       setLoading(false);
     }

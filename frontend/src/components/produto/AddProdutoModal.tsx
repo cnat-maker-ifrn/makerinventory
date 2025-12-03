@@ -1,16 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { getSubcategorias } from "../../api/subcategoriaApi";
 import { useCreateProduto } from "../../hooks/produto/useCreateProduto";
+import { type Subcategoria } from "../../types/subcategoria";
 
 interface AddProdutoModalProps {
   open: boolean;
   onClose: () => void;
   onCreated?: (produto: any) => void;
-}
-
-interface Subcategoria {
-  id: number;
-  nome: string;
 }
 
 export default function AddProdutoModal({
@@ -100,6 +96,38 @@ export default function AddProdutoModal({
                 </option>
               ))}
             </select>
+          </div>
+          {/* ------------------ UNIDADE DE MEDIDA (APENAS PARA FRACIONADO) ------------------ */}
+          {tipo === "fracionado" && (
+            <div>
+              <label className="font-medium">Unidade de Medida</label>
+              <select
+                name="unidade_de_medida"
+                required={tipo === "fracionado"}
+                className="border px-3 py-2 rounded-md w-full"
+              >
+                <option value="">Selecione...</option>
+                <option value="kg">Quilograma (kg)</option>
+                <option value="g">Grama (g)</option>
+                <option value="l">Litro (l)</option>
+                <option value="ml">Mililitro (ml)</option>
+                <option value="m">Metro (m)</option>
+                <option value="cm">Centímetro (cm)</option>
+              </select>
+            </div>
+          )}
+
+
+          {/* ------------------ QUANTIDADE MÍNIMA ------------------ */}
+          <div>
+            <label className="font-medium">Quantidade mínima</label>
+            <input
+              type="number"
+              name="quantidade_minima"
+              required
+              min={0}
+              className="border px-3 py-2 rounded-md w-full"
+            />
           </div>
 
           {/* ------------------ ERRO ------------------ */}

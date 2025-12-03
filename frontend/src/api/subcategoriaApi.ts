@@ -1,11 +1,5 @@
-import type { Categoria } from "./categoriaApi";
+import type { Subcategoria } from "../types/subcategoria";
 import api from "./api";
-
-export interface Subcategoria {
-  id: number;
-  nome: string;
-  categoria: Categoria;
-}
 
 /** Busca todas as subcategorias */
 export async function getSubcategorias(): Promise<Subcategoria[]> {

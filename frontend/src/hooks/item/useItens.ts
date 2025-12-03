@@ -1,34 +1,9 @@
 import { useEffect, useState } from "react";
 import { getItens } from "../../api/itemApi";
-
-export interface ProdutoDetalhes {
-  id: number;
-  nome: string;
-  quantidade_minima: number;
-  subcategoria: number;
-  subcategoria_nome?: string;
-  foto: string | null;
-}
-
-export interface ItemUnificado {
-  id: number;
-  nome: string;                  
-  codigo: string;
-  foto: string | null;
-  preco: number;
-  data_entrada: string;
-
-  produto: number;               // id do produto
-  produto_detalhes: ProdutoDetalhes | null; 
-
-  eh_do_cnatmaker: boolean;
-  disponibilidade: boolean;
-  eh_quebrado: boolean;
-  eh_emprestado: boolean;
-}
+import type { Item } from "../../types/item";
 
 export function useItens() {
-  const [dados, setDados] = useState<ItemUnificado[]>([]);
+  const [dados, setDados] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
@@ -39,16 +14,16 @@ export function useItens() {
 
         const itens = await getItens();
 
-        const normalizados: ItemUnificado[] = itens.map((i: any) => ({
+        const normalizados: Item[] = itens.map((i: any) => ({
           id: i.id,
-          nome: i.nome,                        // Mantém nome do item
+          nome: i.nome,
           codigo: i.codigo,
           foto: i.foto ?? null,
           preco: Number(i.preco ?? 0),
           data_entrada: i.data_entrada,
 
-          produto: i.produto,                  // ID do produto
-          produto_detalhes: i.produto_detalhes ?? null, // objeto completo do produto
+          produto: Number(i.produto),                  // ID
+          produto_detalhes: i.produto_detalhes ?? null, // OBJETO ProdutoUnitario
 
           eh_do_cnatmaker: Boolean(i.eh_do_cnatmaker),
           disponibilidade: Boolean(i.disponibilidade),

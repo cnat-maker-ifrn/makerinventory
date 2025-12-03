@@ -1,8 +1,7 @@
 import { useState } from "react";
-import {
-  createProdutoUnitario,
-  createProdutoFracionado,
-} from "../../api/produtoApi";
+import { createProdutoUnitario, createProdutoFracionado } from "../../api/produtoApi";
+import { type ProdutoFracionado } from "../../types/produtofracionado";
+import { type ProdutoUnitario } from "../../types/produtounitario";
 
 export function useCreateProduto() {
   const [loading, setLoading] = useState(false);
@@ -11,7 +10,7 @@ export function useCreateProduto() {
   async function criar(
     form: FormData,
     tipo: "unitario" | "fracionado"
-  ): Promise<any> {
+  ): Promise<ProdutoUnitario | ProdutoFracionado> {
     setLoading(true);
     setErro("");
 
@@ -22,13 +21,22 @@ export function useCreateProduto() {
       return await createProdutoFracionado(form);
 
     } catch (e: any) {
-      const msg =
-        e?.response?.data?.detail ||
-        e?.response?.data?.error ||
-        "Erro ao criar produto";
+      const data = e?.response?.data;
+      let msg = "Erro ao criar produto";
+
+      if (data) {
+        if (typeof data === "string") {
+          msg = data;
+        } else if (data.detail) {
+          msg = data.detail;
+        } else {
+          const key = Object.keys(data)[0];
+          msg = Array.isArray(data[key]) ? data[key][0] : data[key];
+        }
+      }
 
       setErro(msg);
-      throw e; // permite o componente exibir toast, fechar modal etc.
+      throw e;
     } finally {
       setLoading(false);
     }
@@ -36,3 +44,4 @@ export function useCreateProduto() {
 
   return { criar, loading, erro };
 }
+

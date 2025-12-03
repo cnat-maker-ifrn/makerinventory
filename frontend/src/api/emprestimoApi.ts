@@ -1,31 +1,35 @@
 import api from "./api";
+import type { Emprestimo } from "../types/emprestimo";
 
-export interface CreateEmprestimoPayload {
-  solicitante: number; // id do solicitante
+/** Busca todos os empréstimos */
+export async function getEmprestimos(): Promise<Emprestimo[]> {
+  const response = await api.get<Emprestimo[]>("emprestimos/");
+  return response.data;
+}
+
+/** Busca um empréstimo pelo ID */
+export async function getEmprestimoById(id: number): Promise<Emprestimo> {
+  const response = await api.get<Emprestimo>(`emprestimos/${id}/`);
+  return response.data;
+}
+
+/** Cria um novo empréstimo */
+export async function createEmprestimo(data: {
+  solicitante: number;
+  itens: number[];
   previsao_entrega: string;
-  itens: number[]; // ids dos itens emprestados
-}
-
-export async function getEmprestimos() {
-  const resp = await api.get("emprestimos/");
+  responsavel: string;
+}): Promise<Emprestimo> {
+  const resp = await api.post<Emprestimo>("emprestimos/", data); // JSON
   return resp.data;
 }
-
-export async function getEmprestimoById(id: number) {
-  const resp = await api.get(`emprestimos/${id}/`);
-  return resp.data;
+/** Atualiza um empréstimo pelo ID */
+export async function updateEmprestimo(id: number, data: any): Promise<Emprestimo> {
+  const response = await api.put<Emprestimo>(`emprestimos/${id}/`, data);
+  return response.data;
 }
 
-export async function createEmprestimo(data: CreateEmprestimoPayload) {
-  const resp = await api.post("emprestimos/", data);
-  return resp.data;
-}
-
-export async function updateEmprestimo(id: number, data: Partial<CreateEmprestimoPayload>) {
-  const resp = await api.put(`emprestimos/${id}/`, data);
-  return resp.data;
-}
-
-export async function deleteEmprestimo(id: number) {
+/** Deleta um empréstimo pelo ID */
+export async function deleteEmprestimo(id: number): Promise<void> {
   await api.delete(`emprestimos/${id}/`);
 }

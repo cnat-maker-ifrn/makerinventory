@@ -37,11 +37,22 @@ class ItemSerializer(serializers.ModelSerializer):
 
 class ProdutoFracionadoSerializer(serializers.ModelSerializer):
     quantidade_em_estoque = serializers.ReadOnlyField()
-    subcategoria = SubcategoriaSerializer(read_only=True)
+    subcategoria_nome = serializers.CharField(source="subcategoria.nome", read_only=True)
+    subcategoria = serializers.PrimaryKeyRelatedField(queryset=Subcategoria.objects.all())
 
     class Meta:
         model = ProdutoFracionado
-        fields = '__all__'
+        fields = [
+            "id",
+            "nome",
+            "foto",
+            "unidade_de_medida",
+            "quantidade_minima",
+            "subcategoria",
+            "subcategoria_nome",
+            "quantidade_em_estoque",
+        ]
+
 
 class LoteSerializer(serializers.ModelSerializer):
     produto = ProdutoFracionadoSerializer(read_only=True)

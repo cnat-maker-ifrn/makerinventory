@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { createEmprestimo, type CreateEmprestimoPayload } from "../../api/emprestimoApi";
+import { createEmprestimo } from "../../api/emprestimoApi";
+
+export interface CreateEmprestimoPayload {
+  solicitante: number;       
+  previsao_entrega: string;  
+  itens: number[];          
+  responsavel: string;     
+}
 
 export function useCreateEmprestimo() {
   const [loading, setLoading] = useState(false);
@@ -13,7 +20,7 @@ export function useCreateEmprestimo() {
       await createEmprestimo(data);
       return true;
     } catch (e: any) {
-      setErro(e.response?.data?.detail || e.message || "Erro ao criar empréstimo.");
+      setErro(e.response?.data?.detail || "Erro ao criar empréstimo");
       return false;
     } finally {
       setLoading(false);

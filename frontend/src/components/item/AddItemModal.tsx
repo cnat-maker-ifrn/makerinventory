@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCreateItem } from "../../hooks/item/useCreateItem";
 import { getProdutosUnitarios } from "../../api/produtoApi";
-
-interface ProdutoUnitario {
-  id: number;
-  nome: string;
-}
+import { type ProdutoUnitario } from "../../types/produtounitario";
 
 interface AddItemModalProps {
   open: boolean;

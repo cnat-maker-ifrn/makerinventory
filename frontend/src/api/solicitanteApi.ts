@@ -1,31 +1,37 @@
 import api from "./api";
+import type { Solicitante } from "../types/solicitante";
 
-export interface SolicitantePayload {
+export async function getSolicitantes(): Promise<Solicitante[]> {
+  const resp = await api.get<Solicitante[]>("solicitantes/");
+  return resp.data;
+}
+
+export async function getSolicitanteById(id: number): Promise<Solicitante> {
+  const resp = await api.get<Solicitante>(`solicitantes/${id}/`);
+  return resp.data;
+}
+
+export async function createSolicitante(data: {
   nome: string;
   matricula: string;
   telefone?: string | null;
-}
-
-export async function getSolicitantes() {
-  const resp = await api.get("solicitantes/");
+}): Promise<Solicitante> {
+  const resp = await api.post<Solicitante>("solicitantes/", data);
   return resp.data;
 }
 
-export async function getSolicitanteById(id: number) {
-  const resp = await api.get(`solicitantes/${id}/`);
+export async function updateSolicitante(
+  id: number,
+  data: {
+    nome: string;
+    matricula: string;
+    telefone?: string | null;
+  }
+): Promise<Solicitante> {
+  const resp = await api.put<Solicitante>(`solicitantes/${id}/`, data);
   return resp.data;
 }
 
-export async function createSolicitante(data: SolicitantePayload) {
-  const resp = await api.post("solicitantes/", data);
-  return resp.data;
-}
-
-export async function updateSolicitante(id: number, data: SolicitantePayload) {
-  const resp = await api.put(`solicitantes/${id}/`, data);
-  return resp.data;
-}
-
-export async function deleteSolicitante(id: number) {
+export async function deleteSolicitante(id: number): Promise<void> {
   await api.delete(`solicitantes/${id}/`);
 }

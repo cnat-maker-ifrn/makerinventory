@@ -1,12 +1,5 @@
 import { MdVisibility, MdAssignmentReturn } from "react-icons/md";
-
-interface Emprestimo {
-  id: number;
-  solicitante: string;
-  data_emprestimo: string;
-  previsao_entrega: string;
-  data_entrega?: string | null;
-}
+import { type Emprestimo } from "../../types/emprestimo";
 
 function safeDate(dateString?: string | null) {
   if (!dateString) return "—";
@@ -20,32 +13,41 @@ interface TableEmprestimoProps {
 }
 
 export default function TableEmprestimo({ emprestimos }: TableEmprestimoProps) {
+  if (emprestimos.length === 0) {
+    return (
+      <div className="overflow-x-auto shadow-md rounded-lg bg-white">
+        <div className="p-6 text-center text-gray-600">
+          Nenhum empréstimo encontrado.
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="w-full text-left">
-        <thead className="bg-[#1A955E] text-white text-[18px]">
+    <div className="overflow-x-auto shadow-md rounded-lg">
+      <table className="min-w-full rounded-lg overflow-hidden">
+        <thead className="bg-[#1A955E] text-white">
           <tr>
-            <th className="p-4">Solicitante</th>
-            <th className="p-4">Empréstimo</th>
-            <th className="p-4">Previsão Entrega</th>
-            <th className="p-4">Devolução</th>
-            <th className="p-4 text-center">Ações</th>
+            <th className="px-4 py-2 text-left">Solicitante</th>
+            <th className="px-4 py-2 text-left">Empréstimo</th>
+            <th className="px-4 py-2 text-left">Previsão Entrega</th>
+            <th className="px-4 py-2 text-left">Devolução</th>
+            <th className="px-4 py-2 text-left">Ações</th>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="bg-white">
           {emprestimos.map((emp) => (
-            <tr key={emp.id} className="hover:bg-gray-100 transition">
-              <td className="p-4">{emp.solicitante}</td>
-              <td className="p-4">{safeDate(emp.data_emprestimo)}</td>
-              <td className="p-4">{safeDate(emp.previsao_entrega)}</td>
-              <td className="p-4">{safeDate(emp.data_entrega)}</td>
+            <tr key={emp.id} className="hover:bg-gray-50">
+              <td className="px-4 py-2">{emp.solicitante_nome}</td>
+              <td className="px-4 py-2">{safeDate(emp.data_emprestimo)}</td>
+              <td className="px-4 py-2">{safeDate(emp.previsao_entrega)}</td>
+              <td className="px-4 py-2">{safeDate(emp.data_entrega)}</td>
 
-              <td className="p-4 flex justify-center gap-4">
+              <td className="px-4 py-2 flex gap-4">
                 <button className="p-2 rounded-full hover:bg-gray-200">
                   <MdVisibility size={28} className="text-[#29854A]" />
                 </button>
-
                 <button className="p-2 rounded-full hover:bg-gray-200">
                   <MdAssignmentReturn size={28} className="text-[#29854A]" />
                 </button>
@@ -53,16 +55,6 @@ export default function TableEmprestimo({ emprestimos }: TableEmprestimoProps) {
             </tr>
           ))}
         </tbody>
-
-        {emprestimos.length === 0 && (
-          <tfoot>
-            <tr>
-              <td colSpan={5} className="text-center p-6 text-gray-600">
-                Nenhum empréstimo encontrado.
-              </td>
-            </tr>
-          </tfoot>
-        )}
       </table>
     </div>
   );

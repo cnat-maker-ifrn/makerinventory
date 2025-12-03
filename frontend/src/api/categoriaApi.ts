@@ -1,9 +1,6 @@
 import api from "./api"; 
+import { type Categoria } from "../types/categoria";
 
-export interface Categoria {
-  id: number;
-  nome: string;
-}
 
 /** Busca todas as categorias */
 export async function getCategorias(): Promise<Categoria[]> {

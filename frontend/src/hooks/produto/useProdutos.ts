@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProdutosUnitarios, getProdutosFracionados } from "../../api/produtoApi";
-
-export interface ProdutoUnificado {
-    id: number;
-    nome: string;
-    tipo: "unitario" | "fracionado";
-    subcategoria: string;
-    foto: string | null;
-    quantidade: number;
-    quantidade_minima: number;
-}
+import { type ProdutoUnificado } from "../../types/produtounificado";
 
 export function useProdutos() {
     const [dados, setDados] = useState<ProdutoUnificado[]>([]);

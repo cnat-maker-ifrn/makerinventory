@@ -15,12 +15,14 @@ export function useSolicitantes() {
 
   useEffect(() => {
     async function carregar() {
+      setLoading(true);
+      setErro("");
+
       try {
-        setLoading(true);
-        const lista = await getSolicitantes();
+        const lista: Solicitante[] = await getSolicitantes();
         setDados(lista);
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error("Erro ao carregar solicitantes:", e);
         setErro("Erro ao carregar solicitantes.");
       } finally {
         setLoading(false);

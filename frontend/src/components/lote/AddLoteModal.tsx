@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { useCreateLote } from "../../hooks/lote/useCreateLote";
+import { type ProdutoFracionado } from "../../types/produtofracionado";
 
 interface AddLoteModalProps {
   open: boolean;
   onClose: () => void;
-}
-
-interface ProdutoFracionado {
-  id: number;
-  nome: string;
 }
 
 export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
