@@ -96,7 +96,7 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
       itens: itensSelecionados,
       previsao_entrega: previsaoEntregaISO,
       responsavel,
-      data_emprestimo: dataEmprestimoISO, // necessário para não dar 400
+      data_emprestimo: dataEmprestimoISO, 
     });
 
     if (sucesso) {

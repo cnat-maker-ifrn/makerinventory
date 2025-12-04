@@ -1,17 +1,17 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import (
     Categoria, Subcategoria, ProdutoUnitario, Item,
     ProdutoFracionado, Lote, Solicitante, Emprestimo,
-    MovimentacaoEstoque, Devolucao
+    MovimentacaoEstoque, Devolucao, Saida
 )
 from .serializers import (
     CategoriaSerializer, SubcategoriaSerializer, ProdutoUnitarioSerializer,
     ItemSerializer, ProdutoFracionadoSerializer, LoteSerializer,
     SolicitanteSerializer, EmprestimoSerializer, MovimentacaoEstoqueSerializer,
-    DevolucaoSerializer
+    DevolucaoSerializer, SaidaSerializer
 )
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -105,3 +105,44 @@ class DevolucaoViewSet(viewsets.ModelViewSet):
 class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all()
     serializer_class = MovimentacaoEstoqueSerializer
+
+class SaidaViewSet(viewsets.ModelViewSet):
+    """
+    CRUD de saídas de estoque.
+    As movimentações são criadas automaticamente via signals.
+    """
+    queryset = Saida.objects.select_related("item", "lote").all()
+    serializer_class = SaidaSerializer
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["responsavel", "item__produto__nome", "lote__produto__nome"]
+    ordering_fields = ["data_saida", "quantidade"]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Criação de Saída.
+        A lógica de movimentação é feita automaticamente pelo signal.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        saida = serializer.save()  # cria a saída normal
+
+        return Response(
+            SaidaSerializer(saida).data,
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=["get"], url_path="por-item")
+    def por_item(self, request):
+        """Filtra saídas que possuem item unitário."""
+        qs = self.queryset.filter(item__isnull=False)
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="por-lote")
+    def por_lote(self, request):
+        """Filtra saídas que possuem lote fracionado."""
+        qs = self.queryset.filter(lote__isnull=False)
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)

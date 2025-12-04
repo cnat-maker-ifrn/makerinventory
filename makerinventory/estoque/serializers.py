@@ -94,3 +94,58 @@ class MovimentacaoEstoqueSerializer(serializers.ModelSerializer):
         model = MovimentacaoEstoque
         fields = '__all__'
 
+class SaidaSerializer(serializers.ModelSerializer):
+    # Exibir nome/código no GET, mas enviar apenas IDs no POST
+    item_nome = serializers.CharField(source="item.nome", read_only=True)
+    item_codigo = serializers.CharField(source="item.codigo", read_only=True)
+
+    lote_nome = serializers.CharField(source="lote.nome", read_only=True)
+    lote_codigo = serializers.CharField(source="lote.codigo", read_only=True)
+
+    class Meta:
+        model = Saida
+        fields = [
+            "id",
+            "item",
+            "item_nome",
+            "item_codigo",
+            "lote",
+            "lote_nome",
+            "lote_codigo",
+            "quantidade",
+            "data_saida",
+            "responsavel",
+            "observacao",
+        ]
+
+    def validate(self, data):
+        item = data.get("item")
+        lote = data.get("lote")
+        quant = data.get("quantidade")
+
+        if item and lote:
+            raise serializers.ValidationError(
+                "A saída deve ter somente item OU lote, não ambos."
+            )
+
+        if not item and not lote:
+            raise serializers.ValidationError(
+                "A saída deve ter um item ou um lote."
+            )
+
+        # VALIDAÇÃO DO LOTE
+        if lote:
+            lote_obj = Lote.objects.get(id=lote.id)
+
+            if quant is None or quant <= 0:
+                raise serializers.ValidationError(
+                    "A quantidade deve ser maior que zero para saídas de lote."
+                )
+
+            if lote_obj.quantidade < quant:
+                raise serializers.ValidationError(
+                    f"O lote não possui quantidade suficiente. Disponível: {lote_obj.quantidade}"
+                )
+
+        return data
+

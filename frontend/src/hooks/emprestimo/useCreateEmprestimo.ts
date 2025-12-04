@@ -6,6 +6,7 @@ export interface CreateEmprestimoPayload {
   previsao_entrega: string;  
   itens: number[];          
   responsavel: string;     
+  data_emprestimo: string;
 }
 
 export function useCreateEmprestimo() {
