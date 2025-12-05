@@ -1,18 +1,17 @@
 export interface Saida {
   id: number;
-  item: {
-    id: number;
-    nome: string;
-    codigo: string;
-  } | null;
 
-  lote: {
-    id: number;
-    nome: string;
-    codigo: string;
-  } | null;
+  item: number | null;   
+  item_nome: string | null;
+  item_codigo: string | null;
+
+
+  lote: number | null;   
+  lote_nome: string | null;      
+  lote_codigo: string | null;    
 
   quantidade: number;
-  responsavel: string;
   data_saida: string;
+  responsavel: string;
+  observacao?: string | null;
 }

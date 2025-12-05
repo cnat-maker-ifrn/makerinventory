@@ -13,7 +13,7 @@ export const TableMovimentacao = ({ dados }: TableMovimentacaoProps) => {
             <th className="px-4 py-3 text-left">Tipo</th>
             <th className="px-4 py-3 text-left">Produto</th>
             <th className="px-4 py-3 text-left">Quantidade</th>
-            <th className="px-4 py-3 text-left">Data</th>
+            <th className="px-4 py-3 text-left">Data/Hora</th>
           </tr>
         </thead>
 
