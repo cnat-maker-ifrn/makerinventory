@@ -46,7 +46,7 @@ db.sqlite3-journal
 # ============================================
 
 # Mídia e estáticos gerados
-/media/
+media/
 staticfiles/
 static/
 collected_static/
