@@ -92,3 +92,14 @@ def movimentacao_devolucao_itens(sender, instance, action, pk_set, **kwargs):
             item.disponibilidade = True
             item.save()
 
+        # Atualiza data_entrega do empréstimo quando todos os itens forem devolvidos
+        emprestimo = instance.emprestimo
+        todos_devolvidos = all(
+            item.id in instance.emprestimo.itens.values_list('id', flat=True)
+            for item in instance.emprestimo.itens.all()
+        )
+        if todos_devolvidos:
+            emprestimo.data_entrega = timezone.now()
+            emprestimo.save()
+
+

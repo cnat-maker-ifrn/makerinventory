@@ -1,5 +1,9 @@
-import { MdVisibility, MdAssignmentReturn } from "react-icons/md";
+import { useState } from "react";
+import { MdVisibility, MdClose } from "react-icons/md";
 import { type Emprestimo } from "../../types/emprestimo";
+import { type Item } from "../../types/item";
+import DevolverButton from "./DevolverButton";
+import { useItens } from "../../hooks/item/useItens"; // hook que retorna { dados, loading, erro }
 
 function safeDate(dateString?: string | null) {
   if (!dateString) return "—";
@@ -10,9 +14,22 @@ function safeDate(dateString?: string | null) {
 
 interface TableEmprestimoProps {
   emprestimos: Emprestimo[];
+  onRefresh?: () => void;
 }
 
-export default function TableEmprestimo({ emprestimos }: TableEmprestimoProps) {
+// Tipo simplificado para o modal
+interface ModalItem {
+  id: number;
+  nome: string;
+  foto?: string | null;
+}
+
+export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprestimoProps) {
+  const [modalItem, setModalItem] = useState<ModalItem[] | null>(null);
+
+  // Todos os itens carregados
+  const { dados: itens } = useItens();
+
   if (emprestimos.length === 0) {
     return (
       <div className="overflow-x-auto shadow-md rounded-lg bg-white">
@@ -23,39 +40,98 @@ export default function TableEmprestimo({ emprestimos }: TableEmprestimoProps) {
     );
   }
 
+  // Função para abrir o modal com os dados completos
+  function handleVisualizar(itensIds: number[]) {
+    const itensCompleto: ModalItem[] = itens
+      .filter((item) => itensIds.includes(item.id))
+      .map((item: Item) => ({
+        id: item.id,
+        nome: item.nome,
+        foto: item.foto ?? null,
+      }));
+
+    setModalItem(itensCompleto);
+  }
+
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg">
-      <table className="min-w-full rounded-lg overflow-hidden">
-        <thead className="bg-[#1A955E] text-white">
-          <tr>
-            <th className="px-4 py-2 text-left">Solicitante</th>
-            <th className="px-4 py-2 text-left">Empréstimo</th>
-            <th className="px-4 py-2 text-left">Previsão Entrega</th>
-            <th className="px-4 py-2 text-left">Devolução</th>
-            <th className="px-4 py-2 text-left">Ações</th>
-          </tr>
-        </thead>
-
-        <tbody className="bg-white">
-          {emprestimos.map((emp) => (
-            <tr key={emp.id} className="hover:bg-gray-50">
-              <td className="px-4 py-2">{emp.solicitante_nome}</td>
-              <td className="px-4 py-2">{safeDate(emp.data_emprestimo)}</td>
-              <td className="px-4 py-2">{safeDate(emp.previsao_entrega)}</td>
-              <td className="px-4 py-2">{safeDate(emp.data_entrega)}</td>
-
-              <td className="px-4 py-2 flex gap-4">
-                <button className="p-2 rounded-full hover:bg-gray-200">
-                  <MdVisibility size={28} className="text-[#29854A]" />
-                </button>
-                <button className="p-2 rounded-full hover:bg-gray-200">
-                  <MdAssignmentReturn size={28} className="text-[#29854A]" />
-                </button>
-              </td>
+    <>
+      <div className="overflow-x-auto shadow-md rounded-lg">
+        <table className="min-w-full rounded-lg overflow-hidden">
+          <thead className="bg-[#1A955E] text-white">
+            <tr>
+              <th className="px-4 py-2 text-left">Solicitante</th>
+              <th className="px-4 py-2 text-left">Empréstimo</th>
+              <th className="px-4 py-2 text-left">Previsão Entrega</th>
+              <th className="px-4 py-2 text-left">Devolução</th>
+              <th className="px-4 py-2 text-left">Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+
+          <tbody className="bg-white">
+            {emprestimos.map((emp) => (
+              <tr key={emp.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{emp.solicitante_nome}</td>
+                <td className="px-4 py-2">{safeDate(emp.data_emprestimo)}</td>
+                <td className="px-4 py-2">{safeDate(emp.previsao_entrega)}</td>
+                <td className="px-4 py-2">{safeDate(emp.data_entrega)}</td>
+
+                <td className="px-4 py-2 flex gap-4">
+                  {/* Botão de visualizar */}
+                  <button
+                    className="p-2 rounded-full hover:bg-gray-200"
+                    onClick={() => handleVisualizar(emp.itens)}
+                  >
+                    <MdVisibility size={28} className="text-[#29854A]" />
+                  </button>
+
+                  {/* Botão de devolução */}
+                  <DevolverButton
+                    emprestimoId={emp.id}
+                    itensIds={emp.itens}
+                    dataEntrega={emp.data_entrega}
+                    onSuccess={onRefresh}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modal */}
+      {modalItem && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full relative">
+            <button
+              onClick={() => setModalItem(null)}
+              className="absolute top-2 right-2 p-1 hover:bg-gray-200 rounded-full"
+            >
+              <MdClose size={24} />
+            </button>
+
+            <h2 className="text-xl font-semibold mb-4">Itens do Empréstimo</h2>
+
+            <div className="grid grid-cols-3 gap-4">
+              {modalItem.map((item) => (
+                <div key={item.id} className="flex flex-col items-center">
+                  {item.foto ? (
+                    <img
+                      src={item.foto}
+                      alt={item.nome}
+                      className="w-24 h-24 object-cover rounded-md"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center text-sm text-gray-600">
+                      Foto
+                    </div>
+                  )}
+                  <span className="mt-2 text-center text-sm">{item.nome}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

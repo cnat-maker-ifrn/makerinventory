@@ -199,7 +199,6 @@ class Devolucao(models.Model):
     def __str__(self):
         return f"Devolução #{self.id} do Empréstimo #{self.emprestimo.id}"
 
-
 class Saida(models.Model):
     item = models.ForeignKey('Item', on_delete=models.PROTECT, null=True, blank=True,
     related_name='saidas')
