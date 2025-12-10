@@ -6,3 +6,5 @@ export async function getMovimentacoes(): Promise<Movimentacao[]> {
   const resp = await api.get<Movimentacao[]>("movimentacoes/");
   return resp.data;
 }
+
+

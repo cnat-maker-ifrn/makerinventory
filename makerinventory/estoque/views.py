@@ -2,6 +2,10 @@ from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from datetime import datetime, timedelta
+from django.db.models import Count
+from django.db.models.functions import ExtractMonth
+
 from .models import (
     Categoria, Subcategoria, ProdutoUnitario, Item,
     ProdutoFracionado, Lote, Solicitante, Emprestimo,
@@ -13,6 +17,7 @@ from .serializers import (
     SolicitanteSerializer, EmprestimoSerializer, MovimentacaoEstoqueSerializer,
     DevolucaoSerializer, SaidaSerializer
 )
+
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -53,7 +58,24 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
         produto = self.get_object()
         serializer = ItemSerializer(produto.itens.all(), many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=["get"], url_path="estoque-baixo")
+    def estoque_baixo(self, request):
+        produtos = ProdutoUnitario.objects.all()
+        resultado = []
 
+        for p in produtos:
+            qtd = p.quantidade_em_estoque
+            if qtd <= p.quantidade_minima:
+                resultado.append({
+                    "id": p.id,
+                    "nome": p.nome,
+                    "quantidade": qtd,
+                    "quantidade_minima": p.quantidade_minima
+                })
+
+        return Response(resultado)
+    
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.select_related("produto").all()
     serializer_class = ItemSerializer
@@ -73,6 +95,24 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
         produto = self.get_object()
         serializer = LoteSerializer(produto.lotes.all(), many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="estoque-baixo")
+    def estoque_baixo(self, request):
+        produtos = ProdutoFracionado.objects.all()
+        resultado = []
+
+        for p in produtos:
+            qtd = p.quantidade_em_estoque or 0
+            if qtd <= p.quantidade_minima:
+                resultado.append({
+                    "id": p.id,
+                    "nome": p.nome,
+                    "quantidade": qtd,
+                    "quantidade_minima": p.quantidade_minima
+                })
+
+        return Response(resultado)
+
 
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.select_related("produto").all()
@@ -105,6 +145,36 @@ class DevolucaoViewSet(viewsets.ModelViewSet):
 class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all()
     serializer_class = MovimentacaoEstoqueSerializer
+
+    @action(detail=False, methods=["get"], url_path="entradas-saidas-12m")
+    def entradas_saidas_12_meses(self, request):
+        hoje = datetime.today()
+        ano_atras = hoje - timedelta(days=365)
+
+        movs = (
+            MovimentacaoEstoque.objects
+            .filter(data_movimentacao__gte=ano_atras)
+            .annotate(mes=ExtractMonth("data_movimentacao"))
+            .values("mes", "tipo_movimentacao")
+            .annotate(total=Count("id"))  # ⬅️ AQUI: contar, não somar quantidade
+            .order_by("mes")
+        )
+
+        meses_nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
+
+        dados = [
+            {"mes": meses_nomes[m - 1], "entradas": 0, "saidas": 0}
+            for m in range(1, 13)
+        ]
+
+        for m in movs:
+            idx = m["mes"] - 1
+            if m["tipo_movimentacao"] == "entrada":
+                dados[idx]["entradas"] = m["total"]
+            else:
+                dados[idx]["saidas"] = m["total"]
+
+        return Response(dados)
 
 class SaidaViewSet(viewsets.ModelViewSet):
     """

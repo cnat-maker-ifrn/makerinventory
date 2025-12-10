@@ -1,39 +1,26 @@
-import { useEffect, useState } from "react";
 import { MdError } from "react-icons/md";
-
-interface ProdutoBaixo {
-  id: number;
-  nome: string;
-  quantidade: number;
-  quantidade_minima: number;
-}
+import { useEstoqueBaixo } from "../../hooks/dashboard/useEstoqueBaixo";
 
 export default function CardEstoqueBaixo() {
-  const [produtosBaixos, setProdutosBaixos] = useState<ProdutoBaixo[]>([]);
+  const { produtos, loading } = useEstoqueBaixo();
 
-  useEffect(() => {
-    const mock = [
-      { id: 1, nome: "PLA Preto", quantidade: 1.2, quantidade_minima: 2 },
-      { id: 2, nome: "Resina UV", quantidade: 0.5, quantidade_minima: 1 },
-      { id: 3, nome: "PETG Branco", quantidade: 2, quantidade_minima: 2 },
-      { id: 4, nome: "Filamento ABS Azul", quantidade: 1, quantidade_minima: 3 },
-      { id: 5, nome: "PLA Vermelho", quantidade: 0.8, quantidade_minima: 2 },
-    ];
-    setProdutosBaixos(mock);
-  }, []);
+  const hasScroll = produtos.length > 3;
 
-  const hasScroll = produtosBaixos.length > 3;
+  if (loading) {
+    return (
+      <div className="bg-[#FFE3E3] w-[100%] p-4 rounded-md shadow-md">
+        <p className="text-red-600">Carregando estoque...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative bg-[#FFE3E3] w-[100%] p-4 rounded-md shadow-md overflow-hidden">
-
-      {/* Título */}
       <h2 className="flex text-[#DF0A0A] items-center gap-2 mb-4 text-xl font-semibold">
         <MdError size={28} />
         Alertas de estoque baixo
       </h2>
 
-      {/* Lista com scroll invisível */}
       <div
         className={`space-y-2 pr-1 ${
           hasScroll
@@ -41,9 +28,9 @@ export default function CardEstoqueBaixo() {
             : ""
         }`}
       >
-        {produtosBaixos.map((p) => (
+        {produtos.map((p, index) => (
           <div
-            key={p.id}
+            key={`${p.id}-${index}`}
             className="bg-white p-3 rounded-md shadow-sm border border-[#ffb4b4] flex justify-between items-center"
           >
             <div>

@@ -3,15 +3,14 @@ import CardGraficoEntradaSaida from "../components/dashboard/CardGraficoEntradaS
 import CardLotesMaisUsados from "../components/dashboard/CardLotesMaisUsados"
 
 export default function Dashboard(){
-    return(
-        <>
+    return (
         <div className="flex gap-2">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 min-w-[400px] flex-1">
                 <CardEstoqueBaixo />
                 <CardGraficoEntradaSaida />
             </div>
-                <CardLotesMaisUsados />
+
+            <CardLotesMaisUsados />
         </div>
-        </>
     )
 }
