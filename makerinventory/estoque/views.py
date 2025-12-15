@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from datetime import datetime, timedelta
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth
 
 from .models import (
@@ -117,6 +117,32 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.select_related("produto").all()
     serializer_class = LoteSerializer
+
+    @action(detail=False, methods=["get"], url_path="mais-usados")
+    def lotes_mais_usados(self, request):
+        lotes = (
+            Lote.objects
+            .annotate(
+                usado=Count(
+                    "movimentacoes",
+                    filter=Q(movimentacoes__tipo_movimentacao__in=["saida", "emprestimo"])
+                )
+            )
+            .filter(usado__gt=0)
+            .order_by("-usado")[:5]
+        )
+
+        dados = [
+            {
+                "id": l.id,
+                "codigo": l.codigo,
+                "produto": l.produto.nome,
+                "usado": l.usado,
+            }
+            for l in lotes
+        ]
+
+        return Response(dados)
 
 class SolicitanteViewSet(viewsets.ModelViewSet):
     queryset = Solicitante.objects.all()

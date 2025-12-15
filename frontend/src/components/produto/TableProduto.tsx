@@ -1,11 +1,27 @@
 import { MdEdit } from "react-icons/md";
 import { useProdutos } from "../../hooks/produto/useProdutos";
 
-export default function TableProduto() {
+interface Props {
+  search: string;
+}
+
+export default function TableProduto({ search }: Props) {
   const { dados: produtos, loading, erro } = useProdutos();
 
   if (loading) return <p>Carregando produtos...</p>;
   if (erro) return <p className="text-red-600">{erro}</p>;
+
+  const termo = search.toLowerCase();
+
+  const produtosFiltrados = produtos.filter((p) =>
+    [
+      p.nome,
+      p.tipo,
+      p.subcategoria,
+    ]
+      .filter(Boolean)
+      .some((campo) => campo.toLowerCase().includes(termo))
+  );
 
   return (
     <div className="overflow-x-auto mt-4 shadow-md rounded-lg">
@@ -23,7 +39,7 @@ export default function TableProduto() {
         </thead>
 
         <tbody className="bg-white">
-          {produtos.map((p) => (
+          {produtosFiltrados.map((p) => (
             <tr key={p.id} className="hover:bg-gray-50">
               <td className="px-4 py-2">
                 {p.foto ? (
@@ -58,8 +74,15 @@ export default function TableProduto() {
               </td>
             </tr>
           ))}
-        </tbody>
 
+          {produtosFiltrados.length === 0 && (
+            <tr>
+              <td colSpan={7} className="text-center py-6 text-gray-500">
+                Nenhum produto encontrado
+              </td>
+            </tr>
+          )}
+        </tbody>
       </table>
     </div>
   );

@@ -1,31 +1,27 @@
-import { useEffect, useState } from "react";
-
-interface LoteMaisUsado {
-  id: number;
-  codigo: string;
-  produto: string;
-  usado: number; // quantidade de usos (para integração com backend)
-}
+import { useLotesMaisUsados } from "../../hooks/dashboard/useLotesMaisUsados";
 
 export default function CardLotesMaisUsados() {
-  const [lotes, setLotes] = useState<LoteMaisUsado[]>([]);
+  const { lotes, loading, erro } = useLotesMaisUsados();
 
-  useEffect(() => {
-    // MOCK - Substituir pelo backend depois
-    const mock = [
-      { id: 1, codigo: "LT-001", produto: "PLA Preto", usado: 42 },
-      { id: 2, codigo: "LT-019", produto: "Resina UV Cinza", usado: 37 },
-      { id: 3, codigo: "LT-014", produto: "PETG Branco", usado: 28 },
-      { id: 4, codigo: "LT-032", produto: "ABS Azul", usado: 22 },
-      { id: 5, codigo: "LT-011", produto: "PLA Vermelho", usado: 19 },
-    ];
+  if (loading) {
+    return (
+      <div className="bg-white w-[705px] p-4 rounded-md shadow-md">
+        <p>Carregando lotes...</p>
+      </div>
+    );
+  }
 
-    setLotes(mock);
-  }, []);
+  if (erro) {
+    return (
+      <div className="bg-white w-[705px] p-4 rounded-md shadow-md">
+        <p className="text-red-600">{erro}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white w-[705px] p-4 rounded-md shadow-md">
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-[#29854A]">
+      <h2 className="text-xl font-semibold mb-4 text-[#29854A]">
         Lotes mais usados
       </h2>
 

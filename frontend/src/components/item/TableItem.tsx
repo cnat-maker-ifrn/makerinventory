@@ -1,11 +1,25 @@
 import { MdEdit } from "react-icons/md";
 import { useItens } from "../../hooks/item/useItens";
 
-export default function TableItem() {
+interface Props {
+  search: string;
+}
+
+export default function TableItem({ search }: Props) {
   const { dados: itens, loading, erro } = useItens();
 
   if (loading) return <div>Carregando itens...</div>;
   if (erro) return <div className="text-red-600">{erro}</div>;
+
+  const itensFiltrados = itens.filter((item) => {
+    const termo = search.toLowerCase();
+
+    return (
+      item.nome.toLowerCase().includes(termo) ||
+      item.codigo.toLowerCase().includes(termo) ||
+      item.produto_detalhes?.nome?.toLowerCase().includes(termo)
+    );
+  });
 
   return (
     <div className="overflow-x-auto shadow-md rounded-lg">
@@ -27,7 +41,7 @@ export default function TableItem() {
         </thead>
 
         <tbody className="bg-white">
-          {itens.map((item) => (
+          {itensFiltrados.map((item) => (
             <tr key={item.id} className="hover:bg-gray-50">
               <td className="px-4 py-2">
                 {item.foto ? (
@@ -80,6 +94,12 @@ export default function TableItem() {
           ))}
         </tbody>
       </table>
+
+      {itensFiltrados.length === 0 && (
+        <p className="text-center text-gray-500 py-6">
+          Nenhum item encontrado
+        </p>
+      )}
     </div>
   );
 }

@@ -1,23 +1,28 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useSaidas } from "../../hooks/saida/useSaidas";
 
-export default function TableSaida() {
+interface Props {
+  search: string;
+}
+
+export default function TableSaida({ search }: Props) {
   const { dados, loading, erro } = useSaidas();
-  const [busca] = useState("");
 
   function formatarData(iso: string) {
     return new Date(iso).toLocaleString("pt-BR");
   }
 
   const filtrados = useMemo(() => {
-    const texto = busca.toLowerCase();
+    const texto = search.toLowerCase();
 
     return dados.filter((s) => {
       const nomeItem = s.item_nome?.toLowerCase() || "";
       const nomeLote = s.lote_nome?.toLowerCase() || "";
       const resp = s.responsavel?.toLowerCase() || "";
       const codigo =
-        s.item_codigo?.toLowerCase() || s.lote_codigo?.toLowerCase() || "";
+        s.item_codigo?.toLowerCase() ||
+        s.lote_codigo?.toLowerCase() ||
+        "";
 
       return (
         nomeItem.includes(texto) ||
@@ -26,7 +31,7 @@ export default function TableSaida() {
         codigo.includes(texto)
       );
     });
-  }, [dados, busca]);
+  }, [dados, search]);
 
   if (loading) return <p className="text-gray-500">Carregando saídas...</p>;
   if (erro) return <p className="text-red-600">{erro}</p>;

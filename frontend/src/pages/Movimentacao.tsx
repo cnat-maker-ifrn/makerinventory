@@ -7,7 +7,6 @@ export default function Movimentacao() {
     const [busca, setBusca] = useState("");
     const { dados, loading, erro } = useMovimentacoes();
 
-    // 🔍 Filtro com base nos campos reais da API
     const filtrados = dados.filter(m => {
         const texto =
             `${m.produto_nome ?? ""} ` +

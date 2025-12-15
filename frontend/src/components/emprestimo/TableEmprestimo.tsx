@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MdVisibility, MdClose } from "react-icons/md";
 import { type Emprestimo } from "../../types/emprestimo";
 import { type Item } from "../../types/item";
 import DevolverButton from "./DevolverButton";
-import { useItens } from "../../hooks/item/useItens"; // hook que retorna { dados, loading, erro }
+import { useItens } from "../../hooks/item/useItens";
 
 function safeDate(dateString?: string | null) {
   if (!dateString) return "—";
@@ -14,23 +14,46 @@ function safeDate(dateString?: string | null) {
 
 interface TableEmprestimoProps {
   emprestimos: Emprestimo[];
+  search: string;
   onRefresh?: () => void;
 }
 
-// Tipo simplificado para o modal
 interface ModalItem {
   id: number;
   nome: string;
   foto?: string | null;
 }
 
-export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprestimoProps) {
+export default function TableEmprestimo({
+  emprestimos,
+  search,
+  onRefresh,
+}: TableEmprestimoProps) {
   const [modalItem, setModalItem] = useState<ModalItem[] | null>(null);
 
   // Todos os itens carregados
   const { dados: itens } = useItens();
 
-  if (emprestimos.length === 0) {
+  // 🔍 FILTRO
+  const emprestimosFiltrados = useMemo(() => {
+    const termo = search.toLowerCase();
+
+    return emprestimos.filter((emp) => {
+      const solicitante = emp.solicitante_nome?.toLowerCase() || "";
+
+      const nomesItens = itens
+        .filter((i) => emp.itens.includes(i.id))
+        .map((i) => i.nome.toLowerCase())
+        .join(" ");
+
+      return (
+        solicitante.includes(termo) ||
+        nomesItens.includes(termo)
+      );
+    });
+  }, [emprestimos, itens, search]);
+
+  if (emprestimosFiltrados.length === 0) {
     return (
       <div className="overflow-x-auto shadow-md rounded-lg bg-white">
         <div className="p-6 text-center text-gray-600">
@@ -40,7 +63,6 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
     );
   }
 
-  // Função para abrir o modal com os dados completos
   function handleVisualizar(itensIds: number[]) {
     const itensCompleto: ModalItem[] = itens
       .filter((item) => itensIds.includes(item.id))
@@ -68,15 +90,20 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
           </thead>
 
           <tbody className="bg-white">
-            {emprestimos.map((emp) => (
+            {emprestimosFiltrados.map((emp) => (
               <tr key={emp.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2">{emp.solicitante_nome}</td>
-                <td className="px-4 py-2">{safeDate(emp.data_emprestimo)}</td>
-                <td className="px-4 py-2">{safeDate(emp.previsao_entrega)}</td>
-                <td className="px-4 py-2">{safeDate(emp.data_entrega)}</td>
+                <td className="px-4 py-2">
+                  {safeDate(emp.data_emprestimo)}
+                </td>
+                <td className="px-4 py-2">
+                  {safeDate(emp.previsao_entrega)}
+                </td>
+                <td className="px-4 py-2">
+                  {safeDate(emp.data_entrega)}
+                </td>
 
                 <td className="px-4 py-2 flex gap-4">
-                  {/* Botão de visualizar */}
                   <button
                     className="p-2 rounded-full hover:bg-gray-200"
                     onClick={() => handleVisualizar(emp.itens)}
@@ -84,7 +111,6 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
                     <MdVisibility size={28} className="text-[#29854A]" />
                   </button>
 
-                  {/* Botão de devolução */}
                   <DevolverButton
                     emprestimoId={emp.id}
                     itensIds={emp.itens}
@@ -98,7 +124,7 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
         </table>
       </div>
 
-      {/* Modal */}
+      {/* MODAL */}
       {modalItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full relative">
@@ -109,7 +135,9 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
               <MdClose size={24} />
             </button>
 
-            <h2 className="text-xl font-semibold mb-4">Itens do Empréstimo</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Itens do Empréstimo
+            </h2>
 
             <div className="grid grid-cols-3 gap-4">
               {modalItem.map((item) => (
@@ -125,7 +153,9 @@ export default function TableEmprestimo({ emprestimos, onRefresh }: TableEmprest
                       Foto
                     </div>
                   )}
-                  <span className="mt-2 text-center text-sm">{item.nome}</span>
+                  <span className="mt-2 text-center text-sm">
+                    {item.nome}
+                  </span>
                 </div>
               ))}
             </div>

@@ -18,7 +18,7 @@ export default function Lote() {
             <div className="mb-4">
                 <AddLoteButton />
             </div>
-            <TableLote />
+            <TableLote search={busca}/>
         </>
     )
 }
