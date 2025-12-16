@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getSubcategorias, type Subcategoria } from "../../api/subcategoriaApi";
+import { getSubcategorias } from "../../api/subcategoriaApi";
+import { type Subcategoria } from "../../types/subcategoria";
 
 export function useSubcategorias() {
   const [dados, setDados] = useState<Subcategoria[]>([]);

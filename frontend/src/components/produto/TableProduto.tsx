@@ -3,9 +3,11 @@ import { useProdutos } from "../../hooks/produto/useProdutos";
 
 interface Props {
   search: string;
+  tipo: "todos" | "unitario" | "fracionado";
+  subcategoria: string;
 }
 
-export default function TableProduto({ search }: Props) {
+export default function TableProduto({ search, tipo, subcategoria }: Props) {
   const { dados: produtos, loading, erro } = useProdutos();
 
   if (loading) return <p>Carregando produtos...</p>;
@@ -13,15 +15,22 @@ export default function TableProduto({ search }: Props) {
 
   const termo = search.toLowerCase();
 
-  const produtosFiltrados = produtos.filter((p) =>
-    [
-      p.nome,
-      p.tipo,
-      p.subcategoria,
-    ]
-      .filter(Boolean)
-      .some((campo) => campo.toLowerCase().includes(termo))
-  );
+  const produtosFiltrados = produtos.filter((p) => {
+    const matchBusca =
+      [p.nome, p.subcategoria]
+        .filter(Boolean)
+        .some((campo) =>
+          campo.toLowerCase().includes(termo)
+        );
+
+    const matchTipo =
+      tipo === "todos" || p.tipo === tipo;
+
+    const matchSubcategoria =
+      subcategoria === "todas" || p.subcategoria === subcategoria;
+
+    return matchBusca && matchTipo && matchSubcategoria;
+  });
 
   return (
     <div className="overflow-x-auto mt-4 shadow-md rounded-lg">
