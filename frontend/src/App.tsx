@@ -14,7 +14,7 @@ import Movimentacao from "./pages/Movimentacao"
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
       <Routes>
 
         <Route path="/" element={<Base />}>

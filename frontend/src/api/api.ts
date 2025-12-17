@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/api/",
+  baseURL: "http://10.24.7.28:8000/api/", //apenas para teste, alterar dependendo do ip do pc
   withCredentials: false, // ou true se usar sessões/cookies
 });
 
