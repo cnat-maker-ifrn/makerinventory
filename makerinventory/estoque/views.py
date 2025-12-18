@@ -1,10 +1,13 @@
 from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import action
 from datetime import datetime, timedelta
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth
+from rest_framework.permissions import AllowAny
+from .permissions import IsAdminOrReadOnly
 
 from .models import (
     Categoria, Subcategoria, ProdutoUnitario, Item,
@@ -15,13 +18,17 @@ from .serializers import (
     CategoriaSerializer, SubcategoriaSerializer, ProdutoUnitarioSerializer,
     ItemSerializer, ProdutoFracionadoSerializer, LoteSerializer,
     SolicitanteSerializer, EmprestimoSerializer, MovimentacaoEstoqueSerializer,
-    DevolucaoSerializer, SaidaSerializer
+    DevolucaoSerializer, SaidaSerializer, MatriculaTokenObtainPairSerializer
 )
 
+class LoginView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    serializer_class = MatriculaTokenObtainPairSerializer
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     @action(detail=True, methods=["get"])
     def subcategorias(self, request, pk=None):
