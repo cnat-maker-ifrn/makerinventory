@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/autenticacao/useAuth";
 
 import SearchBar from "../components/utils/SearchBar";
 import TableItem from "../components/item/TableItem";
 import AddItemButton from "../components/item/AddItemButton";
 
 export default function Item() {
+  const { isAuthenticated } = useAuth();
   const [busca, setBusca] = useState("");
 
   return (
@@ -17,9 +19,11 @@ export default function Item() {
         placeholder="Buscar item..."
       />
 
-      <div className="flex mb-4">
-        <AddItemButton />
-      </div>
+      {isAuthenticated && (
+        <div className="flex mb-4">
+          <AddItemButton />
+        </div>
+      )}
 
       <TableItem search={busca} />
     </>

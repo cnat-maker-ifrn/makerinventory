@@ -1,15 +1,22 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/autenticacao/useAuth";
 
 export default function Login() {
   const { signIn, loading, error } = useAuth();
+  const navigate = useNavigate();
 
   const [matricula, setMatricula] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    signIn(matricula, password);
+
+    try {
+      await signIn(matricula, password);
+      navigate("/");
+    } catch {
+    }
   }
 
   return (
@@ -46,13 +53,15 @@ export default function Login() {
         </div>
 
         {error && (
-          <p className="text-red-600 text-sm mb-3">{error}</p>
+          <p className="text-red-600 text-sm mb-3">
+            {error}
+          </p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#1A955E] text-white py-2 rounded hover:bg-[#16784b] transition"
+          className="w-full bg-[#1A955E] text-white py-2 rounded hover:bg-[#16784b] transition disabled:opacity-60"
         >
           {loading ? "Entrando..." : "Entrar"}
         </button>

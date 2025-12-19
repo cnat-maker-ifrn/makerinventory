@@ -11,7 +11,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function signIn(matricula: string, password: string) {
+  async function signIn(matricula: string, password: string): Promise<void> {
     try {
       setLoading(true);
       setError("");
@@ -25,6 +25,9 @@ export function useAuth() {
       setUser(data.user);
     } catch (err) {
       setError("Matrícula ou senha inválida.");
+
+      // 🔥 ISSO É O QUE FALTAVA
+      throw err;
     } finally {
       setLoading(false);
     }

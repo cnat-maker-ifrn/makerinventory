@@ -16,10 +16,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* 🔓 ROTA PÚBLICA */}
         <Route path="/login" element={<Login />} />
 
-        {/* 🔐 ROTAS DO SISTEMA */}
         <Route path="/" element={<Base />}>
 
           <Route index element={<Dashboard />} />
