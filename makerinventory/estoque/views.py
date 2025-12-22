@@ -1,10 +1,13 @@
 from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import action
 from datetime import datetime, timedelta
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth
+from rest_framework.permissions import AllowAny
+from .permissions import IsAuthenticatedOrReadOnly
 
 from .models import (
     Categoria, Subcategoria, ProdutoUnitario, Item,
@@ -15,13 +18,17 @@ from .serializers import (
     CategoriaSerializer, SubcategoriaSerializer, ProdutoUnitarioSerializer,
     ItemSerializer, ProdutoFracionadoSerializer, LoteSerializer,
     SolicitanteSerializer, EmprestimoSerializer, MovimentacaoEstoqueSerializer,
-    DevolucaoSerializer, SaidaSerializer
+    DevolucaoSerializer, SaidaSerializer, MatriculaTokenObtainPairSerializer
 )
 
+class LoginView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+    serializer_class = MatriculaTokenObtainPairSerializer
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"])
     def subcategorias(self, request, pk=None):
@@ -32,6 +39,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class SubcategoriaViewSet(viewsets.ModelViewSet):
     queryset = Subcategoria.objects.select_related("categoria").all()
     serializer_class = SubcategoriaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"], url_path="produtos-unitarios")
     def produtos_unitarios(self, request, pk=None):
@@ -52,6 +60,7 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoUnitarioSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nome', 'descricao']
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"], url_path="itens")
     def itens(self, request, pk=None):
@@ -79,6 +88,7 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.select_related("produto").all()
     serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=False, methods=["get"])
     def disponiveis(self, request):
@@ -89,6 +99,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
     queryset = ProdutoFracionado.objects.prefetch_related("lotes").all()
     serializer_class = ProdutoFracionadoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"], url_path="lotes")
     def lotes(self, request, pk=None):
@@ -117,6 +128,7 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.select_related("produto").all()
     serializer_class = LoteSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=False, methods=["get"], url_path="mais-usados")
     def lotes_mais_usados(self, request):
@@ -147,10 +159,12 @@ class LoteViewSet(viewsets.ModelViewSet):
 class SolicitanteViewSet(viewsets.ModelViewSet):
     queryset = Solicitante.objects.all()
     serializer_class = SolicitanteSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class EmprestimoViewSet(viewsets.ModelViewSet):
     queryset = Emprestimo.objects.select_related("solicitante").prefetch_related("itens").all()
     serializer_class = EmprestimoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=False, methods=["get"], url_path="ativos")
     def ativos(self, request):
@@ -167,10 +181,12 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
 class DevolucaoViewSet(viewsets.ModelViewSet):
     queryset = Devolucao.objects.select_related("emprestimo").prefetch_related("itens").all()
     serializer_class = DevolucaoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all()
     serializer_class = MovimentacaoEstoqueSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=False, methods=["get"], url_path="entradas-saidas-12m")
     def entradas_saidas_12_meses(self, request):
@@ -209,6 +225,7 @@ class SaidaViewSet(viewsets.ModelViewSet):
     """
     queryset = Saida.objects.select_related("item", "lote").all()
     serializer_class = SaidaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["responsavel", "item__produto__nome", "lote__produto__nome"]

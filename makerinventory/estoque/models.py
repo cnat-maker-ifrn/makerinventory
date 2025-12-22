@@ -3,7 +3,75 @@ from django.db import models
 from django.db.models import Q, Sum
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 import uuid
+
+
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, matricula, password=None, **extra_fields):
+        if not matricula:
+            raise ValueError("A matrícula é obrigatória")
+
+        user = self.model(
+            matricula=matricula,
+            username=matricula,  # mantém compatibilidade interna
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, matricula, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser precisa ter is_staff=True")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser precisa ter is_superuser=True")
+
+        return self.create_user(matricula, password, **extra_fields)
+
+
+class User(AbstractUser):
+    matricula = models.CharField(
+        max_length=14,
+        unique=True,
+        verbose_name="Matrícula"
+    )
+
+    nome = models.CharField(
+        max_length=100,
+        verbose_name="Nome completo"
+    )
+
+    USERNAME_FIELD = "matricula"
+    REQUIRED_FIELDS = ["nome"]
+
+    objects = UserManager()  
+
+    class Meta:
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
+
+    def save(self, *args, **kwargs):
+        if self.matricula:
+            self.username = self.matricula
+
+        if self.nome:
+            partes = self.nome.strip().split(" ")
+            self.first_name = partes[0]
+            self.last_name = " ".join(partes[1:]) if len(partes) > 1 else ""
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.nome} ({self.matricula})"
+
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=50, unique=True)
@@ -16,6 +84,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Subcategoria(models.Model):
     nome = models.CharField(max_length=100, unique=True)
     categoria = models.ForeignKey(Categoria, related_name="subcategorias", on_delete=models.CASCADE)
@@ -27,6 +96,7 @@ class Subcategoria(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class ProdutoUnitario(models.Model):
     subcategoria = models.ForeignKey(Subcategoria, related_name="produtos_unitarios", on_delete=models.CASCADE)
@@ -45,6 +115,7 @@ class ProdutoUnitario(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Item(models.Model):
     produto = models.ForeignKey(ProdutoUnitario, related_name="itens", on_delete=models.PROTECT)
@@ -76,6 +147,7 @@ class Item(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.codigo})"
+
 
 class ProdutoFracionado(models.Model):
     UNIDADES_DE_MEDIDA = [
@@ -109,7 +181,8 @@ class ProdutoFracionado(models.Model):
             .aggregate(total=Sum('quantidade'))['total']
         )
         return total
-    
+
+
 class Lote(models.Model):
     foto = models.ImageField(upload_to='img/produto/fracionado', blank=True, null=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
@@ -138,6 +211,7 @@ class Lote(models.Model):
     def __str__(self):
         return f"{self.nome} ({self.codigo}) — {self.quantidade} {self.produto.unidade_de_medida}"
 
+
 class Solicitante(models.Model):
     nome = models.CharField(max_length=100)
     matricula = models.CharField(unique=True)
@@ -150,6 +224,7 @@ class Solicitante(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Emprestimo(models.Model):
     solicitante = models.ForeignKey('Solicitante', related_name='emprestimos', on_delete=models.CASCADE)
@@ -179,6 +254,7 @@ class Emprestimo(models.Model):
     def __str__(self):
         return f"Empréstimo ({self.id}) - {self.solicitante}"
 
+
 class Devolucao(models.Model):
     emprestimo = models.ForeignKey(Emprestimo, related_name='devolucoes', on_delete=models.CASCADE)
     itens = models.ManyToManyField(Item, related_name='devolucoes')
@@ -198,6 +274,7 @@ class Devolucao(models.Model):
 
     def __str__(self):
         return f"Devolução #{self.id} do Empréstimo #{self.emprestimo.id}"
+
 
 class Saida(models.Model):
     item = models.ForeignKey('Item', on_delete=models.PROTECT, null=True, blank=True,
@@ -232,6 +309,7 @@ class Saida(models.Model):
             return f"Saída de {self.item.nome} ({self.item.codigo})"
         else:
             return f"Saída de {self.lote.nome} ({self.lote.codigo})"
+
 
 class MovimentacaoEstoque(models.Model):
     TIPO_MOVIMENTACAO = [

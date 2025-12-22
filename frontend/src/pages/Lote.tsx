@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/autenticacao/useAuth";
 
 import SearchBar from "../components/utils/SearchBar"
 import TableLote from "../components/lote/TableLote"
 import AddLoteButton from "../components/lote/AddLoteButton"
 
 export default function Lote() {
+    const { isAuthenticated } = useAuth();
     const [busca, setBusca] = useState("");
 
     return(
@@ -15,9 +17,11 @@ export default function Lote() {
                 onChange={setBusca}
                 placeholder="Buscar lote..."
             />
-            <div className="mb-4">
-                <AddLoteButton />
-            </div>
+            {isAuthenticated && (
+                <div className="mb-4">
+                    <AddLoteButton />
+                </div>
+            )}
             <TableLote search={busca}/>
         </>
     )

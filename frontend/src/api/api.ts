@@ -5,6 +5,15 @@ const api = axios.create({
   withCredentials: false, // ou true se usar sessões/cookies
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
 // (Opcional) Interceptor para adicionar token automaticamente
 // api.interceptors.request.use((config) => {
 //   const token = localStorage.getItem("token");

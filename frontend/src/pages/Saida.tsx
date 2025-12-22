@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/autenticacao/useAuth";
 
 import SearchBar from "../components/utils/SearchBar";
 import AddSaidaButton from "../components/saida/AddSaidaButton";
 import TableSaida from "../components/saida/TableSaida";
 
 export default function Saida() {
+  const { isAuthenticated } = useAuth();
   const [busca, setBusca] = useState("");
 
   return (
@@ -17,9 +19,11 @@ export default function Saida() {
         placeholder="Buscar saída..."
       />
 
-      <div className="mb-4">
-        <AddSaidaButton />
-      </div>
+      {isAuthenticated && (
+        <div className="mb-4">
+          <AddSaidaButton />
+        </div>
+      )}
 
       <TableSaida search={busca} />
     </>

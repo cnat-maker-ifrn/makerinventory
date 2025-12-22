@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/autenticacao/useAuth";
 
 import SearchBar from "../components/utils/SearchBar";
 import FilterTipoProduto from "../components/utils/FilterTipoProduto";
@@ -13,6 +14,7 @@ import AddLoteButton from "../components/lote/AddLoteButton";
 import TableProduto from "../components/produto/TableProduto";
 
 export default function Produto() {
+  const { isAuthenticated } = useAuth();
   const [busca, setBusca] = useState("");
   const [tipo, setTipo] = useState<"todos" | "unitario" | "fracionado">("todos");
   const [subcategoria, setSubcategoria] = useState<string>("todas");
@@ -35,13 +37,15 @@ export default function Produto() {
       </div>
 
       {/* ➕ Botões de ação */}
-      <div className="flex gap-4 mb-6">
-        <AddCategoriaButton />
-        <AddSubcategoriaButton />
-        <AddProdutoButton />
-        <AddItemButton />
-        <AddLoteButton />
-      </div>
+      {isAuthenticated && (
+        <div className="flex gap-4 mb-6">
+          <AddCategoriaButton />
+          <AddSubcategoriaButton />
+          <AddProdutoButton />
+          <AddItemButton />
+          <AddLoteButton />
+        </div>
+      )}
 
       {/* 📊 Tabela */}
       <TableProduto

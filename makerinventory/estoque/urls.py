@@ -1,9 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
+
 from .views import (
-    CategoriaViewSet, SubcategoriaViewSet, ProdutoUnitarioViewSet,
-    ItemViewSet, ProdutoFracionadoViewSet, LoteViewSet,
-    SolicitanteViewSet, EmprestimoViewSet, MovimentacaoEstoqueViewSet, DevolucaoViewSet, SaidaViewSet
+    CategoriaViewSet, LoginView, SubcategoriaViewSet,
+    ProdutoUnitarioViewSet, ItemViewSet, ProdutoFracionadoViewSet,
+    LoteViewSet, SolicitanteViewSet, EmprestimoViewSet,
+    MovimentacaoEstoqueViewSet, DevolucaoViewSet, SaidaViewSet
 )
 
 router = DefaultRouter()
@@ -20,5 +23,10 @@ router.register(r'movimentacoes', MovimentacaoEstoqueViewSet)
 router.register(r'saidas', SaidaViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("login/", LoginView.as_view(), name="login"),
+    # compatibility endpoints used by the frontend at /api/auth/*
+    path("auth/login/", LoginView.as_view(), name="auth_login"),
+    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/refresh/", TokenRefreshView.as_view(), name="auth_token_refresh"),
+    path("", include(router.urls)),
 ]

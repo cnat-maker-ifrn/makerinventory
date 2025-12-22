@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/autenticacao/useAuth";
 
 import SearchBar from "../components/utils/SearchBar";
 import TableEmprestimo from "../components/emprestimo/TableEmprestimo";
@@ -7,6 +8,7 @@ import AddEmprestimoButton from "../components/emprestimo/AddEmprestimoButton";
 import { useEmprestimos } from "../hooks/emprestimo/useEmprestimos";
 
 export default function Emprestimo() {
+  const { isAuthenticated } = useAuth();
   const { dados: emprestimos, loading, erro } = useEmprestimos();
   const [busca, setBusca] = useState("");
 
@@ -23,10 +25,16 @@ export default function Emprestimo() {
         placeholder="Buscar empréstimo..."
       />
 
-      <div className="flex gap-4 mb-4">
-        <AddSolicitanteButton />
-        <AddEmprestimoButton />
-      </div>
+      {isAuthenticated && (
+        <div className="flex gap-4 mb-4">
+
+
+
+          
+          <AddSolicitanteButton />
+          <AddEmprestimoButton />
+        </div>
+      )}
 
       <TableEmprestimo emprestimos={emprestimos} search={busca} />
     </>
