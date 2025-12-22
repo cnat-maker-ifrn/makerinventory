@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCreateLote } from "../../hooks/lote/useCreateLote";
+import { getProdutosFracionados } from "../../api/produtoApi";
 import { type ProdutoFracionado } from "../../types/produtofracionado";
 
 interface AddLoteModalProps {
@@ -23,10 +24,22 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
   // Buscar produtos fracionados quando o modal abre
   useEffect(() => {
     if (open) {
-      fetch("http://127.0.0.1:8000/api/produtos-fracionados/")
-        .then((res) => res.json())
-        .then((data) => setProdutos(data))
-        .catch(() => console.error("Erro ao buscar produtos fracionados"));
+      async function fetchProdutos() {
+        try {
+          const data = await getProdutosFracionados();
+          
+          // Lidar com resposta que pode ser array ou PaginatedResponse
+          const produtosList = Array.isArray(data) 
+            ? data 
+            : data.results || [];
+          
+          setProdutos(produtosList);
+        } catch (err) {
+          console.error("Erro ao buscar produtos fracionados:", err);
+        }
+      }
+      
+      fetchProdutos();
     }
   }, [open]);
 

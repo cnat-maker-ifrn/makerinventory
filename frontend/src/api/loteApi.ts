@@ -1,8 +1,9 @@
-import api from "./api"
+import api from "./api";
+import type { PaginatedResponse } from "../types/pagination";
 
-export async function getLotes() {
-  const resp = await api.get("lotes/")
-  return resp.data
+export async function getLotes(page = 1): Promise<PaginatedResponse<any>> {
+  const resp = await api.get(`lotes/?page=${page}`);
+  return resp.data;
 }
 
 export async function getLoteById(id: number) {

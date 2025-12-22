@@ -1,9 +1,14 @@
 import api from "./api";
 import { type Item } from "../types/item";
+import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todos os itens */
-export async function getItens(): Promise<Item[]> {
-  const response = await api.get("itens/");
+export async function getItens(
+  page = 1
+): Promise<PaginatedResponse<Item>> {
+  const response = await api.get<PaginatedResponse<Item>>(
+    `itens/?page=${page}`
+  );
   return response.data;
 }
 

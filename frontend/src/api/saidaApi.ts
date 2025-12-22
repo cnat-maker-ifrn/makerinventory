@@ -1,9 +1,14 @@
 import api from "./api";
 import type { Saida } from "../types/saida";
+import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todas as saídas */
-export async function getSaidas(): Promise<Saida[]> {
-  const response = await api.get<Saida[]>("saidas/");
+export async function getSaidas(
+  page = 1
+): Promise<PaginatedResponse<Saida>> {
+  const response = await api.get<PaginatedResponse<Saida>>(
+    `saidas/?page=${page}`
+  );
   return response.data;
 }
 

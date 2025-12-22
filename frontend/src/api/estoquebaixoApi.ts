@@ -7,5 +7,14 @@ export async function getProdutosBaixoEstoque(): Promise<ProdutoBaixo[]> {
     api.get("produtos-fracionados/estoque-baixo/"),
   ]);
 
-  return [...unitarios.data, ...fracionados.data];
+  // Lidar com respostas que podem ser arrays ou PaginatedResponse
+  const unitariosData = Array.isArray(unitarios.data) 
+    ? unitarios.data 
+    : unitarios.data.results || [];
+    
+  const fracionadosData = Array.isArray(fracionados.data) 
+    ? fracionados.data 
+    : fracionados.data.results || [];
+
+  return [...unitariosData, ...fracionadosData];
 }

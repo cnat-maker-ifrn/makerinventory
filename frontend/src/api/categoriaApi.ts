@@ -5,7 +5,14 @@ import { type Categoria } from "../types/categoria";
 /** Busca todas as categorias */
 export async function getCategorias(): Promise<Categoria[]> {
   const response = await api.get("categorias/");
-  return response.data;
+  
+  // Lidar com resposta que pode ser array ou PaginatedResponse
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+  
+  // Se for PaginatedResponse, extrair results
+  return response.data.results || [];
 }
 
 /** Cria uma nova categoria */

@@ -5,7 +5,16 @@ import { useMovimentacoes } from "../hooks/movimentacao/useMovimentacoes";
 
 export default function Movimentacao() {
     const [busca, setBusca] = useState("");
-    const { dados, loading, erro } = useMovimentacoes();
+    const { 
+        dados, 
+        loading, 
+        erro, 
+        page, 
+        hasNext, 
+        hasPrevious, 
+        goToNextPage, 
+        goToPreviousPage 
+    } = useMovimentacoes();
 
     const filtrados = dados.filter(m => {
         const texto =
@@ -33,7 +42,32 @@ export default function Movimentacao() {
             {erro && <p className="text-red-500">{erro}</p>}
 
             {!loading && !erro && (
-                <TableMovimentacao dados={filtrados} />
+                <>
+                    <TableMovimentacao dados={filtrados} />
+                    
+                    {/* 🔽 PAGINAÇÃO */}
+                    <div className="flex justify-center gap-4 mt-6">
+                        <button
+                            onClick={goToPreviousPage}
+                            disabled={!hasPrevious}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                        >
+                            Anterior
+                        </button>
+
+                        <span className="flex items-center">
+                            Página {page}
+                        </span>
+
+                        <button
+                            onClick={goToNextPage}
+                            disabled={!hasNext}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                        >
+                            Próxima
+                        </button>
+                    </div>
+                </>
             )}
         </>
     );

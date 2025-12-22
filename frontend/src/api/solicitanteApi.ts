@@ -2,8 +2,15 @@ import api from "./api";
 import type { Solicitante } from "../types/solicitante";
 
 export async function getSolicitantes(): Promise<Solicitante[]> {
-  const resp = await api.get<Solicitante[]>("solicitantes/");
-  return resp.data;
+  const resp = await api.get("solicitantes/");
+  
+  // Lidar com resposta que pode ser array ou PaginatedResponse
+  if (Array.isArray(resp.data)) {
+    return resp.data;
+  }
+  
+  // Se for PaginatedResponse, extrair results
+  return resp.data.results || [];
 }
 
 export async function getSolicitanteById(id: number): Promise<Solicitante> {

@@ -23,8 +23,18 @@ export default function AddSaidaModal({ open, onClose }: AddSaidaModalProps) {
     async function loadData() {
       const itensResp = await getItens();
       const lotesResp = await getLotes();
-      setItens(itensResp);
-      setLotes(lotesResp);
+      
+      // Lidar com respostas que podem ser arrays ou PaginatedResponse
+      const itensList = Array.isArray(itensResp) 
+        ? itensResp 
+        : itensResp.results || [];
+        
+      const lotesList = Array.isArray(lotesResp) 
+        ? lotesResp 
+        : lotesResp.results || [];
+      
+      setItens(itensList);
+      setLotes(lotesList);
     }
     if (open) loadData();
   }, [open]);

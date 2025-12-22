@@ -198,7 +198,7 @@ class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
             .filter(data_movimentacao__gte=ano_atras)
             .annotate(mes=ExtractMonth("data_movimentacao"))
             .values("mes", "tipo_movimentacao")
-            .annotate(total=Count("id"))  # ⬅️ AQUI: contar, não somar quantidade
+            .annotate(total=Count("id")) 
             .order_by("mes")
         )
 
@@ -239,7 +239,7 @@ class SaidaViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        saida = serializer.save()  # cria a saída normal
+        saida = serializer.save() 
 
         return Response(
             SaidaSerializer(saida).data,

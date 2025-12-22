@@ -36,6 +36,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
     ),
+    "DEFAULT_PAGINATION_CLASS": "estoque.pagination.DefaultPagination",
+    "PAGE_SIZE": 20,
 }
 
 SIMPLE_JWT = {

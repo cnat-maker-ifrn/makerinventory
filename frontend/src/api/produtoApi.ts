@@ -1,6 +1,7 @@
 import api from "./api";
-import type { ProdutoUnitario } from "../types/produtounitario";  
+import type { ProdutoUnitario } from "../types/produtounitario";
 import type { ProdutoFracionado } from "../types/produtofracionado";
+import type { PaginatedResponse } from "../types/pagination";
 
 export async function createProdutoUnitario(data: FormData) {
   const resp = await api.post("produtos-unitarios/", data, {
@@ -16,12 +17,16 @@ export async function createProdutoFracionado(data: FormData) {
   return resp.data;
 }
 
-export async function getProdutosUnitarios(): Promise<ProdutoUnitario[]> {
-  const resp = await api.get("produtos-unitarios/");
+export async function getProdutosUnitarios(
+  page = 1
+): Promise<PaginatedResponse<ProdutoUnitario>> {
+  const resp = await api.get(`produtos-unitarios/?page=${page}`);
   return resp.data;
 }
 
-export async function getProdutosFracionados(): Promise<ProdutoFracionado[]> {
-  const resp = await api.get("produtos-fracionados/");
+export async function getProdutosFracionados(
+  page = 1
+): Promise<PaginatedResponse<ProdutoFracionado>> {
+  const resp = await api.get(`produtos-fracionados/?page=${page}`);
   return resp.data;
 }
