@@ -1,9 +1,14 @@
 import api from "./api";
 import { type Item } from "../types/item";
+import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todos os itens */
-export async function getItens(): Promise<Item[]> {
-  const response = await api.get("itens/");
+export async function getItens(
+  page = 1
+): Promise<PaginatedResponse<Item>> {
+  const response = await api.get<PaginatedResponse<Item>>(
+    `itens/?page=${page}`
+  );
   return response.data;
 }
 
@@ -21,7 +26,7 @@ export async function createItem(data: FormData): Promise<Item> {
 
 /** Atualiza um item pelo ID */
 export async function updateItem(id: number, data: FormData): Promise<Item> {
-  const response = await api.put(`itens/${id}/`, data);
+  const response = await api.patch(`itens/${id}/`, data);
   return response.data;
 }
 

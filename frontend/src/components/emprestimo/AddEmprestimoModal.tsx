@@ -45,8 +45,18 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
           getSolicitantes(),
           getItens(),
         ]);
-        setSolicitantes(solicitantesData);
-        setItens(itensData.filter((i) => i.disponibilidade)); // apenas itens disponíveis
+        
+        // Lidar com respostas que podem ser arrays ou PaginatedResponse
+        const solicitantesList = Array.isArray(solicitantesData) 
+          ? solicitantesData 
+          : solicitantesData.results || [];
+          
+        const itensList = Array.isArray(itensData) 
+          ? itensData 
+          : itensData.results || [];
+        
+        setSolicitantes(solicitantesList);
+        setItens(itensList.filter((i) => i.disponibilidade)); // apenas itens disponíveis
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
       } finally {

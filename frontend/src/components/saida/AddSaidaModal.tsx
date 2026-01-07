@@ -23,8 +23,18 @@ export default function AddSaidaModal({ open, onClose }: AddSaidaModalProps) {
     async function loadData() {
       const itensResp = await getItens();
       const lotesResp = await getLotes();
-      setItens(itensResp);
-      setLotes(lotesResp);
+      
+      // Lidar com respostas que podem ser arrays ou PaginatedResponse
+      const itensList = Array.isArray(itensResp) 
+        ? itensResp 
+        : itensResp.results || [];
+        
+      const lotesList = Array.isArray(lotesResp) 
+        ? lotesResp 
+        : lotesResp.results || [];
+      
+      setItens(itensList);
+      setLotes(lotesList);
     }
     if (open) loadData();
   }, [open]);
@@ -101,7 +111,7 @@ export default function AddSaidaModal({ open, onClose }: AddSaidaModalProps) {
                 onChange={(e) => setItem(Number(e.target.value))}
               >
                 <option value="">Selecione um item</option>
-                {itens.map((it) => (
+                {itens.filter((it) => it.disponibilidade).map((it) => (
                   <option key={it.id} value={it.id}>
                     {it.nome} — {it.codigo}
                   </option>
@@ -123,7 +133,7 @@ export default function AddSaidaModal({ open, onClose }: AddSaidaModalProps) {
                   <option value="">Selecione um lote</option>
                   {lotes.map((l) => (
                     <option key={l.id} value={l.id}>
-                      {l.codigo} — {l.produto_nome}
+                      {l.nome} - {l.codigo}
                     </option>
                   ))}
                 </select>

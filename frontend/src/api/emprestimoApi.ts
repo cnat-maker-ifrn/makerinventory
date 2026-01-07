@@ -3,8 +3,15 @@ import type { Emprestimo } from "../types/emprestimo";
 
 /** Busca todos os empréstimos */
 export async function getEmprestimos(): Promise<Emprestimo[]> {
-  const response = await api.get<Emprestimo[]>("emprestimos/");
-  return response.data;
+  const response = await api.get("emprestimos/");
+  
+  // Lidar com resposta que pode ser array ou PaginatedResponse
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+  
+  // Se for PaginatedResponse, extrair results
+  return response.data.results || [];
 }
 
 /** Busca um empréstimo pelo ID */

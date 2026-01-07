@@ -5,7 +5,7 @@ export interface CreateItemPayload {
   nome: string;
   produto: number;
   preco: string;
-  proprietario_cnat: string; 
+  eh_do_cnatmaker: boolean; 
   imagem?: File | null;
 }
 
