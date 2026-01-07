@@ -26,7 +26,7 @@ export async function createItem(data: FormData): Promise<Item> {
 
 /** Atualiza um item pelo ID */
 export async function updateItem(id: number, data: FormData): Promise<Item> {
-  const response = await api.put(`itens/${id}/`, data);
+  const response = await api.patch(`itens/${id}/`, data);
   return response.data;
 }
 

@@ -1,11 +1,16 @@
 import { MdEdit } from "react-icons/md";
+import { useState } from "react";
 import { useLotes } from "../../hooks/lote/useLotes";
+import EditLoteModal from "./EditLoteModal";
 
 interface Props {
   search: string;
 }
 
 export default function TableLotes({ search }: Props) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [loteSelecionado, setLoteSelecionado] = useState<any>(null);
+
   const { 
     dados: lotes, 
     loading, 
@@ -16,6 +21,21 @@ export default function TableLotes({ search }: Props) {
     goToNextPage, 
     goToPreviousPage 
   } = useLotes();
+
+  const handleEditClick = (lote: any) => {
+    setLoteSelecionado(lote);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setLoteSelecionado(null);
+  };
+
+  const handleEditSuccess = () => {
+    goToPreviousPage();
+    goToNextPage();
+  };
 
   if (loading) return <div>Carregando lotes...</div>;
   if (erro) return <div className="text-red-600">{erro}</div>;
@@ -37,7 +57,7 @@ export default function TableLotes({ search }: Props) {
           <thead className="bg-[#1A955E] text-white">
             <tr>
               <th className="px-4 py-2 text-left">Foto</th>
-              <th className="px-4 py-2 text-left">Produto</th>
+              <th className="px-4 py-2 text-left">Nome</th>
               <th className="px-4 py-2 text-left">Código</th>
               <th className="px-4 py-2 text-left">Fornecedor</th>
               <th className="px-4 py-2 text-left">Quantidade</th>
@@ -86,7 +106,7 @@ export default function TableLotes({ search }: Props) {
                 {/* Validade */}
                 <td className="px-4 py-2">
                   {lote.data_validade
-                    ? new Date(lote.data_validade).toLocaleDateString()
+                    ? lote.data_validade.split("T")[0].split("-").reverse().join("/")
                     : "-"}
                 </td>
 
@@ -97,7 +117,10 @@ export default function TableLotes({ search }: Props) {
 
                 {/* Ações */}
                 <td className="px-4 py-2">
-                  <button className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1">
+                  <button 
+                    onClick={() => handleEditClick(lote)}
+                    className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
+                  >
                     <MdEdit size={24} />
                   </button>
                 </td>
@@ -137,6 +160,13 @@ export default function TableLotes({ search }: Props) {
           Próxima
         </button>
       </div>
+
+      <EditLoteModal
+        open={editOpen}
+        lote={loteSelecionado}
+        onClose={handleEditClose}
+        onSuccess={handleEditSuccess}
+      />
     </>
   );
 }

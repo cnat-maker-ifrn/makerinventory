@@ -13,10 +13,9 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
   const [loadingProdutos, setLoadingProdutos] = useState(true);
 
   // Form states
-  const [nome, setNome] = useState("");
   const [produtoId, setProdutoId] = useState<number | "">("");
   const [preco, setPreco] = useState("");
-  const [proprietario, setProprietario] = useState("true");
+  const [proprietario, setProprietario] = useState<boolean>(true);
   const [foto, setFoto] = useState<File | null>(null);
 
   const { criar, loading, erro } = useCreateItem();
@@ -26,10 +25,9 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
   // Resetar formulário sempre que abrir o modal
   useEffect(() => {
     if (open) {
-      setNome("");
       setProdutoId("");
       setPreco("");
-      setProprietario("true");
+      setProprietario(true);
       setFoto(null);
     }
   }, [open]);
@@ -43,12 +41,12 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
 
       try {
         const data = await getProdutosUnitarios();
-        
+
         // Lidar com resposta que pode ser array ou PaginatedResponse
-        const produtosList = Array.isArray(data) 
-          ? data 
+        const produtosList = Array.isArray(data)
+          ? data
           : data.results || [];
-        
+
         setProdutos(produtosList);
       } catch (err) {
         console.error("Erro ao carregar produtos:", err);
@@ -68,11 +66,14 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
       return;
     }
 
+    const produtoSelecionado = produtos.find(p => p.id === produtoId);
+    const nomeProduto = produtoSelecionado?.nome || "";
+
     const sucesso = await criar({
-      nome,
+      nome: nomeProduto,
       produto: Number(produtoId),
       preco,
-      proprietario_cnat: proprietario,
+      eh_do_cnatmaker: proprietario,
       imagem: foto,
     });
 
@@ -83,28 +84,14 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center px-4 z-50 transition ${
-        open ? "bg-black/40 visible" : "invisible"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center px-4 z-50 transition ${open ? "bg-black/40 visible" : "invisible"
+        }`}
     >
       {open && (
         <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Cadastrar novo item</h2>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Nome */}
-            <div>
-              <label className="block mb-1 font-semibold">Nome</label>
-              <input
-                type="text"
-                required
-                className="w-full border rounded-md p-2"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                disabled={isBusy}
-              />
-            </div>
-
             {/* Produto Unitário */}
             <div>
               <label className="block mb-1 font-semibold">Produto (unitário)</label>
@@ -149,8 +136,8 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
               <label className="block mb-1 font-semibold">Proprietário</label>
               <select
                 className="w-full border rounded-md p-2"
-                value={proprietario}
-                onChange={(e) => setProprietario(e.target.value)}
+                value={proprietario ? "true" : "false"}
+                onChange={(e) => setProprietario(e.target.value === "true")}
                 disabled={isBusy}
               >
                 <option value="true">CNAT Maker</option>

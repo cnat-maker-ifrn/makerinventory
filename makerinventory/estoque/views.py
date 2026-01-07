@@ -190,12 +190,13 @@ class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="entradas-saidas-12m")
     def entradas_saidas_12_meses(self, request):
-        hoje = datetime.today()
-        ano_atras = hoje - timedelta(days=365)
+        ano_atual = datetime.today().year
+        inicio_ano = datetime(ano_atual, 1, 1)
+        fim_ano = datetime(ano_atual, 12, 31)
 
         movs = (
             MovimentacaoEstoque.objects
-            .filter(data_movimentacao__gte=ano_atras)
+            .filter(data_movimentacao__gte=inicio_ano, data_movimentacao__lte=fim_ano)
             .annotate(mes=ExtractMonth("data_movimentacao"))
             .values("mes", "tipo_movimentacao")
             .annotate(total=Count("id")) 

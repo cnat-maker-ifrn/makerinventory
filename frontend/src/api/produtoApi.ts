@@ -30,3 +30,17 @@ export async function getProdutosFracionados(
   const resp = await api.get(`produtos-fracionados/?page=${page}`);
   return resp.data;
 }
+
+export async function updateProdutoUnitario(id: number, data: FormData) {
+  const resp = await api.patch(`produtos-unitarios/${id}/`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return resp.data;
+}
+
+export async function updateProdutoFracionado(id: number, data: FormData) {
+  const resp = await api.patch(`produtos-fracionados/${id}/`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return resp.data;
+}

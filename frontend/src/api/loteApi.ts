@@ -17,7 +17,9 @@ export async function createLote(data: any) {
 }
 
 export async function updateLote(id: number, data: any) {
-  const resp = await api.put(`lotes/${id}/`, data)
+  const resp = await api.patch(`lotes/${id}/`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })
   return resp.data
 }
 

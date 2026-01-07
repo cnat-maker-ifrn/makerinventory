@@ -1,11 +1,17 @@
 import { MdEdit } from "react-icons/md";
+import { useState } from "react";
 import { useItens } from "../../hooks/item/useItens";
+import EditItemModal from "./EditItemModal";
+import { type Item } from "../../types/item";
 
 interface Props {
   search: string;
 }
 
 export default function TableItem({ search }: Props) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [itemSelecionado, setItemSelecionado] = useState<Item | null>(null);
+
   const { 
     dados: itens, 
     loading, 
@@ -16,6 +22,21 @@ export default function TableItem({ search }: Props) {
     goToNextPage, 
     goToPreviousPage 
   } = useItens();
+
+  const handleEditClick = (item: Item) => {
+    setItemSelecionado(item);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setItemSelecionado(null);
+  };
+
+  const handleEditSuccess = () => {
+    goToPreviousPage();
+    goToNextPage();
+  };
 
   if (loading) return <div>Carregando itens...</div>;
   if (erro) return <div className="text-red-600">{erro}</div>;
@@ -39,7 +60,6 @@ export default function TableItem({ search }: Props) {
               <th className="px-4 py-2 text-left">Foto</th>
               <th className="px-4 py-2 text-left">Nome</th>
               <th className="px-4 py-2 text-left">Código</th>
-              <th className="px-4 py-2 text-left">Produto</th>
               <th className="px-4 py-2 text-left">Proprietário</th>
               <th className="px-4 py-2 text-left">Disponível</th>
               <th className="px-4 py-2 text-left">Quebrado</th>
@@ -69,9 +89,6 @@ export default function TableItem({ search }: Props) {
 
                 <td className="px-4 py-2">{item.nome}</td>
                 <td className="px-4 py-2">{item.codigo}</td>
-                <td className="px-4 py-2">
-                  {item.produto_detalhes?.nome ?? "—"}
-                </td>
 
                 <td className="px-4 py-2">
                   {item.eh_do_cnatmaker ? "CNAT Maker" : "IFRN"}
@@ -96,7 +113,10 @@ export default function TableItem({ search }: Props) {
                 </td>
 
                 <td className="px-4 py-2">
-                  <button className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1">
+                  <button 
+                    onClick={() => handleEditClick(item)}
+                    className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
+                  >
                     <MdEdit size={24} />
                   </button>
                 </td>
@@ -134,6 +154,13 @@ export default function TableItem({ search }: Props) {
           Próxima
         </button>
       </div>
+
+      <EditItemModal
+        open={editOpen}
+        item={itemSelecionado}
+        onClose={handleEditClose}
+        onSuccess={handleEditSuccess}
+      />
     </>
   );
 }

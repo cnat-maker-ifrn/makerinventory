@@ -1,5 +1,8 @@
 import { MdEdit } from "react-icons/md";
+import { useState } from "react";
 import { useProdutos } from "../../hooks/produto/useProdutos";
+import EditProdutoModal from "./EditProdutoModal";
+import { type ProdutoUnificado } from "../../types/produtounificado";
 
 interface Props {
   search: string;
@@ -8,6 +11,9 @@ interface Props {
 }
 
 export default function TableProduto({ search, tipo, subcategoria }: Props) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoUnificado | null>(null);
+
   const {
     dados: produtos,
     loading,
@@ -18,6 +24,21 @@ export default function TableProduto({ search, tipo, subcategoria }: Props) {
     goToNextPage,
     goToPreviousPage,
   } = useProdutos();
+
+  const handleEditClick = (p: ProdutoUnificado) => {
+    setProdutoSelecionado(p);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setProdutoSelecionado(null);
+  };
+
+  const handleEditSuccess = () => {
+    goToPreviousPage();
+    goToNextPage();
+  };
 
   if (loading) return <p>Carregando produtos...</p>;
   if (erro) return <p className="text-red-600">{erro}</p>;
@@ -87,7 +108,10 @@ export default function TableProduto({ search, tipo, subcategoria }: Props) {
                 <td className="px-4 py-2">{p.quantidade_minima}</td>
 
                 <td className="px-4 py-2">
-                  <button className="text-blue-600 hover:bg-gray-300 p-1 rounded-md cursor-pointer">
+                  <button 
+                    onClick={() => handleEditClick(p)}
+                    className="text-blue-600 hover:bg-gray-300 p-1 rounded-md cursor-pointer"
+                  >
                     <MdEdit size={26} />
                   </button>
                 </td>
@@ -127,6 +151,14 @@ export default function TableProduto({ search, tipo, subcategoria }: Props) {
           Próxima
         </button>
       </div>
+
+      <EditProdutoModal
+        open={editOpen}
+        produto={produtoSelecionado}
+        tipo={produtoSelecionado?.tipo === "unitario" ? "unitario" : "fracionado"}
+        onClose={handleEditClose}
+        onSuccess={handleEditSuccess}
+      />
     </>
   );
 }
