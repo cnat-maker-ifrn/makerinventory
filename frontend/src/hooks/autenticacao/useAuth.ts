@@ -25,8 +25,6 @@ export function useAuth() {
       setUser(data.user);
     } catch (err) {
       setError("Matrícula ou senha inválida.");
-
-      // 🔥 ISSO É O QUE FALTAVA
       throw err;
     } finally {
       setLoading(false);

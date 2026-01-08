@@ -86,7 +86,7 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
         return Response(resultado)
     
 class ItemViewSet(viewsets.ModelViewSet):
-    queryset = Item.objects.select_related("produto").all()
+    queryset = Item.objects.select_related("produto").all().order_by("-data_entrada")
     serializer_class = ItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -184,7 +184,7 @@ class DevolucaoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
-    queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all()
+    queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all().order_by("-data_movimentacao")
     serializer_class = MovimentacaoEstoqueSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 

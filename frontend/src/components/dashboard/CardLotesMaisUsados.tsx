@@ -20,7 +20,7 @@ export default function CardLotesMaisUsados() {
   }
 
   return (
-    <div className="bg-white w-[705px] p-4 rounded-md shadow-md">
+    <div className="bg-white w-[705px] min-h-[90vh] p-4 rounded-md shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-[#29854A]">
         Lotes mais usados
       </h2>

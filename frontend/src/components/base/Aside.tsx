@@ -19,7 +19,7 @@ export default function Aside() {
         "p-8 flex items-center gap-4 cursor-pointer hover:bg-[#1A855E]";
 
     return (
-        <aside className="w-[279px] h-screen bg-[#1A955E] rounded-md shadow-md">
+        <aside className="w-[279px] min-h-screen bg-[#1A955E] rounded-md shadow-md">
             <nav>
                 <ul className="text-white text-[25px]">
 

@@ -12,10 +12,10 @@ export default function Base() {
       : "flex-1 p-8";
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <div className="flex">
+      <div className="flex flex-1 min-h-screen"> 
         <Aside />
 
         <main className={mainClass}>
