@@ -78,7 +78,6 @@ export default function Movimentacao() {
         <>
           <TableMovimentacao dados={filtrados} />
 
-          {/* 🔽 PAGINAÇÃO */}
           <div className="flex justify-center gap-4 mt-6">
             <button
               onClick={goToPreviousPage}
