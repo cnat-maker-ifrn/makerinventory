@@ -15,8 +15,11 @@ export default function Login() {
     try {
       await signIn(matricula, password);
       navigate("/");
-    } catch {
-    }
+    } catch {}
+  }
+
+  function handleBackToDashboard() {
+    navigate("/");
   }
 
   return (
@@ -61,9 +64,28 @@ export default function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#1A955E] text-white py-2 rounded hover:bg-[#16784b] transition disabled:opacity-60"
+          className="w-full bg-[#1A955E] text-white py-2 rounded hover:bg-[#16784b] transition disabled:opacity-60 mb-3"
         >
           {loading ? "Entrando..." : "Entrar"}
+        </button>
+
+        {/* Botão voltar para dashboard */}
+        <button
+          type="button"
+          onClick={handleBackToDashboard}
+          className="
+            w-full
+            border-2 border-[#1A955E]
+            text-[#1A955E]
+            py-2
+            rounded
+            hover:bg-[#1A955E]
+            hover:text-white
+            transition
+            font-semibold
+          "
+        >
+          Voltar para o Dashboard
         </button>
       </form>
     </div>
