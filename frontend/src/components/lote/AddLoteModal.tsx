@@ -6,9 +6,10 @@ import { type ProdutoFracionado } from "../../types/produtofracionado";
 interface AddLoteModalProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
+export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalProps) {
   const [produtos, setProdutos] = useState<ProdutoFracionado[]>([]);
   const { criar, loading, erro } = useCreateLote();
 
@@ -76,6 +77,7 @@ export default function AddLoteModal({ open, onClose }: AddLoteModalProps) {
         validade: "",
         foto: null,
       });
+      onSuccess?.();
       onClose();
     } else {
       alert("Erro ao cadastrar o lote");

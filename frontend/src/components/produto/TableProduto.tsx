@@ -10,7 +10,11 @@ interface Props {
   subcategoria: string;
 }
 
-export default function TableProduto({ search, tipo, subcategoria }: Props) {
+export default function TableProduto({
+  search,
+  tipo,
+  subcategoria,
+}: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoUnificado | null>(null);
 
@@ -23,7 +27,7 @@ export default function TableProduto({ search, tipo, subcategoria }: Props) {
     hasPrevious,
     goToNextPage,
     goToPreviousPage,
-  } = useProdutos();
+  } = useProdutos(search, tipo);
 
   const handleEditClick = (p: ProdutoUnificado) => {
     setProdutoSelecionado(p);

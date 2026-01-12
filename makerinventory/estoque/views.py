@@ -29,6 +29,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
 
     @action(detail=True, methods=["get"])
     def subcategorias(self, request, pk=None):
@@ -40,6 +41,7 @@ class SubcategoriaViewSet(viewsets.ModelViewSet):
     queryset = Subcategoria.objects.select_related("categoria").all()
     serializer_class = SubcategoriaSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None
 
     @action(detail=True, methods=["get"], url_path="produtos-unitarios")
     def produtos_unitarios(self, request, pk=None):
@@ -117,6 +119,8 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
     queryset = ProdutoFracionado.objects.prefetch_related("lotes").all()
     serializer_class = ProdutoFracionadoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['nome', 'descricao']
 
     @action(detail=True, methods=["get"], url_path="lotes")
     def lotes(self, request, pk=None):
@@ -196,9 +200,26 @@ class SolicitanteViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 class EmprestimoViewSet(viewsets.ModelViewSet):
-    queryset = Emprestimo.objects.select_related("solicitante").prefetch_related("itens").all()
+    queryset = Emprestimo.objects.select_related("solicitante").prefetch_related("itens").all().order_by("-data_emprestimo")
     serializer_class = EmprestimoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['solicitante__nome', 'responsavel']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtro por data inicial
+        data_inicio = self.request.query_params.get('data_inicio')
+        if data_inicio:
+            queryset = queryset.filter(data_emprestimo__gte=data_inicio)
+        
+        # Filtro por data final
+        data_fim = self.request.query_params.get('data_fim')
+        if data_fim:
+            queryset = queryset.filter(data_emprestimo__lte=f"{data_fim} 23:59:59")
+        
+        return queryset
 
     @action(detail=False, methods=["get"], url_path="ativos")
     def ativos(self, request):

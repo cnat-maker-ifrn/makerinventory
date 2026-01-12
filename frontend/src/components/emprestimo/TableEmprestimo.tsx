@@ -15,6 +15,11 @@ function safeDate(dateString?: string | null) {
 interface TableEmprestimoProps {
   emprestimos: Emprestimo[];
   search: string;
+  page: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  onNextPage: () => void;
+  onPreviousPage: () => void;
   onRefresh?: () => void;
 }
 
@@ -27,6 +32,11 @@ interface ModalItem {
 export default function TableEmprestimo({
   emprestimos,
   search,
+  page,
+  hasNext,
+  hasPrevious,
+  onNextPage,
+  onPreviousPage,
   onRefresh,
 }: TableEmprestimoProps) {
   const [modalItem, setModalItem] = useState<ModalItem[] | null>(null);
@@ -162,6 +172,29 @@ export default function TableEmprestimo({
           </div>
         </div>
       )}
+
+      {/* 🔽 PAGINAÇÃO */}
+      <div className="flex justify-center gap-4 mt-6">
+        <button
+          onClick={onPreviousPage}
+          disabled={!hasPrevious}
+          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Anterior
+        </button>
+
+        <span className="flex items-center">
+          Página {page}
+        </span>
+
+        <button
+          onClick={onNextPage}
+          disabled={!hasNext}
+          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Próxima
+        </button>
+      </div>
     </>
   );
 }

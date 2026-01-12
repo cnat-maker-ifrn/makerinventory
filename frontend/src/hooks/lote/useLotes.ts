@@ -29,6 +29,7 @@ export function useLotes(
         const normalizados: Lote[] = results.map((l: any) => ({
           id: l.id,
           codigo: l.codigo,
+          nome: l.nome,
 
           quantidade: Number(l.quantidade ?? 0),
           preco: Number(l.preco ?? 0),
@@ -39,10 +40,12 @@ export function useLotes(
 
           foto: l.foto ?? null,
 
-          produto: {
+          produto: l.produto ? {
             id: l.produto.id,
             nome: l.produto.nome,
-          },
+            unidade_de_medida: l.produto.unidade_de_medida,
+          } : { id: 0, nome: "Desconhecido" },
+          unidade_de_medida: l.produto?.unidade_de_medida ?? "unidade",
         }));
 
         setDados(normalizados);

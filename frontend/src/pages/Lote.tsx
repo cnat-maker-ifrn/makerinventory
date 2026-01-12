@@ -10,6 +10,12 @@ export default function Lote() {
     const [busca, setBusca] = useState("");
     const [dataInicio, setDataInicio] = useState<string>("");
     const [dataFim, setDataFim] = useState<string>("");
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const handleLoteCreated = () => {
+      // Força recarregar a tabela
+      setRefreshKey(k => k + 1);
+    };
 
     return(
         <>
@@ -45,10 +51,10 @@ export default function Lote() {
 
             {isAuthenticated && (
                 <div className="mb-4">
-                    <AddLoteButton />
+                    <AddLoteButton onCreated={handleLoteCreated} />
                 </div>
             )}
-            <TableLote search={busca} data_inicio={dataInicio} data_fim={dataFim}/>
+            <TableLote key={refreshKey} search={busca} data_inicio={dataInicio} data_fim={dataFim}/>
         </>
     )
 }

@@ -1,17 +1,23 @@
 import api from "./api";
 import type { Emprestimo } from "../types/emprestimo";
+import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todos os empréstimos */
-export async function getEmprestimos(): Promise<Emprestimo[]> {
-  const response = await api.get("emprestimos/");
+export async function getEmprestimos(
+  page = 1,
+  search = "",
+  data_inicio = "",
+  data_fim = ""
+): Promise<PaginatedResponse<Emprestimo>> {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
   
-  // Lidar com resposta que pode ser array ou PaginatedResponse
-  if (Array.isArray(response.data)) {
-    return response.data;
-  }
-  
-  // Se for PaginatedResponse, extrair results
-  return response.data.results || [];
+  if (search) params.append("search", search);
+  if (data_inicio) params.append("data_inicio", data_inicio);
+  if (data_fim) params.append("data_fim", data_fim);
+
+  const response = await api.get(`emprestimos/?${params.toString()}`);
+  return response.data;
 }
 
 /** Busca um empréstimo pelo ID */

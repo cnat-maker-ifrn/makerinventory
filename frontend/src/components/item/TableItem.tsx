@@ -66,6 +66,7 @@ export default function TableItem({ search, data_inicio, data_fim }: Props) {
               <th className="px-4 py-2 text-left">Disponível</th>
               <th className="px-4 py-2 text-left">Quebrado</th>
               <th className="px-4 py-2 text-left">Emprestado</th>
+              <th className="px-4 py-2 text-left">Unidade</th>
               <th className="px-4 py-2 text-left">Preço</th>
               <th className="px-4 py-2 text-left">Entrada</th>
               <th className="px-4 py-2 text-left">Ações</th>
@@ -107,6 +108,8 @@ export default function TableItem({ search, data_inicio, data_fim }: Props) {
                 <td className="px-4 py-2">
                   {item.eh_emprestado ? "Sim" : "Não"}
                 </td>
+
+                <td className="px-4 py-2">un</td>
 
                 <td className="px-4 py-2">R$ {item.preco}</td>
 

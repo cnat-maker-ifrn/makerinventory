@@ -18,17 +18,41 @@ export async function createProdutoFracionado(data: FormData) {
 }
 
 export async function getProdutosUnitarios(
-  page = 1
+  page = 1,
+  search = ""
 ): Promise<PaginatedResponse<ProdutoUnitario>> {
-  const resp = await api.get(`produtos-unitarios/?page=${page}`);
-  return resp.data;
+  try {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    
+    if (search) params.append("search", search);
+
+    const resp = await api.get(`produtos-unitarios/?${params.toString()}`);
+    return resp.data;
+  } catch (e: any) {
+    console.error("Erro ao buscar produtos unitários página", page, ":", e.response?.status, e.response?.data);
+    // Retornar resposta vazia em caso de erro
+    return { count: 0, next: null, previous: null, results: [] };
+  }
 }
 
 export async function getProdutosFracionados(
-  page = 1
+  page = 1,
+  search = ""
 ): Promise<PaginatedResponse<ProdutoFracionado>> {
-  const resp = await api.get(`produtos-fracionados/?page=${page}`);
-  return resp.data;
+  try {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    
+    if (search) params.append("search", search);
+
+    const resp = await api.get(`produtos-fracionados/?${params.toString()}`);
+    return resp.data;
+  } catch (e: any) {
+    console.error("Erro ao buscar produtos fracionados página", page, ":", e.response?.status, e.response?.data);
+    // Retornar resposta vazia em caso de erro
+    return { count: 0, next: null, previous: null, results: [] };
+  }
 }
 
 export async function updateProdutoUnitario(id: number, data: FormData) {

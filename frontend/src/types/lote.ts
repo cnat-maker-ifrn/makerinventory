@@ -12,4 +12,5 @@ export interface Lote {
     data_entrada: string;
     codigo: string;
     nome: string;
+    unidade_de_medida?: string; // unidade do produto fracionado
 }
