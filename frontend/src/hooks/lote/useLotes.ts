@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { getLotes } from "../../api/loteApi";
 import type { Lote } from "../../types/lote";
 
-export function useLotes() {
+export function useLotes(
+  search = "",
+  data_inicio = "",
+  data_fim = ""
+) {
   const [dados, setDados] = useState<Lote[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -15,7 +19,7 @@ export function useLotes() {
     async function carregar() {
       try {
         setLoading(true);
-        const response = await getLotes(page);
+        const response = await getLotes(page, search, data_inicio, data_fim);
 
         // Lidar com resposta que pode ser array ou PaginatedResponse
         const results = Array.isArray(response) 
@@ -61,7 +65,7 @@ export function useLotes() {
     }
 
     carregar();
-  }, [page]);
+  }, [page, search, data_inicio, data_fim]);
 
   const goToNextPage = () => {
     if (hasNext) setPage(p => p + 1);

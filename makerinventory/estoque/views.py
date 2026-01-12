@@ -89,6 +89,23 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.select_related("produto").all().order_by("-data_entrada")
     serializer_class = ItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['nome', 'codigo', 'produto__nome']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtro por data inicial
+        data_inicio = self.request.query_params.get('data_inicio')
+        if data_inicio:
+            queryset = queryset.filter(data_entrada__gte=data_inicio)
+        
+        # Filtro por data final
+        data_fim = self.request.query_params.get('data_fim')
+        if data_fim:
+            queryset = queryset.filter(data_entrada__lte=f"{data_fim} 23:59:59")
+        
+        return queryset
 
     @action(detail=False, methods=["get"])
     def disponiveis(self, request):
@@ -126,9 +143,26 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
 
 
 class LoteViewSet(viewsets.ModelViewSet):
-    queryset = Lote.objects.select_related("produto").all()
+    queryset = Lote.objects.select_related("produto").all().order_by("-data_entrada")
     serializer_class = LoteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['codigo', 'produto__nome', 'fornecedor']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtro por data inicial
+        data_inicio = self.request.query_params.get('data_inicio')
+        if data_inicio:
+            queryset = queryset.filter(data_entrada__gte=data_inicio)
+        
+        # Filtro por data final
+        data_fim = self.request.query_params.get('data_fim')
+        if data_fim:
+            queryset = queryset.filter(data_entrada__lte=f"{data_fim} 23:59:59")
+        
+        return queryset
 
     @action(detail=False, methods=["get"], url_path="mais-usados")
     def lotes_mais_usados(self, request):
@@ -187,6 +221,24 @@ class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = MovimentacaoEstoque.objects.select_related("item", "lote").all().order_by("-data_movimentacao")
     serializer_class = MovimentacaoEstoqueSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['tipo_movimentacao', 'item__nome', 'lote__nome']
+    filterset_fields = ['data_movimentacao']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtro por data inicial
+        data_inicio = self.request.query_params.get('data_inicio')
+        if data_inicio:
+            queryset = queryset.filter(data_movimentacao__gte=data_inicio)
+        
+        # Filtro por data final
+        data_fim = self.request.query_params.get('data_fim')
+        if data_fim:
+            queryset = queryset.filter(data_movimentacao__lte=f"{data_fim} 23:59:59")
+        
+        return queryset
 
     @action(detail=False, methods=["get"], url_path="entradas-saidas-12m")
     def entradas_saidas_12_meses(self, request):
@@ -224,13 +276,28 @@ class SaidaViewSet(viewsets.ModelViewSet):
     CRUD de saídas de estoque.
     As movimentações são criadas automaticamente via signals.
     """
-    queryset = Saida.objects.select_related("item", "lote").all()
+    queryset = Saida.objects.select_related("item", "lote").all().order_by("-data_saida")
     serializer_class = SaidaSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["responsavel", "item__produto__nome", "lote__produto__nome"]
     ordering_fields = ["data_saida", "quantidade"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtro por data inicial
+        data_inicio = self.request.query_params.get('data_inicio')
+        if data_inicio:
+            queryset = queryset.filter(data_saida__gte=data_inicio)
+        
+        # Filtro por data final
+        data_fim = self.request.query_params.get('data_fim')
+        if data_fim:
+            queryset = queryset.filter(data_saida__lte=f"{data_fim} 23:59:59")
+        
+        return queryset
 
     def create(self, request, *args, **kwargs):
         """

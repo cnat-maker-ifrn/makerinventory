@@ -4,10 +4,20 @@ import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todos os itens */
 export async function getItens(
-  page = 1
+  page = 1,
+  search = "",
+  data_inicio = "",
+  data_fim = ""
 ): Promise<PaginatedResponse<Item>> {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  
+  if (search) params.append("search", search);
+  if (data_inicio) params.append("data_inicio", data_inicio);
+  if (data_fim) params.append("data_fim", data_fim);
+
   const response = await api.get<PaginatedResponse<Item>>(
-    `itens/?page=${page}`
+    `itens/?${params.toString()}`
   );
   return response.data;
 }

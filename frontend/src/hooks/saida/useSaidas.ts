@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { getSaidas } from "../../api/saidaApi";
 import { type Saida } from "../../types/saida";
 
-export function useSaidas() {
+export function useSaidas(
+  search = "",
+  data_inicio = "",
+  data_fim = ""
+) {
   const [dados, setDados] = useState<Saida[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -16,7 +20,7 @@ export function useSaidas() {
       try {
         setLoading(true);
 
-        const response = await getSaidas(page);
+        const response = await getSaidas(page, search, data_inicio, data_fim);
 
         // Lidar com resposta que pode ser array ou PaginatedResponse
         const results = Array.isArray(response) 
@@ -49,7 +53,7 @@ export function useSaidas() {
     }
 
     carregar();
-  }, [page]);
+  }, [page, search, data_inicio, data_fim]);
 
   const goToNextPage = () => {
     if (hasNext) setPage(p => p + 1);
