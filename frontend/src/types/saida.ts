@@ -9,6 +9,7 @@ export interface Saida {
   lote: number | null;   
   lote_nome: string | null;      
   lote_codigo: string | null;    
+  lote_unidade_de_medida?: string | null;
 
   quantidade: number;
   data_saida: string;

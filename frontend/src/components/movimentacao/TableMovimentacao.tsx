@@ -25,7 +25,7 @@ export const TableMovimentacao = ({ dados }: TableMovimentacaoProps) => {
             >
               <td className="px-4 py-3 capitalize">{m.tipo_movimentacao}</td>
               <td className="px-4 py-3">{m.produto_nome}</td>
-              <td className="px-4 py-3">{m.quantidade}</td>
+              <td className="px-4 py-3">{m.quantidade}{m.unidade_de_medida?.toLowerCase() ?? ""}</td>
               <td className="px-4 py-3">
                 {new Date(m.data_movimentacao).toLocaleString("pt-BR")}
               </td>

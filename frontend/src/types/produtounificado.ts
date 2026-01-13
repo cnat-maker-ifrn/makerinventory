@@ -6,4 +6,5 @@ export interface ProdutoUnificado {
     foto: string | null;
     quantidade: number;
     quantidade_minima: number;
+    unidade_de_medida?: string | null;
 }

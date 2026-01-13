@@ -50,6 +50,7 @@ export function useProdutos(
                     foto: p.foto ?? null,
                     quantidade: Number(p.quantidade_em_estoque ?? 0),
                     quantidade_minima: Number(p.quantidade_minima ?? 0),
+                    unidade_de_medida: "un",
                 }));
 
                 const fracionados = fracResults.map((p: any) => ({
@@ -60,6 +61,7 @@ export function useProdutos(
                     foto: p.foto ?? null,
                     quantidade: Number(p.quantidade_em_estoque ?? 0),
                     quantidade_minima: Number(p.quantidade_minima ?? 0),
+                    unidade_de_medida: p.unidade_de_medida ?? null,
                 }));
 
                 setDados([...unitarios, ...fracionados]);

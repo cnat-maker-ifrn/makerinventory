@@ -82,7 +82,7 @@ export default function TableSaida({
                     </td>
                     <td className="px-4 py-2">{nome}</td>
                     <td className="px-4 py-2">{codigo}</td>
-                    <td className="px-4 py-2">{s.quantidade}</td>
+                    <td className="px-4 py-2">{s.quantidade}{isItem ? "un" : s.lote_unidade_de_medida?.toLowerCase() ?? ""}</td>
                     <td className="px-4 py-2">{s.responsavel}</td>
                     <td className="px-4 py-2">
                       {formatarData(s.data_saida)}

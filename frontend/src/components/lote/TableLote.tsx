@@ -63,7 +63,6 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
               <th className="px-4 py-2 text-left">Código</th>
               <th className="px-4 py-2 text-left">Fornecedor</th>
               <th className="px-4 py-2 text-left">Quantidade</th>
-              <th className="px-4 py-2 text-left">Unidade</th>
               <th className="px-4 py-2 text-left">Preço</th>
               <th className="px-4 py-2 text-left">Validade</th>
               <th className="px-4 py-2 text-left">Entrada</th>
@@ -99,10 +98,7 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
                 <td className="px-4 py-2">{lote.fornecedor ?? "-"}</td>
 
                 {/* Quantidade */}
-                <td className="px-4 py-2">{lote.quantidade}</td>
-
-                {/* Unidade de Medida */}
-                <td className="px-4 py-2">{lote.unidade_de_medida?.toUpperCase() ?? "-"}</td>
+                <td className="px-4 py-2">{lote.quantidade}{lote.produto?.unidade_de_medida?.toLowerCase() ?? ""}</td>
 
                 {/* Preço */}
                 <td className="px-4 py-2">
@@ -135,7 +131,7 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
 
             {lotesFiltrados.length === 0 && (
               <tr>
-                <td colSpan={10} className="text-center py-6 text-gray-500">
+                <td colSpan={9} className="text-center py-6 text-gray-500">
                   Nenhum lote encontrado
                 </td>
               </tr>
