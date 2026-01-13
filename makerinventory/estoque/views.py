@@ -259,6 +259,11 @@ class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
         if data_fim:
             queryset = queryset.filter(data_movimentacao__lte=f"{data_fim} 23:59:59")
         
+        # Filtro por tipo de movimentação
+        tipo_movimentacao = self.request.query_params.get('tipo_movimentacao')
+        if tipo_movimentacao:
+            queryset = queryset.filter(tipo_movimentacao=tipo_movimentacao)
+        
         return queryset
 
     @action(detail=False, methods=["get"], url_path="entradas-saidas-12m")

@@ -139,10 +139,30 @@ class DevolucaoSerializer(serializers.ModelSerializer):
 
 class MovimentacaoEstoqueSerializer(serializers.ModelSerializer):
     produto_nome = serializers.ReadOnlyField()
+    unidade_de_medida = serializers.SerializerMethodField()
 
     class Meta:
         model = MovimentacaoEstoque
-        fields = '__all__'
+        fields = [
+            'id',
+            'item',
+            'lote',
+            'saida',
+            'emprestimo',
+            'devolucao',
+            'produto_nome',
+            'tipo_movimentacao',
+            'quantidade',
+            'data_movimentacao',
+            'unidade_de_medida',
+        ]
+
+    def get_unidade_de_medida(self, obj):
+        if obj.item:
+            return 'un'
+        elif obj.lote:
+            return obj.lote.produto.unidade_de_medida
+        return None
 
 
 class SaidaSerializer(serializers.ModelSerializer):
@@ -152,6 +172,7 @@ class SaidaSerializer(serializers.ModelSerializer):
 
     lote_nome = serializers.CharField(source="lote.nome", read_only=True)
     lote_codigo = serializers.CharField(source="lote.codigo", read_only=True)
+    lote_unidade_de_medida = serializers.CharField(source="lote.produto.unidade_de_medida", read_only=True)
 
     class Meta:
         model = Saida
@@ -163,6 +184,7 @@ class SaidaSerializer(serializers.ModelSerializer):
             "lote",
             "lote_nome",
             "lote_codigo",
+            "lote_unidade_de_medida",
             "quantidade",
             "data_saida",
             "responsavel",
