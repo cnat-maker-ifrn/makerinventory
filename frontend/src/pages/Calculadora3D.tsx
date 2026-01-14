@@ -1,0 +1,700 @@
+import { useState } from "react";
+import type { CalculadoraPrecosData, ResultadoCalculadora } from "../types/calculadora3d";
+import { IMPRESSORAS_LISTA, IMPRESSORAS_DISPONIVEL } from "../config/impressoras";
+
+const calcularPrecosFinais = (dados: CalculadoraPrecosData): ResultadoCalculadora => {
+  const impressora = dados.impressoraSelecionada;
+
+  // 1. Custo de Material
+  const pesoComPerda = dados.pesoGramas * (1 + dados.percentualPerdaMateria / 100);
+  const custoMaterial = pesoComPerda * dados.precoGramaMateria;
+
+  // 2. Custo de Energia
+  const custoEnergia =
+    (impressora.consumoWatts / 1000) * dados.tempoImpressaoHoras * dados.kWhValor;
+
+  // 3. Depreciação da Máquina
+  const custoDepreciacaoMaquina = (impressora.precoCompra / impressora.vidaUtiHoras) * dados.tempoImpressaoHoras;
+
+  // 4. Manutenção da Máquina (por hora de impressão)
+  const custoManutencaoMaquina = (impressora.custoManutencaoMensal / 160) * dados.tempoImpressaoHoras; // 160 horas/mês
+
+  // 5. Mão de Obra
+  const tempoTotalMaoObra = dados.tempoSetup + dados.tempoPosProcesamento;
+  const custoMaoObra = tempoTotalMaoObra * dados.taxaHorariaMaoObra;
+
+  // Subtotal antes da taxa de falha
+  const subtotalAntesDeTaxaFalha =
+    custoMaterial + custoEnergia + custoDepreciacaoMaquina + custoManutencaoMaquina + custoMaoObra;
+
+  // 6. Taxa de Falha (Risco)
+  const custoPorFalha = subtotalAntesDeTaxaFalha * (dados.percentualTaxaFalha / 100);
+
+  // 7. Custos Adicionais
+  const custosAdicionais = dados.custosEmbalagem + dados.comissaoPlatafirma;
+
+  // Subtotal de custos
+  const subtotalCustos =
+    custoMaterial +
+    custoEnergia +
+    custoDepreciacaoMaquina +
+    custoManutencaoMaquina +
+    custoMaoObra +
+    custoPorFalha +
+    custosAdicionais;
+
+  // Impostos
+  const impostos = subtotalCustos * (dados.percentualImpostos / 100);
+
+  // Margem de Lucro
+  const margem = (subtotalCustos + impostos) * (dados.percentualMargemLucro / 100);
+
+  // Preço Final
+  const precoFinal = subtotalCustos + impostos + margem;
+
+  return {
+    custoMaterial,
+    custoEnergia,
+    custoDepreciacaoMaquina,
+    custoManutencaoMaquina,
+    custoMaoObra,
+    custoPorFalha,
+    custosAdicionais,
+    subtotalCustos,
+    impostos,
+    margem,
+    precoFinal,
+  };
+};
+
+export default function Calculadora3D() {
+  const impressoraPadrao = IMPRESSORAS_LISTA[0];
+  const [modoImpressora, setModoImpressora] = useState<"cadastrada" | "customizada">("cadastrada");
+  const [impressoraCustomizada, setImpressoraCustomizada] = useState({
+    precoCompra: 1500,
+    consumoWatts: 220,
+    vidaUtiHoras: 5000,
+    custoManutencaoMensal: 50,
+  });
+
+  const [dados, setDados] = useState<CalculadoraPrecosData>({
+    pesoGramas: 100,
+    precoGramaMateria: 0.12,
+    percentualPerdaMateria: 5,
+    tempoImpressaoHoras: 10,
+    kWhValor: 0.8,
+    impressoraSelecionada: impressoraPadrao,
+    tempoSetup: 0.5,
+    tempoPosProcesamento: 1,
+    taxaHorariaMaoObra: 50,
+    percentualTaxaFalha: 15,
+    custosEmbalagem: 10,
+    comissaoPlatafirma: 0,
+    percentualImpostos: 0,
+    percentualMargemLucro: 30,
+  });
+
+  const [resultado, setResultado] = useState<ResultadoCalculadora | null>(null);
+
+  const calcular = () => {
+    const res = calcularPrecosFinais(dados);
+    setResultado(res);
+  };
+
+  const handleInputChange = (
+    field: keyof CalculadoraPrecosData,
+    value: string | number
+  ) => {
+    const numValue = typeof value === "string" ? parseFloat(value) || 0 : value;
+    setDados((prev) => ({
+      ...prev,
+      [field]: numValue,
+    }));
+  };
+
+  const handleImpressoraChange = (impressoraId: string) => {
+    const impressoraSelecionada = IMPRESSORAS_DISPONIVEL[impressoraId];
+    if (impressoraSelecionada) {
+      setDados((prev) => ({
+        ...prev,
+        impressoraSelecionada,
+      }));
+    }
+  };
+
+  const handleImpressoraCustomizadaChange = (field: keyof typeof impressoraCustomizada, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    const novaCustomizada = { ...impressoraCustomizada, [field]: numValue };
+    setImpressoraCustomizada(novaCustomizada);
+    
+    // Atualizar também o dados com a impressora customizada
+    setDados((prev) => ({
+      ...prev,
+      impressoraSelecionada: {
+        id: "customizada",
+        nome: "Impressora Personalizada",
+        ...novaCustomizada,
+      },
+    }));
+  };
+
+  const handleModoImpressoraChange = (modo: "cadastrada" | "customizada") => {
+    setModoImpressora(modo);
+    
+    if (modo === "cadastrada") {
+      // Voltar para impressora cadastrada
+      const impressoraSelecionada = IMPRESSORAS_DISPONIVEL[impressoraPadrao.id];
+      if (impressoraSelecionada) {
+        setDados((prev) => ({
+          ...prev,
+          impressoraSelecionada,
+        }));
+      }
+    } else {
+      // Usar customizada
+      setDados((prev) => ({
+        ...prev,
+        impressoraSelecionada: {
+          id: "customizada",
+          nome: "Impressora Personalizada",
+          ...impressoraCustomizada,
+        },
+      }));
+    }
+  }
+
+  const formatarMoeda = (valor: number): string => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
+
+  return (
+    <div className="w-full h-screen overflow-y-auto bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          Calculadora de Preços 3D
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Calcule o preço final de suas impressões 3D considerando todos os custos envolvidos.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Formulário */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Seção 1: Custos de Materiais */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                1. Custos de Materiais
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Peso da Peça (gramas)
+                  </label>
+                  <input
+                    type="number"
+                    value={dados.pesoGramas}
+                    onChange={(e) =>
+                      handleInputChange("pesoGramas", e.target.value)
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                    step="0.1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Inclua peso dos suportes e brim/raft
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Preço por Grama (R$)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.precoGramaMateria}
+                      onChange={(e) =>
+                        handleInputChange("precoGramaMateria", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Perda de Material (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.percentualPerdaMateria}
+                      onChange={(e) =>
+                        handleInputChange("percentualPerdaMateria", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Seção 2: Consumo de Energia */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                2. Consumo de Energia Elétrica
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tempo de Impressão (horas)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.tempoImpressaoHoras}
+                      onChange={(e) =>
+                        handleInputChange("tempoImpressaoHoras", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Valor do kWh (R$)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.kWhValor}
+                      onChange={(e) =>
+                        handleInputChange("kWhValor", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  * O consumo da máquina varia de acordo com a impressora selecionada
+                </p>
+              </div>
+            </div>
+
+            {/* Seção 3: Depreciação e Manutenção */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                3. Impressora (Depreciação e Manutenção)
+              </h2>
+              
+              {/* Seleção de Modo */}
+              <div className="mb-6 flex gap-2">
+                <button
+                  onClick={() => handleModoImpressoraChange("cadastrada")}
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                    modoImpressora === "cadastrada"
+                      ? "bg-teal-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  Cadastrada
+                </button>
+                <button
+                  onClick={() => handleModoImpressoraChange("customizada")}
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                    modoImpressora === "customizada"
+                      ? "bg-teal-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  Personalizada
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {modoImpressora === "cadastrada" ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Selecione a Impressora
+                      </label>
+                      <select
+                        value={dados.impressoraSelecionada.id}
+                        onChange={(e) => handleImpressoraChange(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none bg-white"
+                      >
+                        {IMPRESSORAS_LISTA.map((imp) => (
+                          <option key={imp.id} value={imp.id}>
+                            {imp.nome}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="bg-gray-100 p-4 rounded-lg space-y-2">
+                      <p className="text-sm">
+                        <strong>Preço de Compra:</strong>{" "}
+                        {formatarMoeda(dados.impressoraSelecionada.precoCompra)}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Consumo Elétrico:</strong> {dados.impressoraSelecionada.consumoWatts}W
+                      </p>
+                      <p className="text-sm">
+                        <strong>Vida Útil Estimada:</strong>{" "}
+                        {dados.impressoraSelecionada.vidaUtiHoras.toLocaleString("pt-BR")} horas
+                      </p>
+                      <p className="text-sm">
+                        <strong>Custo de Manutenção Mensal:</strong>{" "}
+                        {formatarMoeda(dados.impressoraSelecionada.custoManutencaoMensal)}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preço de Compra (R$)
+                        </label>
+                        <input
+                          type="number"
+                          value={impressoraCustomizada.precoCompra}
+                          onChange={(e) =>
+                            handleImpressoraCustomizadaChange("precoCompra", e.target.value)
+                          }
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                          step="100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Consumo Elétrico (Watts)
+                        </label>
+                        <input
+                          type="number"
+                          value={impressoraCustomizada.consumoWatts}
+                          onChange={(e) =>
+                            handleImpressoraCustomizadaChange("consumoWatts", e.target.value)
+                          }
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                          step="10"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Vida Útil Estimada (horas)
+                        </label>
+                        <input
+                          type="number"
+                          value={impressoraCustomizada.vidaUtiHoras}
+                          onChange={(e) =>
+                            handleImpressoraCustomizadaChange("vidaUtiHoras", e.target.value)
+                          }
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                          step="100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Custo Manutenção Mensal (R$)
+                        </label>
+                        <input
+                          type="number"
+                          value={impressoraCustomizada.custoManutencaoMensal}
+                          onChange={(e) =>
+                            handleImpressoraCustomizadaChange("custoManutencaoMensal", e.target.value)
+                          }
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                          step="10"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-teal-50 border border-teal-200 p-4 rounded-lg space-y-2">
+                      <p className="text-sm">
+                        <strong>Preço de Compra:</strong>{" "}
+                        {formatarMoeda(impressoraCustomizada.precoCompra)}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Consumo Elétrico:</strong> {impressoraCustomizada.consumoWatts}W
+                      </p>
+                      <p className="text-sm">
+                        <strong>Vida Útil Estimada:</strong>{" "}
+                        {impressoraCustomizada.vidaUtiHoras.toLocaleString("pt-BR")} horas
+                      </p>
+                      <p className="text-sm">
+                        <strong>Custo de Manutenção Mensal:</strong>{" "}
+                        {formatarMoeda(impressoraCustomizada.custoManutencaoMensal)}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Seção 4: Mão de Obra */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                4. Mão de Obra
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Modelagem
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.tempoSetup}
+                      onChange={(e) =>
+                        handleInputChange("tempoSetup", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.25"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Fatiamento, preparação
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Acabamento (horas)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.tempoPosProcesamento}
+                      onChange={(e) =>
+                        handleInputChange("tempoPosProcesamento", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.25"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Remoção de suportes, lixamento
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Taxa Horária de Mão de Obra (R$/hora)
+                  </label>
+                  <input
+                    type="number"
+                    value={dados.taxaHorariaMaoObra}
+                    onChange={(e) =>
+                      handleInputChange("taxaHorariaMaoObra", e.target.value)
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                    step="5"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Seção 5: Taxa de Falha */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                5. Taxa de Falha (Risco)
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Percentual de Risco (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={dados.percentualTaxaFalha}
+                    onChange={(e) =>
+                      handleInputChange("percentualTaxaFalha", e.target.value)
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                    step="1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Margem para cobrir impressões que deram errado (10-20% recomendado)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Seção 6: Custos Adicionais */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                6. Custos Adicionais
+              </h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Embalagem (R$)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.custosEmbalagem}
+                      onChange={(e) =>
+                        handleInputChange("custosEmbalagem", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Comissão Plataforma (R$)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.comissaoPlatafirma}
+                      onChange={(e) =>
+                        handleInputChange("comissaoPlatafirma", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="1"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Impostos (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.percentualImpostos}
+                      onChange={(e) =>
+                        handleInputChange("percentualImpostos", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="0.1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Margem de Lucro (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={dados.percentualMargemLucro}
+                      onChange={(e) =>
+                        handleInputChange("percentualMargemLucro", e.target.value)
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                      step="1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Botão Calcular */}
+            <button
+              onClick={calcular}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+            >
+              Calcular Preço Final
+            </button>
+          </div>
+
+          {/* Resultado */}
+          {resultado && (
+            <div className="lg:col-span-1">
+              <div className="bg-white p-6 rounded-lg shadow-md sticky top-8">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+                  Resultado
+                </h2>
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Material:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoMaterial)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Energia:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoEnergia)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Depreciação Máquina:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoDepreciacaoMaquina)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Manutenção Máquina:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoManutencaoMaquina)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Mão de Obra:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoMaoObra)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Taxa de Falha:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custoPorFalha)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Custos Adicionais:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.custosAdicionais)}
+                    </span>
+                  </div>
+
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Subtotal:</span>
+                      <span className="font-semibold">
+                        {formatarMoeda(resultado.subtotalCustos)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Impostos:</span>
+                    <span className="font-medium">
+                      {formatarMoeda(resultado.impostos)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Margem de Lucro:</span>
+                    <span className="font-medium text-green-600">
+                      {formatarMoeda(resultado.margem)}
+                    </span>
+                  </div>
+
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between">
+                      <span className="text-lg font-bold text-gray-800">
+                        Preço Final:
+                      </span>
+                      <span className="text-2xl font-bold text-teal-600">
+                        {formatarMoeda(resultado.precoFinal)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setResultado(null)}
+                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition-colors duration-200"
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

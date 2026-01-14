@@ -2,12 +2,14 @@ import { useState } from "react";
 import SearchBar from "../components/utils/SearchBar";
 import { TableMovimentacao } from "../components/movimentacao/TableMovimentacao";
 import FilterDataMovimentacao from "../components/movimentacao/FilterDataMovimentacao";
+import FilterTipoMovimentacao from "../components/movimentacao/FilterTipoMovimentacao";
 import { useMovimentacoes } from "../hooks/movimentacao/useMovimentacoes";
 
 export default function Movimentacao() {
   const [busca, setBusca] = useState<string>("");
   const [dataInicio, setDataInicio] = useState<string>("");
   const [dataFim, setDataFim] = useState<string>("");
+  const [tipoMovimentacao, setTipoMovimentacao] = useState<string>("");
 
   const {
     dados,
@@ -18,7 +20,7 @@ export default function Movimentacao() {
     hasPrevious,
     goToNextPage,
     goToPreviousPage,
-  } = useMovimentacoes(busca, dataInicio, dataFim);
+  } = useMovimentacoes(busca, dataInicio, dataFim, tipoMovimentacao);
 
   return (
     <>
@@ -33,12 +35,19 @@ export default function Movimentacao() {
           placeholder="Buscar movimentação..."
         />
 
-        <FilterDataMovimentacao
-          dataInicio={dataInicio}
-          dataFim={dataFim}
-          onChangeInicio={setDataInicio}
-          onChangeFim={setDataFim}
-        />
+        <div className="flex flex-wrap gap-4">
+          <FilterDataMovimentacao
+            dataInicio={dataInicio}
+            dataFim={dataFim}
+            onChangeInicio={setDataInicio}
+            onChangeFim={setDataFim}
+          />
+
+          <FilterTipoMovimentacao
+            tipoMovimentacao={tipoMovimentacao}
+            onChangeTipo={setTipoMovimentacao}
+          />
+        </div>
       </div>
 
       {loading && <p>Carregando...</p>}
