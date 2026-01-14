@@ -21,9 +21,8 @@ export interface CalculadoraPrecosData {
   impressoraSelecionada: Impressora;
 
   // Mão de obra
-  tempoSetup: number; // em horas
-  tempoPosProcesamento: number; // em horas
-  taxaHorariaMaoObra: number;
+  tempoModelagem: number; // em horas
+  tempoAcabamento: number; // em horas
 
   // Taxa de falha
   percentualTaxaFalha: number;

@@ -20,8 +20,8 @@ const calcularPrecosFinais = (dados: CalculadoraPrecosData): ResultadoCalculador
   const custoManutencaoMaquina = (impressora.custoManutencaoMensal / 160) * dados.tempoImpressaoHoras; // 160 horas/mês
 
   // 5. Mão de Obra
-  const tempoTotalMaoObra = dados.tempoSetup + dados.tempoPosProcesamento;
-  const custoMaoObra = tempoTotalMaoObra * dados.taxaHorariaMaoObra;
+  const tempoTotalMaoObra = dados.tempoModelagem + dados.tempoAcabamento;
+  const custoMaoObra = tempoTotalMaoObra;
 
   // Subtotal antes da taxa de falha
   const subtotalAntesDeTaxaFalha =
@@ -84,9 +84,8 @@ export default function Calculadora3D() {
     tempoImpressaoHoras: 10,
     kWhValor: 0.8,
     impressoraSelecionada: impressoraPadrao,
-    tempoSetup: 0.5,
-    tempoPosProcesamento: 1,
-    taxaHorariaMaoObra: 50,
+    tempoModelagem: 0.5,
+    tempoAcabamento: 1,
     percentualTaxaFalha: 15,
     custosEmbalagem: 10,
     comissaoPlatafirma: 0,
@@ -446,9 +445,9 @@ export default function Calculadora3D() {
                     </label>
                     <input
                       type="number"
-                      value={dados.tempoSetup}
+                      value={dados.tempoModelagem}
                       onChange={(e) =>
-                        handleInputChange("tempoSetup", e.target.value)
+                        handleInputChange("tempoModelagem", e.target.value)
                       }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
                       step="0.25"
@@ -463,9 +462,9 @@ export default function Calculadora3D() {
                     </label>
                     <input
                       type="number"
-                      value={dados.tempoPosProcesamento}
+                      value={dados.tempoAcabamento}
                       onChange={(e) =>
-                        handleInputChange("tempoPosProcesamento", e.target.value)
+                        handleInputChange("tempoAcabamento", e.target.value)
                       }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
                       step="0.25"
@@ -476,20 +475,6 @@ export default function Calculadora3D() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Taxa Horária de Mão de Obra (R$/hora)
-                  </label>
-                  <input
-                    type="number"
-                    value={dados.taxaHorariaMaoObra}
-                    onChange={(e) =>
-                      handleInputChange("taxaHorariaMaoObra", e.target.value)
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
-                    step="5"
-                  />
-                </div>
               </div>
             </div>
 
