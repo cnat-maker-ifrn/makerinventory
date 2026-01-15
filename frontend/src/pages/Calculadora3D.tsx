@@ -6,8 +6,15 @@ const calcularPrecosFinais = (dados: CalculadoraPrecosData): ResultadoCalculador
     const impressora = dados.impressoraSelecionada;
 
     // 1. Custo de Material
-    const pesoComPerda = dados.pesoGramas * (1 + dados.percentualPerdaMateria / 100);
-    const custoMaterial = pesoComPerda * dados.precoGramaMateria;
+    let custoMaterial = 0;
+    for (let i = 0; i < 4; i++) {
+        const filamento = dados.filamentos[i];
+        if (filamento) {
+            const pesoComPerda = filamento.peso + (i === 0 ? dados.pesoPerdaMaterial : 0);
+            const precoGramaFilamento = filamento.preco / 1000;
+            custoMaterial += pesoComPerda * precoGramaFilamento;
+        }
+    }
 
     // 2. Custo de Energia
     const custoEnergia =
@@ -80,9 +87,13 @@ export default function Calculadora3D() {
     });
 
     const [dados, setDados] = useState<CalculadoraPrecosData>({
-        pesoGramas: 0,
-        precoGramaMateria: 0.12,
-        percentualPerdaMateria: 5,
+        filamentos: [
+            { peso: 0, preco: 0.12 },
+            null,
+            null,
+            null,
+        ],
+        pesoPerdaMaterial: 5,
         tempoImpressaoHoras: 10,
         kWhValor: 0.8,
         impressoraSelecionada: impressoraPadrao,
@@ -111,6 +122,30 @@ export default function Calculadora3D() {
             ...prev,
             [field]: numValue,
         }));
+    };
+
+    const handleFilamentoChange = (
+        index: number,
+        field: "peso" | "preco",
+        value: string
+    ) => {
+        const numValue = parseFloat(value) || 0;
+        setDados((prev) => {
+            const novoFilamentos = [...prev.filamentos] as [any, any, any, any];
+            if (!novoFilamentos[index]) {
+                novoFilamentos[index] = { peso: 0, preco: 0.12 };
+            }
+            novoFilamentos[index] = { ...novoFilamentos[index], [field]: numValue };
+            return { ...prev, filamentos: novoFilamentos };
+        });
+    };
+
+    const handleRemoverFilamento = (index: number) => {
+        setDados((prev) => {
+            const novoFilamentos = [...prev.filamentos] as [any, any, any, any];
+            novoFilamentos[index] = null;
+            return { ...prev, filamentos: novoFilamentos };
+        });
     };
 
     const handleImpressoraChange = (impressoraId: string) => {
@@ -190,53 +225,85 @@ export default function Calculadora3D() {
                                 1. Custos de Materiais
                             </h2>
                             <div className="space-y-4">
+                                {/* Filamentos */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                                        Filamentos (até 4)
+                                    </label>
+                                    <div className="space-y-3">
+                                        {[0, 1, 2, 3].map((index) => (
+                                            <div key={index}>
+                                                {dados.filamentos[index] ? (
+                                                    <div className="flex gap-2 items-end">
+                                                        <div className="flex-1">
+                                                            <label className="block text-xs text-gray-600 mb-1">
+                                                                Filamento {index + 1} - Peso da peça (g)
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                value={dados.filamentos[index]?.peso || ""}
+                                                                onChange={(e) =>
+                                                                    handleFilamentoChange(index, "peso", e.target.value)
+                                                                }
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                                                step="0.1"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <label className="block text-xs text-gray-600 mb-1">
+                                                                Preço do filamento (R$/kg)
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                value={dados.filamentos[index]?.preco || ""}
+                                                                onChange={(e) =>
+                                                                    handleFilamentoChange(index, "preco", e.target.value)
+                                                                }
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                                                step="0.01"
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleRemoverFilamento(index)}
+                                                            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                ) : index === 0 || dados.filamentos[index - 1] ? (
+                                                    <button
+                                                        onClick={() =>
+                                                            handleFilamentoChange(index, "peso", "0")
+                                                        }
+                                                        className="w-full py-2 px-3 border-2 border-dashed border-teal-300 rounded-lg text-teal-600 hover:bg-teal-50 transition-colors"
+                                                    >
+                                                        + Adicionar Filamento {index + 1}
+                                                    </button>
+                                                ) : null}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        Você pode adicionar até 4 filamentos para cálculos com múltiplas cores
+                                    </p>
+                                </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Peso da Peça (gramas)
+                                        Perda de Material (g)
                                     </label>
                                     <input
                                         type="number"
-                                        value={dados.pesoGramas}
+                                        value={dados.pesoPerdaMaterial}
                                         onChange={(e) =>
-                                            handleInputChange("pesoGramas", e.target.value)
+                                            handleInputChange("pesoPerdaMaterial", e.target.value)
                                         }
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
                                         step="0.1"
                                     />
                                     <p className="text-xs text-gray-500 mt-1">
-                                        Inclua peso dos suportes e brim/raft
+                                        Caso for usar a Bambu
                                     </p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Preço por Grama (R$)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={dados.precoGramaMateria}
-                                            onChange={(e) =>
-                                                handleInputChange("precoGramaMateria", e.target.value)
-                                            }
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
-                                            step="0.01"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Perda de Material (%)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={dados.percentualPerdaMateria}
-                                            onChange={(e) =>
-                                                handleInputChange("percentualPerdaMateria", e.target.value)
-                                            }
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
-                                            step="0.1"
-                                        />
-                                    </div>
                                 </div>
                             </div>
                         </div>

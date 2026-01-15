@@ -8,6 +8,7 @@ import {
     MdCompareArrows,
     MdArrowDropDown,
     MdCalculate,
+    MdHelpOutline,
 } from "react-icons/md";
 
 import { NavLink } from "react-router-dom";
@@ -102,6 +103,12 @@ export default function Aside() {
                     <NavLink to="/calculadora-3d" className={baseStyle}>
                         <MdCalculate size={28} />
                         Calculadora 3D
+                    </NavLink>
+
+                    {/* Manual */}
+                    <NavLink to="/manual" className={baseStyle}>
+                        <MdHelpOutline size={28} />
+                        Manual
                     </NavLink>
 
                 </ul>

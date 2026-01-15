@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.0.55:8000/api/", //apenas para teste, alterar dependendo do ip do pc
+  baseURL: "http://192.168.0.54:8000/api/", //apenas para teste, alterar dependendo do ip do pc
   withCredentials: false, // ou true se usar sessões/cookies
 });
 

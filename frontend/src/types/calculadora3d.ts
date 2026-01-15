@@ -7,11 +7,15 @@ export interface Impressora {
   custoManutencaoMensal: number;
 }
 
+export interface Filamento {
+  peso: number; // em gramas
+  preco: number; // preço por kg
+}
+
 export interface CalculadoraPrecosData {
   // Materiais
-  pesoGramas: number;
-  precoGramaMateria: number;
-  percentualPerdaMateria: number;
+  filamentos: [Filamento, Filamento | null, Filamento | null, Filamento | null];
+  pesoPerdaMaterial: number;
 
   // Energia
   tempoImpressaoHoras: number;
