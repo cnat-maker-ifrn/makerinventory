@@ -9,6 +9,8 @@ import Lote from "./pages/Lote";
 import Emprestimo from "./pages/Emprestimo";
 import Saida from "./pages/Saida";
 import Movimentacao from "./pages/Movimentacao";
+import Calculadora3D from "./pages/Calculadora3D";
+import Manual from "./pages/Manual";
 import Login from "./pages/Login";
 
 export default function App() {
@@ -17,6 +19,7 @@ export default function App() {
       <Routes>
 
         <Route path="/login" element={<Login />} />
+        <Route path="/manual" element={<Manual />} />
 
         <Route path="/" element={<Base />}>
 
@@ -29,6 +32,7 @@ export default function App() {
           <Route path="emprestimos" element={<Emprestimo />} />
           <Route path="saidas" element={<Saida />} />
           <Route path="movimentacoes" element={<Movimentacao />} />
+          <Route path="calculadora-3d" element={<Calculadora3D />} />
 
         </Route>
 

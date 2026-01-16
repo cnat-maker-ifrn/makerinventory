@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { getItens } from "../../api/itemApi";
 import type { Item } from "../../types/item";
 
-export function useItens() {
+export function useItens(
+  search = "",
+  data_inicio = "",
+  data_fim = ""
+) {
   const [dados, setDados] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -16,7 +20,7 @@ export function useItens() {
       try {
         setLoading(true);
 
-        const response = await getItens(page);
+        const response = await getItens(page, search, data_inicio, data_fim);
 
         // Lidar com resposta que pode ser array ou PaginatedResponse
         const results = Array.isArray(response) 
@@ -60,7 +64,7 @@ export function useItens() {
     }
 
     carregar();
-  }, [page]);
+  }, [page, search, data_inicio, data_fim]);
 
   const goToNextPage = () => {
     if (hasNext) setPage(p => p + 1);

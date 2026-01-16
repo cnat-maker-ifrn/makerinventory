@@ -8,6 +8,8 @@ import AddItemButton from "../components/item/AddItemButton";
 export default function Item() {
   const { isAuthenticated } = useAuth();
   const [busca, setBusca] = useState("");
+  const [dataInicio, setDataInicio] = useState<string>("");
+  const [dataFim, setDataFim] = useState<string>("");
 
   return (
     <>
@@ -19,13 +21,36 @@ export default function Item() {
         placeholder="Buscar item..."
       />
 
+      <div className="flex flex-col gap-4 mt-4 mb-6">
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-2">Data Início</label>
+            <input
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-2">Data Fim</label>
+            <input
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+            />
+          </div>
+        </div>
+      </div>
+
       {isAuthenticated && (
         <div className="flex mb-4">
           <AddItemButton />
         </div>
       )}
 
-      <TableItem search={busca} />
+      <TableItem search={busca} data_inicio={dataInicio} data_fim={dataFim} />
     </>
   );
 }

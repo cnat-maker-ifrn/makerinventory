@@ -5,9 +5,11 @@ import EditLoteModal from "./EditLoteModal";
 
 interface Props {
   search: string;
+  data_inicio: string;
+  data_fim: string;
 }
 
-export default function TableLotes({ search }: Props) {
+export default function TableLotes({ search, data_inicio, data_fim }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [loteSelecionado, setLoteSelecionado] = useState<any>(null);
 
@@ -20,7 +22,7 @@ export default function TableLotes({ search }: Props) {
     hasPrevious, 
     goToNextPage, 
     goToPreviousPage 
-  } = useLotes();
+  } = useLotes(search, data_inicio, data_fim);
 
   const handleEditClick = (lote: any) => {
     setLoteSelecionado(lote);
@@ -96,7 +98,7 @@ export default function TableLotes({ search }: Props) {
                 <td className="px-4 py-2">{lote.fornecedor ?? "-"}</td>
 
                 {/* Quantidade */}
-                <td className="px-4 py-2">{lote.quantidade}</td>
+                <td className="px-4 py-2">{lote.quantidade}{lote.produto?.unidade_de_medida?.toLowerCase() ?? ""}</td>
 
                 {/* Preço */}
                 <td className="px-4 py-2">

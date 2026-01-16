@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { getMovimentacoes } from "../../api/movimentacaoApi";
 import type { Movimentacao } from "../../types/movimentacao";
 
-export function useMovimentacoes() {
+export function useMovimentacoes(
+  search = "",
+  data_inicio = "",
+  data_fim = "",
+  tipo_movimentacao = ""
+) {
   const [dados, setDados] = useState<Movimentacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -16,7 +21,7 @@ export function useMovimentacoes() {
       try {
         setLoading(true);
 
-        const response = await getMovimentacoes(page);
+        const response = await getMovimentacoes(page, search, data_inicio, data_fim, tipo_movimentacao);
 
         // Lidar com resposta que pode ser array ou PaginatedResponse
         const results = Array.isArray(response) 
@@ -51,7 +56,7 @@ export function useMovimentacoes() {
     }
 
     carregar();
-  }, [page]);
+  }, [page, search, data_inicio, data_fim, tipo_movimentacao]);
 
   const goToNextPage = () => {
     if (hasNext) setPage(p => p + 1);

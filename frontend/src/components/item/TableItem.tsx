@@ -6,9 +6,11 @@ import { type Item } from "../../types/item";
 
 interface Props {
   search: string;
+  data_inicio: string;
+  data_fim: string;
 }
 
-export default function TableItem({ search }: Props) {
+export default function TableItem({ search, data_inicio, data_fim }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState<Item | null>(null);
 
@@ -21,7 +23,7 @@ export default function TableItem({ search }: Props) {
     hasPrevious, 
     goToNextPage, 
     goToPreviousPage 
-  } = useItens();
+  } = useItens(search, data_inicio, data_fim);
 
   const handleEditClick = (item: Item) => {
     setItemSelecionado(item);

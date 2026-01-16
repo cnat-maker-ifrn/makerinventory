@@ -1,22 +1,28 @@
 import { useMemo } from "react";
-import { useSaidas } from "../../hooks/saida/useSaidas";
 
 interface Props {
   search: string;
+  dados: any[];
+  loading: boolean;
+  erro: string;
+  page: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  onNextPage: () => void;
+  onPreviousPage: () => void;
 }
 
-export default function TableSaida({ search }: Props) {
-  const { 
-    dados, 
-    loading, 
-    erro, 
-    page, 
-    hasNext, 
-    hasPrevious, 
-    goToNextPage, 
-    goToPreviousPage 
-  } = useSaidas();
-
+export default function TableSaida({ 
+  search, 
+  dados, 
+  loading, 
+  erro, 
+  page, 
+  hasNext, 
+  hasPrevious, 
+  onNextPage, 
+  onPreviousPage 
+}: Props) {
   function formatarData(iso: string) {
     return new Date(iso).toLocaleString("pt-BR");
   }
@@ -76,7 +82,7 @@ export default function TableSaida({ search }: Props) {
                     </td>
                     <td className="px-4 py-2">{nome}</td>
                     <td className="px-4 py-2">{codigo}</td>
-                    <td className="px-4 py-2">{s.quantidade}</td>
+                    <td className="px-4 py-2">{s.quantidade}{isItem ? "un" : s.lote_unidade_de_medida?.toLowerCase() ?? ""}</td>
                     <td className="px-4 py-2">{s.responsavel}</td>
                     <td className="px-4 py-2">
                       {formatarData(s.data_saida)}
@@ -92,7 +98,7 @@ export default function TableSaida({ search }: Props) {
       {/* 🔽 PAGINAÇÃO */}
       <div className="flex justify-center gap-4 mt-6">
         <button
-          onClick={goToPreviousPage}
+          onClick={onPreviousPage}
           disabled={!hasPrevious}
           className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
         >
@@ -104,7 +110,7 @@ export default function TableSaida({ search }: Props) {
         </span>
 
         <button
-          onClick={goToNextPage}
+          onClick={onNextPage}
           disabled={!hasNext}
           className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
         >

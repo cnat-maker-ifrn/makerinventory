@@ -9,4 +9,5 @@ export interface Movimentacao {
     saida: number | null;
     emprestimo: number | null;
     devolucao: number | null;
+    unidade_de_medida?: string | null;
 }

@@ -2,8 +2,21 @@ import { useState } from "react";
 import { MdAdd } from "react-icons/md";
 import AddLoteModal from "../lote/AddLoteModal";
 
-export default function AddLoteButton() {
+interface AddLoteButtonProps {
+  onCreated?: () => void;
+}
+
+export default function AddLoteButton({ onCreated }: AddLoteButtonProps) {
   const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSuccess = () => {
+    handleClose();
+    onCreated?.();
+  };
 
   return (
     <>
@@ -15,7 +28,7 @@ export default function AddLoteButton() {
         Novo Lote
       </button>
 
-      <AddLoteModal open={open} onClose={() => setOpen(false)} />
+      <AddLoteModal open={open} onClose={handleClose} onSuccess={handleSuccess} />
     </>
   );
 }

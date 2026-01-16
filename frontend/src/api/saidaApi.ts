@@ -4,10 +4,20 @@ import type { PaginatedResponse } from "../types/pagination";
 
 /** Busca todas as saídas */
 export async function getSaidas(
-  page = 1
+  page = 1,
+  search = "",
+  data_inicio = "",
+  data_fim = ""
 ): Promise<PaginatedResponse<Saida>> {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  
+  if (search) params.append("search", search);
+  if (data_inicio) params.append("data_inicio", data_inicio);
+  if (data_fim) params.append("data_fim", data_fim);
+
   const response = await api.get<PaginatedResponse<Saida>>(
-    `saidas/?page=${page}`
+    `saidas/?${params.toString()}`
   );
   return response.data;
 }
