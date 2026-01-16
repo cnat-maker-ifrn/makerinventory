@@ -69,7 +69,7 @@ export default function EditLoteModal({
 
             if (dataValidade) {
                 form.append("data_validade", dataValidade);
-            } 
+            }
 
             if (foto) {
                 form.append("foto", foto);
@@ -124,7 +124,12 @@ export default function EditLoteModal({
                         <input
                             type="file"
                             accept="image/*"
-                            className="w-full border rounded px-3 py-2"
+                            className="w-full border rounded px-3 py-2 
+             file:mr-5 file:py-1 file:px-4 
+             file:rounded-border file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100"
                             onChange={handleFotoChange}
                             disabled={loading}
                         />

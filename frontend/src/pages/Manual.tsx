@@ -87,14 +87,14 @@ export default function Manual() {
             {/* Categoria */}
             <section id="categoria" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">1. Categoria</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é uma Categoria?</h3>
                   <p className="leading-relaxed">
-                    Uma <strong>Categoria</strong> é a classificação mais geral e abrangente para organizar seus produtos no inventário. 
-                    Serve como o primeiro nível de organização, agrupando tipos principais de itens. Por exemplo: 
-                    <strong> Impressoras 3D, Filamentos, Materiais, Ferramentas, Eletrônicos</strong>, etc.
+                    Uma <strong>Categoria</strong> é a classificação mais geral e abrangente para organizar seus produtos no inventário.
+                    Serve como o primeiro nível de organização, agrupando tipos principais de itens. Por exemplo:
+                    <strong> Consumíveis, Móveis, Ferramentas, Eletrônicos</strong>, etc.
                   </p>
                 </div>
 
@@ -102,17 +102,15 @@ export default function Manual() {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Cadastrar uma Categoria?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
-                    <li>Procure pela opção de cadastro de categorias (geralmente no menu de administração)</li>
-                    <li>Clique no botão <strong>Adicionar Nova Categoria</strong></li>
-                    <li>Preencha o nome da categoria (ex: "Filamentos")</li>
-                    <li>Opcionalmente, adicione uma descrição</li>
+                    <li>Clique no botão <strong>+ Nova Categoria</strong></li>
+                    <li>Preencha o nome da categoria (ex: "Eletrônicos")</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Mantenha suas categorias simples e bem definidas. 
+                    <strong>💡 Dica:</strong> Mantenha suas categorias simples e bem definidas.
                     Use categorias amplas que você possa subdividir em subcategorias mais específicas.
                   </p>
                 </div>
@@ -122,15 +120,15 @@ export default function Manual() {
             {/* Subcategoria */}
             <section id="subcategoria" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">2. Subcategoria</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é uma Subcategoria?</h3>
                   <p className="leading-relaxed">
-                    Uma <strong>Subcategoria</strong> é um nível mais específico de classificação que fica dentro de uma Categoria. 
-                    Enquanto a categoria é ampla, a subcategoria divide aquela categoria em tipos mais específicos. 
-                    Por exemplo, dentro da categoria <strong>"Filamentos"</strong>, você pode ter subcategorias como 
-                    <strong> PLA, ABS, PETG, TPU</strong>, etc.
+                    Uma <strong>Subcategoria</strong> é um nível mais específico de classificação que fica dentro de uma Categoria.
+                    Enquanto a categoria é ampla, a subcategoria divide aquela categoria em tipos mais específicos.
+                    Por exemplo, dentro da categoria <strong>"Consumíveis"</strong>, você pode ter subcategorias como
+                    <strong> Filamentos, Resinas, MDF</strong>, etc.
                   </p>
                 </div>
 
@@ -138,18 +136,16 @@ export default function Manual() {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Cadastrar uma Subcategoria?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
-                    <li>Procure pela opção de cadastro de subcategorias</li>
-                    <li>Clique no botão <strong>Adicionar Nova Subcategoria</strong></li>
-                    <li>Selecione a <strong>Categoria</strong> pai (ex: "Filamentos")</li>
-                    <li>Preencha o nome da subcategoria (ex: "PLA")</li>
-                    <li>Opcionalmente, adicione uma descrição</li>
+                    <li>Clique no botão <strong>+ Nova Subcategoria</strong></li>
+                    <li>Selecione a <strong>Categoria</strong> pai (ex: "Consumíveis")</li>
+                    <li>Preencha o nome da subcategoria (ex: "Filamentos")</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
 
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-                  <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Sempre crie uma subcategoria dentro de uma categoria. 
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
+                  <p className="text-sm text-yellow-900">
+                    <strong>⚠ Obs.:</strong> Sempre crie uma subcategoria dentro de uma categoria.
                     Você não pode criar um produto diretamente em uma categoria sem uma subcategoria.
                   </p>
                 </div>
@@ -159,34 +155,46 @@ export default function Manual() {
             {/* Produto */}
             <section id="produto" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">3. Produto</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é um Produto?</h3>
                   <p className="leading-relaxed">
-                    Um <strong>Produto</strong> é a representação de um item específico que você comercializa ou utiliza. 
-                    Está vinculado a uma subcategoria e define o tipo exato do que você está gerenciando. 
-                    Por exemplo, dentro da subcategoria "PLA", você pode ter produtos como 
-                    <strong> "Filamento PLA Vermelho 1kg", "Filamento PLA Azul 500g"</strong>, etc.
+                    Um <strong>Produto</strong> é a representação de um item específico que você comercializa ou utiliza.
+                    Está vinculado a uma subcategoria e define o tipo exato do que você está gerenciando.
+                    Por exemplo, dentro da subcategoria "Filamentos", você pode ter produtos como
+                    <strong> "Filamento PLA Vermelho 1kg", "Filamento PLA Azul 1kg"</strong>, etc.
                   </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Tipos de Produtos</h3>
+                  <div className="space-y-3 ml-4">
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <p><strong>Produto Unitário:</strong> São vendidos em unidade (ex: Impressoras, Desktops e Notebooks)</p>
+                    </div>
+                    <div className="border-l-4 border-green-500 pl-4">
+                      <p><strong>Produto Fracionado:</strong> São vendidos em quantidade(ex: Filamento PLA e Filamentos ABS)</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Cadastrar um Produto?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
-                    <li>Clique no botão <strong>Adicionar Novo Produto</strong></li>
+                    <li>Clique no botão <strong>+ Novo Produto</strong></li>
+                    <li>Selecione o <strong>Tipo do Produto</strong></li>
                     <li>Preencha o <strong>Nome do Produto</strong> (ex: "Filamento PLA Vermelho 1kg")</li>
-                    <li>Selecione a <strong>Categoria</strong> e depois a <strong>Subcategoria</strong></li>
-                    <li>Adicione o <strong>SKU</strong> (código identificador único, opcional)</li>
-                    <li>Preencha outras informações relevantes (descrição, preço de custo, etc)</li>
+                    <li>Selecione a <strong>Subcategoria</strong></li>
+                    <li>Adicone a <strong>Quantidade Mínima</strong>(Diz o mínimo que deve ter do produto no laboratório)</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
 
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-                  <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Um produto é apenas a definição do que você está controlando. 
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
+                  <p className="text-sm text-yellow-900">
+                    <strong>⚠ Obs.:</strong> Um produto é apenas a definição do que você está controlando.
                     O estoque real é controlado através de <strong>Itens</strong> e <strong>Lotes</strong>.
                   </p>
                 </div>
@@ -196,35 +204,17 @@ export default function Manual() {
             {/* Item */}
             <section id="item" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">4. Item</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é um Item?</h3>
                   <p className="leading-relaxed">
-                    Um <strong>Item</strong> é uma unidade individual de um Produto no seu inventário. 
-                    Cada item possui um <strong>número de série único</strong> (UUID) que o identifica especificamente. 
-                    Itens são usados para rastrear produtos de forma individualizada, especialmente útil para 
-                    produtos com alto valor ou que precisam de rastreamento específico. Por exemplo, 
+                    Um <strong>Item</strong> é uma unidade individual de um Produto no seu inventário.
+                    Cada item possui um <strong>número de série único</strong> (UUID) que o identifica especificamente.
+                    Itens são usados para rastrear produtos de forma individualizada, especialmente útil para
+                    produtos com alto valor ou que precisam de rastreamento específico. Por exemplo,
                     se você tem um produto "Impressora 3D Modelo X", cada impressora física é um Item diferente.
                   </p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Tipos de Produtos e Itens</h3>
-                  <div className="space-y-3 ml-4">
-                    <div className="border-l-4 border-green-500 pl-4">
-                      <p><strong>Produto Unitário:</strong> Cada unidade é um Item separado (ex: Impressoras, Computadores)</p>
-                    </div>
-                    <div className="border-l-4 border-green-500 pl-4">
-                      <p><strong>Produto em Lote:</strong> Agrupado em lotes, não tem itens individuais (ex: Filamentos vendidos em rolos)</p>
-                    </div>
-                    <div className="border-l-4 border-green-500 pl-4">
-                      <p><strong>Produto Baixo Estoque:</strong> Usado para materiais que precisam alertar quando acabam (ex: Tinta, Papel)</p>
-                    </div>
-                    <div className="border-l-4 border-green-500 pl-4">
-                      <p><strong>Produto Fracionado:</strong> Pode ser dividido em quantidades menores (ex: Serviços de impressão)</p>
-                    </div>
-                  </div>
                 </div>
 
                 <div>
@@ -232,18 +222,19 @@ export default function Manual() {
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
                     <li>Clique em <strong>Itens</strong> no submenu</li>
-                    <li>Clique no botão <strong>Adicionar Novo Item</strong></li>
+                    <li>Clique no botão <strong>+ Novo Item</strong></li>
                     <li>Selecione o <strong>Produto</strong> ao qual o item pertence</li>
                     <li>O sistema gerará automaticamente um <strong>UUID único</strong> para o item</li>
-                    <li>Adicione informações como data de entrada, localização, etc</li>
+                    <li>Adicione o <strong>Preço</strong></li>
+                    <li>Adicione o proprietário (É do Cnat Maker ou é do IFRN)</li>
+                    <li> Adicione uma <strong>Foto</strong> daquele item em específico (opcional)</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Itens são para produtos de alto valor que você quer rastrear individualmente. 
-                    Para produtos em grande quantidade (como filamentos), use Lotes em vez de Itens.
+                    <strong>💡 Dica:</strong> Quando for colocar uma foto, coloque a daquele item em específico e não uma genérica da internet.
                   </p>
                 </div>
               </div>
@@ -252,15 +243,14 @@ export default function Manual() {
             {/* Lote */}
             <section id="lote" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">5. Lote</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é um Lote?</h3>
                   <p className="leading-relaxed">
-                    Um <strong>Lote</strong> é uma agrupação de múltiplas unidades de um Produto que são gerenciadas juntas. 
-                    Ao contrário de Itens (que são individuais), Lotes permitem que você controle quantidades sem rastrear 
-                    cada unidade separadamente. Por exemplo, se você recebe 100 rolos de filamento, você cria um Lote com 100 unidades 
-                    em vez de criar 100 Itens diferentes.
+                    <strong>Lotes</strong> são produtos medidos em volume ou peso.
+                    Ao contrário de Itens (que são individuais), Lotes permitem que você controle quantidades de uma única unidade. Por exemplo, 1kg de Filamento. Você controla quanto do conteúdo ainda resta naquele lote.
+
                   </p>
                 </div>
 
@@ -295,7 +285,7 @@ export default function Manual() {
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Use Lotes para produtos com grande volume e uso frequente. 
+                    <strong>💡 Dica:</strong> Use Lotes para produtos com grande volume e uso frequente.
                     O sistema automaticamente reduz a quantidade do lote quando há saídas ou empréstimos.
                   </p>
                 </div>
@@ -305,14 +295,13 @@ export default function Manual() {
             {/* Movimentação */}
             <section id="movimentacao" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">6. Movimentações</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é uma Movimentação?</h3>
                   <p className="leading-relaxed">
-                    Uma <strong>Movimentação</strong> é um registro de transferência de produtos entre locais diferentes 
-                    no seu inventário. Serve para rastrear quando um produto é movido de um local para outro, 
-                    sem que ele saia do seu controle. Por exemplo, mover filamento da estante A para a estante B, 
+                    Uma <strong>Movimentação</strong> é um registro de transferências de produtos. Serve para rastrear quando um produto é movido de um local para outro,
+                    sem que ele saia do seu controle. Por exemplo, mover filamento da estante A para a estante B,
                     ou transferir uma impressora de um departamento para outro.
                   </p>
                 </div>
@@ -348,8 +337,7 @@ export default function Manual() {
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Movimentações são importantes para rastrear a localização física de seus produtos. 
-                    Sempre registre uma movimentação quando mudar um item de lugar para manter o histórico atualizado.
+                    <strong>💡 Dica:</strong> Movimentações são importantes para rastrear seus produtos. São criadas automaticamente quando um empréstimo é criado, ocorre uma devolução, um item ou lote é criado, ou uma saída é registrada
                   </p>
                 </div>
               </div>
@@ -358,14 +346,14 @@ export default function Manual() {
             {/* Saída */}
             <section id="saida" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">7. Saídas</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é uma Saída?</h3>
                   <p className="leading-relaxed">
-                    Uma <strong>Saída</strong> é um registro de quando um produto permanentemente deixa seu inventário. 
-                    Diferente de uma Movimentação (que apenas muda de local) ou de um Empréstimo (que deve retornar), 
-                    uma saída é definitiva. Por exemplo: venda de um produto, consumo interno de material, ou descarte de itens danificados.
+                    Uma <strong>Saída</strong> é um registro de quando um item ou lote permanentemente deixa seu inventário.
+                    Diferente de um Empréstimo (que deve retornar),
+                    uma saída é definitiva. Por exemplo: Consumo interno de material e descarte de itens danificados.
                   </p>
                 </div>
 
@@ -404,7 +392,7 @@ export default function Manual() {
 
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-4">
                   <p className="text-sm text-red-900">
-                    <strong>⚠️ Importante:</strong> Saídas são permanentes. O estoque será reduzido imediatamente. 
+                    <strong>⚠️ Importante:</strong> Saídas são permanentes. O estoque será reduzido imediatamente.
                     Se você quer registrar uma retirada temporária, use um Empréstimo em vez de uma Saída.
                   </p>
                 </div>
@@ -414,14 +402,14 @@ export default function Manual() {
             {/* Empréstimo */}
             <section id="emprestimo" className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">8. Empréstimos</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é um Empréstimo?</h3>
                   <p className="leading-relaxed">
-                    Um <strong>Empréstimo</strong> é um registro de quando um produto é temporariamente retirado do inventário 
-                    com a intenção de ser devolvido. Diferente de uma Saída (que é permanente), um empréstimo rastreia 
-                    quando o item saiu e quando deve retornar. Por exemplo: emprestar uma ferramenta para um cliente, 
+                    Um <strong>Empréstimo</strong> é um registro de quando um produto é temporariamente retirado do inventário
+                    com a intenção de ser devolvido. Diferente de uma Saída (que é permanente), um empréstimo rastreia
+                    quando o item saiu e quando deve retornar. Por exemplo: emprestar uma ferramenta para um cliente,
                     ceder uma máquina para teste, ou retirar equipamento para conserto.
                   </p>
                 </div>
@@ -471,7 +459,7 @@ export default function Manual() {
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> O sistema avisa quando um empréstimo está vencido (passou da data de devolução). 
+                    <strong>💡 Dica:</strong> O sistema avisa quando um empréstimo está vencido (passou da data de devolução).
                     Você pode configurar notificações para ser avisado sobre devoluções pendentes.
                   </p>
                 </div>
@@ -481,10 +469,10 @@ export default function Manual() {
             {/* Resumo */}
             <section className="bg-green-50 rounded-lg shadow-md p-8 border-l-4 border-green-500">
               <h2 className="text-2xl font-bold text-green-700 mb-4">📋 Resumo da Hierarquia</h2>
-              
+
               <div className="space-y-4 text-gray-700">
                 <p className="text-lg">A estrutura do inventário segue esta hierarquia:</p>
-                
+
                 <div className="bg-white p-4 rounded border border-green-200 font-mono text-sm">
                   <div>Categoria (ex: "Filamentos")</div>
                   <div className="ml-4">└─ Subcategoria (ex: "PLA")</div>

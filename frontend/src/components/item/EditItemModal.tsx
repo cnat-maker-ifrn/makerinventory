@@ -59,7 +59,7 @@ export default function EditItemModal({
       form.append("preco", preco);
       form.append("eh_do_cnatmaker", proprietario);
       form.append("eh_quebrado", String(quebrado));
-      
+
       if (foto) {
         form.append("imagem", foto);
       }
@@ -113,7 +113,12 @@ export default function EditItemModal({
             <input
               type="file"
               accept="image/*"
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded px-3 py-2 
+             file:mr-5 file:py-1 file:px-4 
+             file:rounded-border file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100"
               onChange={handleFotoChange}
               disabled={loading}
             />
@@ -174,6 +179,9 @@ export default function EditItemModal({
               onChange={(e) => setPreco(e.target.value)}
               disabled={loading}
             />
+            <span className="absolute right-3 text-gray-500 pointer-events-none">
+              R$
+            </span>
           </div>
 
           {/* Botões */}
