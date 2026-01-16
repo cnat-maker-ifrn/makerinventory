@@ -195,7 +195,8 @@ export default function Manual() {
                 <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
                   <p className="text-sm text-yellow-900">
                     <strong>⚠ Obs.:</strong> Um produto é apenas a definição do que você está controlando.
-                    O estoque real é controlado através de <strong>Itens</strong> e <strong>Lotes</strong>.
+                    O estoque real é controlado através de <strong>Itens</strong> e <strong>Lotes</strong>;<br></br>
+                    Cuidado com os nomes que colocar nos produtos, pois ao cadastrar um item ou lote, os que estiverem vinculados a este produto terão o nome dele e ao criar um item ou lote eles automaticamente criam uma movimentação, e esta <strong>só pode ser apagada por um admin</strong>, logo, evite erros de digitação ou brincadeiras nos nomes dos produtos.
                   </p>
                 </div>
               </div>
@@ -218,6 +219,20 @@ export default function Manual() {
                 </div>
 
                 <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Características de um Item</h3>
+                  <ul className="list-disc list-inside space-y-2 ml-4">
+                    <li><strong>Foto do item:</strong> Foto de um item em específico</li>
+                    <li><strong>Nome do item:</strong> Mesmo nome do produto ao qual está vinculado</li>
+                    <li><strong>Código do Item:</strong> Identificador único do Item (ex: "ITM-EBF99F41D0")</li>
+                    <li><strong>Proprietário:</strong> É do Cnat Maker ou é do IFRN</li>
+                    <li><strong>Disponibilidade:</strong> Diz se o item ainda está no laboratório</li>
+                    <li><strong>Emprestado:</strong> Diz se o item do laboratório foi emprestado a alguém</li>
+                    <li><strong>Preço:</strong> Preço do item</li>
+                    <li><strong>Data de Entrada:</strong> Quando o item foi adicionado ao estoque</li>
+                  </ul>
+                </div>
+
+                <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Cadastrar um Item?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
@@ -234,7 +249,7 @@ export default function Manual() {
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Quando for colocar uma foto, coloque a daquele item em específico e não uma genérica da internet.
+                    <strong>💡 Dica:</strong> Quando for colocar uma foto, coloque a daquele item em específico e não uma genérica da internet;<br></br>
                   </p>
                 </div>
               </div>
@@ -261,7 +276,7 @@ export default function Manual() {
                     <li><strong>Quantidade:</strong> Número total de unidades no lote</li>
                     <li><strong>Data de Entrada:</strong> Quando o lote foi recebido</li>
                     <li><strong>Data de Validade:</strong> Quando o lote vence (se aplicável)</li>
-                    <li><strong>Fornecedor:</strong> De quem foi adquirido o lote</li>
+                    <li><strong>Fornecedor:</strong> De quem foi adquirido o lote (Marca)</li>
                     <li><strong>Custo Unitário:</strong> Preço de cada unidade no lote</li>
                   </ul>
                 </div>
