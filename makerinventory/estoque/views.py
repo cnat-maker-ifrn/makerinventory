@@ -115,6 +115,17 @@ class ItemViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(itens, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=["post"], url_path="gerar-qrcode")
+    def gerar_qrcode(self, request, pk=None):
+        item = self.get_object()
+        item.gerar_qrcode()
+        serializer = self.get_serializer(item)
+        return Response({
+            "success": True,
+            "message": "QR Code gerado com sucesso",
+            "qrcode_url": item.qrcode.url if item.qrcode else None
+        })
+
 class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
     queryset = ProdutoFracionado.objects.prefetch_related("lotes").all()
     serializer_class = ProdutoFracionadoSerializer
@@ -193,6 +204,17 @@ class LoteViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(dados)
+
+    @action(detail=True, methods=["post"], url_path="gerar-qrcode")
+    def gerar_qrcode(self, request, pk=None):
+        lote = self.get_object()
+        lote.gerar_qrcode()
+        serializer = self.get_serializer(lote)
+        return Response({
+            "success": True,
+            "message": "QR Code gerado com sucesso",
+            "qrcode_url": lote.qrcode.url if lote.qrcode else None
+        })
 
 class SolicitanteViewSet(viewsets.ModelViewSet):
     queryset = Solicitante.objects.all()

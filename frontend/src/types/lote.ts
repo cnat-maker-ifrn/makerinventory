@@ -5,12 +5,13 @@ export interface Lote {
     foto: string | null;
     preco: number;
     fornecedor: string | null;
-    produto: ProdutoFracionado; // read-only
-    produto_id?: number;        // write-only
+    produto: ProdutoFracionado; 
+    produto_id?: number;        
     quantidade: number;
     data_validade: string | null;
     data_entrada: string;
     codigo: string;
     nome: string;
-    unidade_de_medida?: string; // unidade do produto fracionado
+    unidade_de_medida?: string;
+    qrcode?: string | null;
 }

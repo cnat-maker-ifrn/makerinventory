@@ -78,7 +78,7 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = "__all__"
-        read_only_fields = ["codigo", "disponibilidade", "eh_emprestado"]
+        read_only_fields = ["codigo", "disponibilidade", "eh_emprestado", "qrcode"]
 
 
 class ProdutoFracionadoSerializer(serializers.ModelSerializer):
@@ -111,6 +111,7 @@ class LoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lote
         fields = "__all__"
+        read_only_fields = ["codigo", "nome", "qrcode"]
 
 
 class SolicitanteSerializer(serializers.ModelSerializer):

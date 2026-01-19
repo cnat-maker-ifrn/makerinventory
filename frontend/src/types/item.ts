@@ -13,6 +13,7 @@ export interface Item {
     eh_quebrado: boolean;
     data_entrada: string;
     eh_emprestado: boolean;
+    qrcode?: string | null;
 }
 
 

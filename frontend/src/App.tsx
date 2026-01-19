@@ -12,6 +12,7 @@ import Movimentacao from "./pages/Movimentacao";
 import Calculadora3D from "./pages/Calculadora3D";
 import Manual from "./pages/Manual";
 import Login from "./pages/Login";
+import QRCodeScanner from "./pages/QRCodeScanner";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/manual" element={<Manual />} />
+        <Route path="/qrcode-scanner/:codigo" element={<QRCodeScanner />} />
 
         <Route path="/" element={<Base />}>
 

@@ -1,8 +1,10 @@
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdQrCode2 } from "react-icons/md";
 import { useState } from "react";
 import { useLotes } from "../../hooks/lote/useLotes";
 import { useAuth } from "../../hooks/autenticacao/useAuth";
 import EditLoteModal from "./EditLoteModal";
+import QRCodeModal from "../qrcode/QRCodeModal";
+import { gerarQRCodeLote } from "../../api/qrcodeApi";
 
 interface Props {
   search: string;
@@ -13,7 +15,15 @@ interface Props {
 export default function TableLotes({ search, data_inicio, data_fim }: Props) {
   const { isAuthenticated } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
   const [loteSelecionado, setLoteSelecionado] = useState<any>(null);
+  const [loteQR, setLoteQR] = useState<{
+    id: number;
+    nome: string;
+    codigo: string;
+    foto?: string | null;
+    qrcode?: string | null;
+  } | null>(null);
 
   const { 
     dados: lotes, 
@@ -39,6 +49,17 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
   const handleEditSuccess = () => {
     goToPreviousPage();
     goToNextPage();
+  };
+
+  const handleQRClick = (lote: any) => {
+    setLoteQR({
+      id: lote.id,
+      nome: lote.produto?.nome ?? lote.nome,
+      codigo: lote.codigo,
+      foto: lote.foto,
+      qrcode: lote.qrcode,
+    });
+    setQrOpen(true);
   };
 
   if (loading) return <div>Carregando lotes...</div>;
@@ -121,7 +142,14 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
 
                 {/* Ações */}
                 {isAuthenticated && (
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 flex gap-2">
+                    <button 
+                      onClick={() => handleQRClick(lote)}
+                      className="text-green-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
+                      title="Gerar/Exibir QR Code"
+                    >
+                      <MdQrCode2 size={24} />
+                    </button>
                     <button 
                       onClick={() => handleEditClick(lote)}
                       className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
@@ -172,6 +200,14 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
         lote={loteSelecionado}
         onClose={handleEditClose}
         onSuccess={handleEditSuccess}
+      />
+
+      <QRCodeModal
+        open={qrOpen}
+        onClose={() => setQrOpen(false)}
+        item={loteQR}
+        type="lote"
+        onGenerateQR={gerarQRCodeLote}
       />
     </>
   );

@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 import uuid
+import qrcode
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 
@@ -130,6 +133,7 @@ class Item(models.Model):
     eh_quebrado = models.BooleanField(default=False)
     data_entrada = models.DateTimeField(auto_now_add=True)
     eh_emprestado = models.BooleanField(default=False)
+    qrcode = models.ImageField(upload_to='img/qrcodes/itens', blank=True, null=True)
 
     class Meta:
         verbose_name = "Item"
@@ -144,6 +148,27 @@ class Item(models.Model):
             self.codigo = f"ITM-{uuid.uuid4().hex[:10].upper()}"
 
         super().save(*args, **kwargs)
+
+    def gerar_qrcode(self):
+        """Gera QR code que redireciona para a página de detalhes do item"""
+        if not self.qrcode:
+            # URL que será codificada no QR code
+            # Ajuste o domínio conforme necessário para produção
+            url_qrcode = f"http://192.168.0.54:5173/qrcode-scanner/{self.codigo}"
+            
+            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr.add_data(url_qrcode)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            buffer.seek(0)
+            
+            file_name = f"item_{self.codigo}.png"
+            self.qrcode.save(file_name, ContentFile(buffer.getvalue()), save=False)
+            self.save()
 
     def __str__(self):
         return f"{self.nome} ({self.codigo})"
@@ -193,6 +218,7 @@ class Lote(models.Model):
     data_entrada = models.DateTimeField(auto_now_add=True)
     codigo = models.CharField(max_length=30, unique=True, editable=False)
     nome = models.CharField(max_length=100, editable=False)
+    qrcode = models.ImageField(upload_to='img/qrcodes/lotes', blank=True, null=True)
 
     class Meta:
         verbose_name = "Lote"
@@ -207,6 +233,26 @@ class Lote(models.Model):
             self.codigo = f"LOT-{uuid.uuid4().hex[:10].upper()}"
 
         super().save(*args, **kwargs)
+
+    def gerar_qrcode(self):
+        """Gera QR code que redireciona para a página de detalhes do lote"""
+        if not self.qrcode:
+            # Ajustar o domínio conforme necessário para produção
+            url_qrcode = f"http://192.168.0.54:5173/qrcode-scanner/{self.codigo}"
+            
+            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr.add_data(url_qrcode)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            buffer = BytesIO()
+            img.save(buffer, format='PNG')
+            buffer.seek(0)
+            
+            file_name = f"lote_{self.codigo}.png"
+            self.qrcode.save(file_name, ContentFile(buffer.getvalue()), save=False)
+            self.save()
 
     def __str__(self):
         return f"{self.nome} ({self.codigo}) — {self.quantidade} {self.produto.unidade_de_medida}"
