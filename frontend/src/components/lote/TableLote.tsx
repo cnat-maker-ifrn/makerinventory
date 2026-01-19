@@ -1,6 +1,7 @@
 import { MdEdit } from "react-icons/md";
 import { useState } from "react";
 import { useLotes } from "../../hooks/lote/useLotes";
+import { useAuth } from "../../hooks/autenticacao/useAuth";
 import EditLoteModal from "./EditLoteModal";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function TableLotes({ search, data_inicio, data_fim }: Props) {
+  const { isAuthenticated } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
   const [loteSelecionado, setLoteSelecionado] = useState<any>(null);
 
@@ -66,7 +68,7 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
               <th className="px-4 py-2 text-left">Preço</th>
               <th className="px-4 py-2 text-left">Validade</th>
               <th className="px-4 py-2 text-left">Entrada</th>
-              <th className="px-4 py-2 text-left">Ações</th>
+              {isAuthenticated && <th className="px-4 py-2 text-left">Ações</th>}
             </tr>
           </thead>
 
@@ -118,20 +120,22 @@ export default function TableLotes({ search, data_inicio, data_fim }: Props) {
                 </td>
 
                 {/* Ações */}
-                <td className="px-4 py-2">
-                  <button 
-                    onClick={() => handleEditClick(lote)}
-                    className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
-                  >
-                    <MdEdit size={24} />
-                  </button>
-                </td>
+                {isAuthenticated && (
+                  <td className="px-4 py-2">
+                    <button 
+                      onClick={() => handleEditClick(lote)}
+                      className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
+                    >
+                      <MdEdit size={24} />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
 
             {lotesFiltrados.length === 0 && (
               <tr>
-                <td colSpan={9} className="text-center py-6 text-gray-500">
+                <td colSpan={isAuthenticated ? 9 : 8} className="text-center py-6 text-gray-500">
                   Nenhum lote encontrado
                 </td>
               </tr>

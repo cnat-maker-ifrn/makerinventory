@@ -1,6 +1,7 @@
 import { MdEdit } from "react-icons/md";
 import { useState } from "react";
 import { useItens } from "../../hooks/item/useItens";
+import { useAuth } from "../../hooks/autenticacao/useAuth";
 import EditItemModal from "./EditItemModal";
 import { type Item } from "../../types/item";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function TableItem({ search, data_inicio, data_fim }: Props) {
+  const { isAuthenticated } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState<Item | null>(null);
 
@@ -68,7 +70,7 @@ export default function TableItem({ search, data_inicio, data_fim }: Props) {
               <th className="px-4 py-2 text-left">Emprestado</th>
               <th className="px-4 py-2 text-left">Preço</th>
               <th className="px-4 py-2 text-left">Entrada</th>
-              <th className="px-4 py-2 text-left">Ações</th>
+              {isAuthenticated && <th className="px-4 py-2 text-left">Ações</th>}
             </tr>
           </thead>
 
@@ -114,14 +116,16 @@ export default function TableItem({ search, data_inicio, data_fim }: Props) {
                   {new Date(item.data_entrada).toLocaleDateString()}
                 </td>
 
-                <td className="px-4 py-2">
-                  <button 
-                    onClick={() => handleEditClick(item)}
-                    className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
-                  >
-                    <MdEdit size={24} />
-                  </button>
-                </td>
+                {isAuthenticated && (
+                  <td className="px-4 py-2">
+                    <button 
+                      onClick={() => handleEditClick(item)}
+                      className="text-blue-600 hover:bg-gray-300 rounded-md cursor-pointer p-1"
+                    >
+                      <MdEdit size={24} />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

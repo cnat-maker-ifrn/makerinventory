@@ -1,6 +1,7 @@
 import { MdEdit } from "react-icons/md";
 import { useState } from "react";
 import { useProdutos } from "../../hooks/produto/useProdutos";
+import { useAuth } from "../../hooks/autenticacao/useAuth";
 import EditProdutoModal from "./EditProdutoModal";
 import { type ProdutoUnificado } from "../../types/produtounificado";
 
@@ -15,6 +16,7 @@ export default function TableProduto({
   tipo,
   subcategoria,
 }: Props) {
+  const { isAuthenticated } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoUnificado | null>(null);
 
@@ -78,7 +80,7 @@ export default function TableProduto({
               <th className="px-4 py-2 text-left">Subcategoria</th>
               <th className="px-4 py-2 text-left">Quantidade</th>
               <th className="px-4 py-2 text-left">Qtd. mínima</th>
-              <th className="px-4 py-2 text-left">Ações</th>
+              {isAuthenticated && <th className="px-4 py-2 text-left">Ações</th>}
             </tr>
           </thead>
 
@@ -111,20 +113,22 @@ export default function TableProduto({
 
                 <td className="px-4 py-2">{p.quantidade_minima}{p.unidade_de_medida?.toLowerCase() ?? ""}</td>
 
-                <td className="px-4 py-2">
-                  <button 
-                    onClick={() => handleEditClick(p)}
-                    className="text-blue-600 hover:bg-gray-300 p-1 rounded-md cursor-pointer"
-                  >
-                    <MdEdit size={26} />
-                  </button>
-                </td>
+                {isAuthenticated && (
+                  <td className="px-4 py-2">
+                    <button 
+                      onClick={() => handleEditClick(p)}
+                      className="text-blue-600 hover:bg-gray-300 p-1 rounded-md cursor-pointer"
+                    >
+                      <MdEdit size={26} />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
 
             {produtosFiltrados.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center py-6 text-gray-500">
+                <td colSpan={isAuthenticated ? 7 : 6} className="text-center py-6 text-gray-500">
                   Nenhum produto encontrado
                 </td>
               </tr>

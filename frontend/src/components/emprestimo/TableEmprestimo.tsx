@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { MdVisibility, MdClose } from "react-icons/md";
 import { type Emprestimo } from "../../types/emprestimo";
 import { type Item } from "../../types/item";
+import { useAuth } from "../../hooks/autenticacao/useAuth";
 import DevolverButton from "./DevolverButton";
 import { useItens } from "../../hooks/item/useItens";
 
@@ -39,6 +40,7 @@ export default function TableEmprestimo({
   onPreviousPage,
   onRefresh,
 }: TableEmprestimoProps) {
+  const { isAuthenticated } = useAuth();
   const [modalItem, setModalItem] = useState<ModalItem[] | null>(null);
 
   // Todos os itens carregados
@@ -121,12 +123,14 @@ export default function TableEmprestimo({
                     <MdVisibility size={28} className="text-[#29854A]" />
                   </button>
 
-                  <DevolverButton
-                    emprestimoId={emp.id}
-                    itensIds={emp.itens}
-                    dataEntrega={emp.data_entrega}
-                    onSuccess={onRefresh}
-                  />
+                  {isAuthenticated && (
+                    <DevolverButton
+                      emprestimoId={emp.id}
+                      itensIds={emp.itens}
+                      dataEntrega={emp.data_entrega}
+                      onSuccess={onRefresh}
+                    />
+                  )}
                 </td>
               </tr>
             ))}
