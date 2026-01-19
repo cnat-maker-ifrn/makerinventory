@@ -85,7 +85,7 @@ export default function Manual() {
           {/* Conteúdo Principal */}
           <main className="lg:col-span-3 space-y-8">
             {/* Categoria */}
-            <section id="categoria" className="bg-white rounded-lg shadow-md p-8">
+            <section id="categoria" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">1. Categoria</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -118,7 +118,7 @@ export default function Manual() {
             </section>
 
             {/* Subcategoria */}
-            <section id="subcategoria" className="bg-white rounded-lg shadow-md p-8">
+            <section id="subcategoria" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">2. Subcategoria</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -137,7 +137,7 @@ export default function Manual() {
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
                     <li>Clique no botão <strong>+ Nova Subcategoria</strong></li>
-                    <li>Selecione a <strong>Categoria</strong> pai (ex: "Consumíveis")</li>
+                    <li>Selecione a <strong>Categoria</strong> principal (ex: "Consumíveis")</li>
                     <li>Preencha o nome da subcategoria (ex: "Filamentos")</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
@@ -153,7 +153,7 @@ export default function Manual() {
             </section>
 
             {/* Produto */}
-            <section id="produto" className="bg-white rounded-lg shadow-md p-8">
+            <section id="produto" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">3. Produto</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -203,7 +203,7 @@ export default function Manual() {
             </section>
 
             {/* Item */}
-            <section id="item" className="bg-white rounded-lg shadow-md p-8">
+            <section id="item" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">4. Item</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -221,9 +221,9 @@ export default function Manual() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Características de um Item</h3>
                   <ul className="list-disc list-inside space-y-2 ml-4">
-                    <li><strong>Foto do item:</strong> Foto de um item em específico</li>
-                    <li><strong>Nome do item:</strong> Mesmo nome do produto ao qual está vinculado</li>
-                    <li><strong>Código do Item:</strong> Identificador único do Item (ex: "ITM-EBF99F41D0")</li>
+                    <li><strong>Foto:</strong> Foto de um item em específico</li>
+                    <li><strong>Nome:</strong> Mesmo nome do produto ao qual está vinculado</li>
+                    <li><strong>Código:</strong> Identificador único do Item (ex: "ITM-EBF99F41D0")</li>
                     <li><strong>Proprietário:</strong> É do Cnat Maker ou é do IFRN</li>
                     <li><strong>Disponibilidade:</strong> Diz se o item ainda está no laboratório</li>
                     <li><strong>Emprestado:</strong> Diz se o item do laboratório foi emprestado a alguém</li>
@@ -256,7 +256,7 @@ export default function Manual() {
             </section>
 
             {/* Lote */}
-            <section id="lote" className="bg-white rounded-lg shadow-md p-8">
+            <section id="lote" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">5. Lote</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -272,12 +272,14 @@ export default function Manual() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Características de um Lote</h3>
                   <ul className="list-disc list-inside space-y-2 ml-4">
-                    <li><strong>Número do Lote:</strong> Identificador único do lote (ex: "LOTE-2024-001")</li>
-                    <li><strong>Quantidade:</strong> Número total de unidades no lote</li>
-                    <li><strong>Data de Entrada:</strong> Quando o lote foi recebido</li>
-                    <li><strong>Data de Validade:</strong> Quando o lote vence (se aplicável)</li>
+                    <li><strong>Foto:</strong> Foto de um lote em específico</li>
+                    <li><strong>Nome:</strong> Mesmo nome do produto ao qual está vinculado</li>
+                    <li><strong>Código:</strong> Identificador único do lote (ex: "LOT-4A3C3C1E9D")</li>
                     <li><strong>Fornecedor:</strong> De quem foi adquirido o lote (Marca)</li>
-                    <li><strong>Custo Unitário:</strong> Preço de cada unidade no lote</li>
+                    <li><strong>Quantidade:</strong> Número total de unidades no lote</li>
+                    <li><strong>Preço:</strong> Preço de um lote específico</li>
+                    <li><strong>Data de Validade:</strong> Quando o lote vence (se aplicável)</li>
+                    <li><strong>Data de Entrada:</strong> Quando o lote foi recebido</li>
                   </ul>
                 </div>
 
@@ -286,14 +288,13 @@ export default function Manual() {
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Produtos</strong></li>
                     <li>Clique em <strong>Lotes</strong> no submenu</li>
-                    <li>Clique no botão <strong>Adicionar Novo Lote</strong></li>
+                    <li>Clique no botão <strong>+ Novo Lote</strong></li>
                     <li>Selecione o <strong>Produto</strong> do lote</li>
-                    <li>Preencha o <strong>Número do Lote</strong></li>
                     <li>Insira a <strong>Quantidade</strong> de unidades</li>
-                    <li>Preencha a <strong>Data de Entrada</strong></li>
-                    <li>Se aplicável, adicione a <strong>Data de Validade</strong></li>
-                    <li>Selecione ou adicione o <strong>Fornecedor</strong></li>
-                    <li>Preencha o <strong>Custo Unitário</strong></li>
+                    <li>Digite o <strong>Preço do Lote</strong></li>
+                    <li>Digite o nome do <strong>Fornecedor</strong></li>
+                    <li>Adicione a <strong>Data de Validade</strong></li>
+                    <li>Adicione uma <strong>Foto</strong> daquele lote em específico (opcional)</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
@@ -301,23 +302,22 @@ export default function Manual() {
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
                     <strong>💡 Dica:</strong> Use Lotes para produtos com grande volume e uso frequente.
-                    O sistema automaticamente reduz a quantidade do lote quando há saídas ou empréstimos.
+                    O sistema automaticamente reduz a quantidade do lote quando saídas ou empréstimos relacionadas a ele são criadas.
                   </p>
                 </div>
               </div>
             </section>
 
             {/* Movimentação */}
-            <section id="movimentacao" className="bg-white rounded-lg shadow-md p-8">
+            <section id="movimentacao" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
+
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">6. Movimentações</h2>
 
               <div className="space-y-4 text-gray-700">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">O que é uma Movimentação?</h3>
                   <p className="leading-relaxed">
-                    Uma <strong>Movimentação</strong> é um registro de transferências de produtos. Serve para rastrear quando um produto é movido de um local para outro,
-                    sem que ele saia do seu controle. Por exemplo, mover filamento da estante A para a estante B,
-                    ou transferir uma impressora de um departamento para outro.
+                    Uma <strong>Movimentação</strong> é um registro do que aconteceu com os produtos. Serve para rastrear quando um produto saiu ou entrou no laboratório. Por exemplo, quando um item é emprestado, automaticamente uma movimentação é criada para registrar essa ação.
                   </p>
                 </div>
 
@@ -325,41 +325,30 @@ export default function Manual() {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Tipos de Movimentações</h3>
                   <div className="space-y-3 ml-4">
                     <div className="border-l-4 border-purple-500 pl-4">
-                      <p><strong>Transferência Entre Locais:</strong> Move um item/lote de um local para outro</p>
+                      <p><strong>Entrada:</strong> Quando um item ou lote é adicionado ao estoque</p>
                     </div>
                     <div className="border-l-4 border-purple-500 pl-4">
-                      <p><strong>Ajuste de Estoque:</strong> Corrige quantidade devido a perdas, danos ou discrepâncias</p>
+                      <p><strong>Saída:</strong> Quando um item ou lote é removido do estoque (não retorna)</p>
                     </div>
                     <div className="border-l-4 border-purple-500 pl-4">
-                      <p><strong>Consolidação:</strong> Agrupa múltiplos lotes ou itens em um só lugar</p>
+                      <p><strong>Empréstimo:</strong> Quando um item ou lote é emprestado para outro laboratório, uma pessoa e etc.</p>
+                    </div>
+                    <div className="border-l-4 border-purple-500 pl-4">
+                      <p><strong>Devolução:</strong> Quando um item ou lote é devolvido após um empréstimo</p>
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Criar uma Movimentação?</h3>
-                  <ol className="list-decimal list-inside space-y-2 ml-4">
-                    <li>Acesse o menu lateral e clique em <strong>Movimentações</strong></li>
-                    <li>Clique no botão <strong>Adicionar Nova Movimentação</strong></li>
-                    <li>Selecione o <strong>Tipo de Movimentação</strong></li>
-                    <li>Escolha o <strong>Produto</strong>, <strong>Item</strong> ou <strong>Lote</strong> a mover</li>
-                    <li>Selecione o <strong>Local de Origem</strong> e <strong>Local de Destino</strong></li>
-                    <li>Insira a <strong>Quantidade</strong> (para lotes fracionados)</li>
-                    <li>Adicione uma <strong>Observação</strong> se necessário</li>
-                    <li>Clique em <strong>Salvar</strong></li>
-                  </ol>
-                </div>
-
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                   <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> Movimentações são importantes para rastrear seus produtos. São criadas automaticamente quando um empréstimo é criado, ocorre uma devolução, um item ou lote é criado, ou uma saída é registrada
+                    <strong>💡 Dica:</strong> Movimentações são importantes para rastrear seus produtos. São criadas automaticamente quando um empréstimo é criado, ocorre uma devolução, um item ou lote é criado, ou uma saída é registrada.
                   </p>
                 </div>
               </div>
             </section>
 
             {/* Saída */}
-            <section id="saida" className="bg-white rounded-lg shadow-md p-8">
+            <section id="saida" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">7. Saídas</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -373,34 +362,14 @@ export default function Manual() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Tipos de Saída</h3>
-                  <div className="space-y-3 ml-4">
-                    <div className="border-l-4 border-red-500 pl-4">
-                      <p><strong>Venda:</strong> Produto vendido a um cliente</p>
-                    </div>
-                    <div className="border-l-4 border-red-500 pl-4">
-                      <p><strong>Consumo Interno:</strong> Produto usado internamente (ex: filamento usado em impressão interna)</p>
-                    </div>
-                    <div className="border-l-4 border-red-500 pl-4">
-                      <p><strong>Descarte:</strong> Produto danificado ou obsoleto que foi removido</p>
-                    </div>
-                    <div className="border-l-4 border-red-500 pl-4">
-                      <p><strong>Doação:</strong> Produto doado para terceiros</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Registrar uma Saída?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Saídas</strong></li>
-                    <li>Clique no botão <strong>Adicionar Nova Saída</strong></li>
-                    <li>Selecione o <strong>Tipo de Saída</strong> (Venda, Consumo, Descarte, etc)</li>
+                    <li>Clique no botão <strong>Registrar Saída</strong></li>
+                    <li>Selecione o <strong>Tipo de Saída</strong> (Untário: para itens, Fracionado: para lotes)</li>
                     <li>Escolha o <strong>Produto</strong>, <strong>Item</strong> ou <strong>Lote</strong></li>
-                    <li>Insira a <strong>Quantidade</strong> que está saindo</li>
-                    <li>Preencha a <strong>Data de Saída</strong></li>
-                    <li>Se for venda, você pode adicionar informações do <strong>Cliente</strong> ou <strong>Nota Fiscal</strong></li>
-                    <li>Adicione uma <strong>Observação</strong> se necessário</li>
+                    <li>Se for Lote, insira a <strong>Quantidade</strong> que está saindo</li>
+                    <li>Escreva o nome do responsável por essa saída (O nome de quem está registrando ela)</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
@@ -415,7 +384,7 @@ export default function Manual() {
             </section>
 
             {/* Empréstimo */}
-            <section id="emprestimo" className="bg-white rounded-lg shadow-md p-8">
+            <section id="emprestimo" className="bg-white rounded-lg shadow-md p-8 scroll-mt-24">
               <h2 className="text-2xl font-bold text-[#1A955E] mb-4">8. Empréstimos</h2>
 
               <div className="space-y-4 text-gray-700">
@@ -430,31 +399,15 @@ export default function Manual() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Estados de um Empréstimo</h3>
-                  <div className="space-y-3 ml-4">
-                    <div className="border-l-4 border-yellow-500 pl-4">
-                      <p><strong>Ativo:</strong> O item foi emprestado e ainda não retornou</p>
-                    </div>
-                    <div className="border-l-4 border-yellow-500 pl-4">
-                      <p><strong>Devolvido:</strong> O item foi emprestado e retornou ao inventário</p>
-                    </div>
-                    <div className="border-l-4 border-yellow-500 pl-4">
-                      <p><strong>Pendente:</strong> O prazo de devolução passou e o item ainda não retornou</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Criar um Empréstimo?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu lateral e clique em <strong>Empréstimos</strong></li>
-                    <li>Clique no botão <strong>Adicionar Novo Empréstimo</strong></li>
-                    <li>Escolha o <strong>Produto</strong>, <strong>Item</strong> ou <strong>Lote</strong> a emprestar</li>
-                    <li>Insira a <strong>Quantidade</strong> (para lotes fracionados)</li>
-                    <li>Preencha o <strong>Solicitante</strong> (pessoa ou departamento que solicitou)</li>
-                    <li>Adicione a <strong>Data de Empréstimo</strong></li>
+                    <li>Se o solicitante ainda não estiver cadastrado clique em <strong>+ Adicionar Solicitante</strong> e preencha os campos Nome, Matrícula e Telefone e clique em Salvar</li>
+                    <li>Clique no botão <strong> + Novo Empréstimo</strong></li>
+                    <li>Selecione o <strong>Solicitante</strong> (pessoa ou departamento que solicitou)</li>
+                    <li>Escolha o <strong>Item</strong> a emprestar</li>
                     <li>Defina a <strong>Data Prevista de Devolução</strong></li>
-                    <li>Adicione uma <strong>Observação</strong> ou <strong>Motivo</strong></li>
+                    <li>Digite o responsável por esse empréstimo (O nome de quem está registrando ela)</li>
                     <li>Clique em <strong>Salvar</strong></li>
                   </ol>
                 </div>
@@ -463,19 +416,14 @@ export default function Manual() {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Como Registrar uma Devolução?</h3>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Acesse o menu <strong>Empréstimos</strong></li>
-                    <li>Procure pelo empréstimo que está sendo devolvido (status "Ativo")</li>
-                    <li>Clique em <strong>Registrar Devolução</strong></li>
-                    <li>Verifique a <strong>Quantidade</strong> retornada</li>
-                    <li>Preencha a <strong>Data de Devolução</strong></li>
-                    <li>Adicione observações sobre o estado do item (se danificado, etc)</li>
-                    <li>Clique em <strong>Confirmar Devolução</strong></li>
+                    <li>Procure pelo empréstimo que está sendo devolvido (não tem a data de entrega)</li>
+                    <li>Clique no botão da prancheta com uma seta para a esquerda</li>
                   </ol>
                 </div>
 
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
-                  <p className="text-sm text-blue-900">
-                    <strong>💡 Dica:</strong> O sistema avisa quando um empréstimo está vencido (passou da data de devolução).
-                    Você pode configurar notificações para ser avisado sobre devoluções pendentes.
+                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4">
+                  <p className="text-sm text-yellow-900">
+                    <strong>⚠ Obs.:</strong> Apenas itens podem ser emprestados.
                   </p>
                 </div>
               </div>
@@ -500,7 +448,7 @@ export default function Manual() {
                   <strong>Resumo das operações:</strong>
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
-                  <li><strong>Movimentação:</strong> Transfere entre locais (item continua seu)</li>
+                  <li><strong>Movimentação:</strong> Registro de operações do estoque (Entradas, Saídas, Empréstimos e Devoluções)</li>
                   <li><strong>Saída:</strong> Remove permanentemente do inventário</li>
                   <li><strong>Empréstimo:</strong> Remove temporariamente com data de retorno</li>
                 </ul>
