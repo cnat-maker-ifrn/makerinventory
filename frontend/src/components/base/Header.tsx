@@ -15,7 +15,7 @@ export default function Header() {
     <header className="w-full h-[100px] bg-white flex items-center justify-between px-6 mb-2 shadow-md">
       
       {/* Logo */}
-      <div className="flex items-center gap-4 pl-[10px]">
+      <a href="" className="flex items-center gap-4 pl-[10px]">
         <img
           className="w-[85px] h-[85px]"
           src="/assets/logo-inventariomaker.svg"
@@ -25,7 +25,7 @@ export default function Header() {
           <span className="font-light">Inventário</span>
           <span className="font-bold ml-5">Maker</span>
         </h1>
-      </div>
+      </a>
 
       {/* Área do usuário / login */}
       <div className="flex items-center gap-4">
