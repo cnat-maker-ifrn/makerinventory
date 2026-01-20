@@ -2,7 +2,8 @@ import type { Subcategoria } from "./subcategoria";
 
 export interface ProdutoFracionado {
     id: number;
-    subcategoria: Subcategoria;        
+    subcategoria: Subcategoria;
+    subcategoria_nome?: string;
     foto: string | null;
     nome: string;
     unidade_de_medida: "kg" | "g" | "l" | "ml" | "m" | "cm";

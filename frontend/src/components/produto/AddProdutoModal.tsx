@@ -57,7 +57,7 @@ export default function AddProdutoModal({
     if (!nome || !subcategoria) return;
 
     if (foto) {
-      form.append("imagem", foto);
+      form.append("foto", foto);
     }
 
     try {

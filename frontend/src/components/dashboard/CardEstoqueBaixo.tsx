@@ -1,6 +1,16 @@
 import { MdError } from "react-icons/md";
 import { useEstoqueBaixo } from "../../hooks/dashboard/useEstoqueBaixo";
 
+function getUnidade(tipo: string | undefined, unidadeDeMedida: string | null | undefined): string {
+  if (tipo === "unitario") {
+    return "un";
+  }
+  if (tipo === "fracionado" && unidadeDeMedida) {
+    return unidadeDeMedida;
+  }
+  return "";
+}
+
 export default function CardEstoqueBaixo() {
   const { produtos, loading } = useEstoqueBaixo();
 
@@ -24,34 +34,43 @@ export default function CardEstoqueBaixo() {
       <div
         className={`space-y-2 pr-1 ${
           hasScroll
-            ? "max-h-[200px] overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            ? "max-h-[80%] overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             : ""
         }`}
       >
-        {produtos.map((p, index) => (
-          <div
-            key={`${p.id}-${index}`}
-            className="bg-white p-3 rounded-md shadow-sm border border-[#ffb4b4] flex justify-between items-center"
-          >
-            <div>
-              <p className="font-semibold text-lg">{p.nome}</p>
-              <p className="text-sm text-gray-600">
-                Quantidade: <strong>{p.quantidade}</strong> / Mínima:{" "}
-                <strong>{p.quantidade_minima}</strong>
-              </p>
-            </div>
-
-            <span
-              className={`text-sm font-bold px-3 py-1 rounded-md ${
-                p.quantidade < p.quantidade_minima
-                  ? "bg-[#DF0A0A] text-white"
-                  : "bg-orange-400 text-white"
-              }`}
+        {produtos.map((p, index) => {
+          const unidade = getUnidade(p.tipo, p.unidade_de_medida);
+          return (
+            <div
+              key={`${p.id}-${index}`}
+              className="bg-white p-3 rounded-md shadow-sm border border-[#ffb4b4] flex justify-between items-center"
             >
-              {p.quantidade < p.quantidade_minima ? "Abaixo" : "No limite"}
-            </span>
-          </div>
-        ))}
+              <div>
+                <p className="font-semibold text-lg">{p.nome}</p>
+                <p className="text-sm text-gray-600">
+                  Quantidade: <strong>{p.quantidade}</strong>
+                  {unidade && (
+                    <span className="text-xs text-gray-500 ml-1">{unidade}</span>
+                  )} / Mínima:{" "}
+                  <strong>{p.quantidade_minima}</strong>
+                  {unidade && (
+                    <span className="text-xs text-gray-500 ml-1">{unidade}</span>
+                  )}
+                </p>
+              </div>
+
+              <span
+                className={`text-sm font-bold px-3 py-1 rounded-md ${
+                  p.quantidade < p.quantidade_minima
+                    ? "bg-[#DF0A0A] text-white"
+                    : "bg-orange-400 text-white"
+                }`}
+              >
+                {p.quantidade < p.quantidade_minima ? "Abaixo" : "No limite"}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {hasScroll && (

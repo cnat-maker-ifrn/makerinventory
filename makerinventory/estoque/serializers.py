@@ -223,3 +223,4 @@ class SaidaSerializer(serializers.ModelSerializer):
 
         return data
 
+

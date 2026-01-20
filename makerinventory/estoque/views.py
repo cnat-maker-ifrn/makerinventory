@@ -82,7 +82,11 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
                     "id": p.id,
                     "nome": p.nome,
                     "quantidade": qtd,
-                    "quantidade_minima": p.quantidade_minima
+                    "quantidade_minima": p.quantidade_minima,
+                    "tipo": "unitario",
+                    "unidade_de_medida": None,
+                    "foto": p.foto.url if p.foto else None,
+                    "subcategoria": p.subcategoria.nome
                 })
 
         return Response(resultado)
@@ -151,7 +155,11 @@ class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
                     "id": p.id,
                     "nome": p.nome,
                     "quantidade": qtd,
-                    "quantidade_minima": p.quantidade_minima
+                    "quantidade_minima": p.quantidade_minima,
+                    "tipo": "fracionado",
+                    "unidade_de_medida": p.unidade_de_medida,
+                    "foto": p.foto.url if p.foto else None,
+                    "subcategoria": p.subcategoria.nome
                 })
 
         return Response(resultado)
@@ -375,3 +383,4 @@ class SaidaViewSet(viewsets.ModelViewSet):
         qs = self.queryset.filter(lote__isnull=False)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+

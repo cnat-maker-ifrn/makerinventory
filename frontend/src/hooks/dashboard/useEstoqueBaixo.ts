@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ProdutoBaixo } from "../../types/produtobaixo";
+import type { ProdutoUnificado } from "../../types/produtounificado";
 import { getProdutosBaixoEstoque } from "../../api/estoquebaixoApi";
 
 export function useEstoqueBaixo() {
-  const [produtos, setProdutos] = useState<ProdutoBaixo[]>([]);
+  const [produtos, setProdutos] = useState<ProdutoUnificado[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function load() {
