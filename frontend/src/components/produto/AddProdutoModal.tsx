@@ -16,11 +16,16 @@ export default function AddProdutoModal({
 }: AddProdutoModalProps) {
   const [tipo, setTipo] = useState<"unitario" | "fracionado">("unitario");
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
+  const [foto, setFoto] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const { criar, loading, erro } = useCreateProduto();
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setFoto(null);
+      setPreview(null);
+    }
 
     getSubcategorias()
       .then((res) => setSubcategorias(res))
@@ -28,6 +33,18 @@ export default function AddProdutoModal({
   }, [open]);
 
   if (!open) return null;
+
+  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -39,11 +56,17 @@ export default function AddProdutoModal({
 
     if (!nome || !subcategoria) return;
 
+    if (foto) {
+      form.append("imagem", foto);
+    }
+
     try {
       const novo = await criar(form, tipo);
 
       if (novo && onCreated) onCreated(novo);
 
+      setFoto(null);
+      setPreview(null);
       onClose();
     } catch {
       // erro já está no hook e exibido na tela
@@ -127,6 +150,32 @@ export default function AddProdutoModal({
               required
               min={0}
               className="border px-3 py-2 rounded-md w-full"
+            />
+          </div>
+
+          {/* ------------------ IMAGEM ------------------ */}
+          <div>
+            <label className="block font-medium mb-1">Imagem</label>
+            {preview && (
+              <div className="bg-gray-100 rounded mb-2 p-2 flex items-center justify-center">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="max-h-48 object-contain"
+                />
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full border rounded px-3 py-2 
+             file:mr-5 file:py-1 file:px-4 
+             file:rounded-border file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100"
+              onChange={handleFotoChange}
+              disabled={loading}
             />
           </div>
 

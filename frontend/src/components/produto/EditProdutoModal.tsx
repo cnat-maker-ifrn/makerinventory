@@ -92,11 +92,13 @@ export default function EditProdutoModal({
           <div>
             <label className="block font-medium mb-1">Foto</label>
             {preview && (
-              <img
-                src={preview}
-                alt="Preview"
-                className="w-full h-40 object-cover rounded mb-2"
-              />
+              <div className="bg-gray-100 rounded mb-2 p-2 flex items-center justify-center">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="max-h-48 object-contain"
+                />
+              </div>
             )}
             <input
               type="file"

@@ -22,9 +22,21 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
     foto: null as File | null,
   });
 
+  const [preview, setPreview] = useState<string | null>(null);
+
   // Buscar produtos fracionados quando o modal abre
   useEffect(() => {
     if (open) {
+      setForm({
+        produto: "",
+        quantidade: "",
+        preco: "",
+        fornecedor: "",
+        validade: "",
+        foto: null,
+      });
+      setPreview(null);
+      
       async function fetchProdutos() {
         try {
           const data = await getProdutosFracionados();
@@ -52,7 +64,15 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, foto: e.target.files?.[0] || null }));
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setForm((prev) => ({ ...prev, foto: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,15 +190,26 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
           {/* Foto */}
           <div>
             <label className="block mb-1 font-semibold">Foto (opcional)</label>
+            {preview && (
+              <div className="bg-gray-100 rounded mb-2 p-2 flex items-center justify-center">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="max-h-48 object-contain"
+                />
+              </div>
+            )}
             <input
               type="file"
+              accept="image/*"
               className="w-full border rounded px-3 py-2 
              file:mr-5 file:py-1 file:px-4 
              file:rounded-border file:border-0
              file:text-sm file:font-semibold
              file:bg-blue-50 file:text-blue-700
              hover:file:bg-blue-100"
-              onChange={handleFile} />
+              onChange={handleFile}
+            />
           </div>
 
           {/* Botões */}

@@ -17,6 +17,7 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
   const [preco, setPreco] = useState("");
   const [proprietario, setProprietario] = useState<boolean>(true);
   const [foto, setFoto] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const { criar, loading, erro } = useCreateItem();
 
@@ -29,6 +30,7 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
       setPreco("");
       setProprietario(true);
       setFoto(null);
+      setPreview(null);
     }
   }, [open]);
 
@@ -81,6 +83,18 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
       onClose();
     }
   }
+
+  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div
@@ -148,8 +162,18 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
             {/* Foto */}
             <div>
               <label className="block mb-1 font-semibold">Foto</label>
+              {preview && (
+                <div className="bg-gray-100 rounded mb-2 p-2 flex items-center justify-center">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="max-h-48 object-contain"
+                  />
+                </div>
+              )}
               <input
                 type="file"
+                accept="image/*"
                 className="w-full border rounded px-3 py-2 
              file:mr-5 file:py-1 file:px-4 
              file:rounded-border file:border-0
@@ -157,7 +181,7 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
              file:bg-blue-50 file:text-blue-700
              hover:file:bg-blue-100"
                 disabled={isBusy}
-                onChange={(e) => e.target.files && setFoto(e.target.files[0])}
+                onChange={handleFotoChange}
               />
             </div>
 
