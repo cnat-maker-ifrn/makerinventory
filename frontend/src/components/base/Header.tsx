@@ -30,9 +30,14 @@ export default function Header() {
       {/* Área do usuário / login */}
       <div className="flex items-center gap-4">
         {isAuthenticated && user && (
-          <div className="font-semibold text-[20px] text-gray-700">
+          <a 
+            href="http://localhost:8000/admin/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[20px] text-gray-700 hover:text-[#1A955E] transition-colors cursor-pointer"
+          >
             Olá, {user.nome}!
-          </div>
+          </a>
         )}
 
         {isAuthenticated ? (
