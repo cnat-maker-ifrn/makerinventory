@@ -150,6 +150,12 @@ export default function AddItemModal({ open, onClose }: AddItemModalProps) {
               <label className="block mb-1 font-semibold">Foto</label>
               <input
                 type="file"
+                className="w-full border rounded px-3 py-2 
+             file:mr-5 file:py-1 file:px-4 
+             file:rounded-border file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100"
                 disabled={isBusy}
                 onChange={(e) => e.target.files && setFoto(e.target.files[0])}
               />

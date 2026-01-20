@@ -88,22 +88,22 @@ export default function Calculadora3D() {
 
     const [dados, setDados] = useState<CalculadoraPrecosData>({
         filamentos: [
-            { peso: 0, preco: 0.12 },
+            { peso: 0, preco: 0 },
             null,
             null,
             null,
         ],
-        pesoPerdaMaterial: 5,
-        tempoImpressaoHoras: 10,
-        kWhValor: 0.8,
+        pesoPerdaMaterial: 0,
+        tempoImpressaoHoras: 0,
+        kWhValor: 0,
         impressoraSelecionada: impressoraPadrao,
-        tempoModelagem: 0.5,
-        tempoAcabamento: 1,
-        percentualTaxaFalha: 15,
-        custosEmbalagem: 10,
+        tempoModelagem: 0,
+        tempoAcabamento: 0,
+        percentualTaxaFalha: 0,
+        custosEmbalagem: 0,
         comissaoPlatafirma: 0,
         percentualImpostos: 0,
-        percentualMargemLucro: 30,
+        percentualMargemLucro: 0,
     });
 
     const [resultado, setResultado] = useState<ResultadoCalculadora | null>(null);

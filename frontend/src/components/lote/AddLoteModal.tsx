@@ -28,18 +28,18 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
       async function fetchProdutos() {
         try {
           const data = await getProdutosFracionados();
-          
+
           // Lidar com resposta que pode ser array ou PaginatedResponse
-          const produtosList = Array.isArray(data) 
-            ? data 
+          const produtosList = Array.isArray(data)
+            ? data
             : data.results || [];
-          
+
           setProdutos(produtosList);
         } catch (err) {
           console.error("Erro ao buscar produtos fracionados:", err);
         }
       }
-      
+
       fetchProdutos();
     }
   }, [open]);
@@ -170,7 +170,15 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
           {/* Foto */}
           <div>
             <label className="block mb-1 font-semibold">Foto (opcional)</label>
-            <input type="file" onChange={handleFile} />
+            <input
+              type="file"
+              className="w-full border rounded px-3 py-2 
+             file:mr-5 file:py-1 file:px-4 
+             file:rounded-border file:border-0
+             file:text-sm file:font-semibold
+             file:bg-blue-50 file:text-blue-700
+             hover:file:bg-blue-100"
+              onChange={handleFile} />
           </div>
 
           {/* Botões */}
