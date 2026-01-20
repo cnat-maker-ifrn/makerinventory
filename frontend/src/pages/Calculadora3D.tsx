@@ -133,7 +133,7 @@ export default function Calculadora3D() {
         setDados((prev) => {
             const novoFilamentos = [...prev.filamentos] as [any, any, any, any];
             if (!novoFilamentos[index]) {
-                novoFilamentos[index] = { peso: 0, preco: 0.12 };
+                novoFilamentos[index] = { peso: 0, preco: 0 };
             }
             novoFilamentos[index] = { ...novoFilamentos[index], [field]: numValue };
             return { ...prev, filamentos: novoFilamentos };
