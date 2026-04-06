@@ -15,7 +15,8 @@ const ITEMS_PER_PAGE = 5;
 export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModalProps) {
   const [solicitantes, setSolicitantes] = useState<Solicitante[]>([]);
   const [itens, setItens] = useState<Item[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
+  const [loadingData, setLoadingData] = useState(false);
+  const [loadingItens, setLoadingItens] = useState(false);
 
   // Input fields
   const [inputSolicitante, setInputSolicitante] = useState("");
@@ -40,7 +41,7 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { criar, loading, erro } = useCreateEmprestimo();
-  const isBusy = loading || loadingData;
+  const isBusy = loading;
 
   // Resetar formulário ao abrir
   useEffect(() => {
@@ -58,36 +59,71 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
     }
   }, [open]);
 
-  // Carregar dados ao abrir
+  // Carregar solicitantes ao abrir
   useEffect(() => {
     if (!open) return;
 
-    async function fetchData() {
-      setLoadingData(true);
+    async function fetchSolicitantes() {
       try {
-        const [solicitantesData, itensData] = await Promise.all([
-          getSolicitantes(),
-          getItens(),
-        ]);
-        
+        const solicitantesData = await getSolicitantes();
         const solicitantesList = Array.isArray(solicitantesData) 
           ? solicitantesData 
           : (solicitantesData as any)?.results || [];
-          
+        
+        setSolicitantes(solicitantesList);
+      } catch (err) {
+        console.error("Erro ao carregar solicitantes:", err);
+      }
+    }
+
+    fetchSolicitantes();
+  }, [open]);
+
+  // Carregar itens com base na busca
+  useEffect(() => {
+    if (!open) return;
+
+    async function fetchItens() {
+      setLoadingItens(true);
+      try {
+        const itensData = await getItens(1, inputItens);
         const itensList = Array.isArray(itensData) 
           ? itensData 
           : (itensData as any)?.results || [];
         
-        setSolicitantes(solicitantesList);
         setItens(itensList.filter((i:any) => i.disponibilidade));
       } catch (err) {
-        console.error("Erro ao carregar dados:", err);
+        console.error("Erro ao carregar itens:", err);
+        setItens([]);
       } finally {
-        setLoadingData(false);
+        setLoadingItens(false);
       }
     }
 
-    fetchData();
+    // Fazer a busca no servidor quando inputItens mudar
+    if (inputItens.length > 0) {
+      fetchItens();
+    } else {
+      setItens([]);
+      setLoadingItens(false);
+    }
+  }, [inputItens, open]);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowSolicitanteDropdown(false);
+        setShowItensDropdown(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
   }, [open]);
 
   // Filtrar solicitantes
@@ -97,13 +133,10 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
     );
   }, [solicitantes, inputSolicitante]);
 
-  // Filtrar itens
+  // Filtrar itens localmente (já vêm filtrados do servidor)
   const itensFiltrados = useCallback(() => {
-    return itens.filter((i) =>
-      i.nome.toLowerCase().includes(inputItens.toLowerCase()) ||
-      i.codigo.toLowerCase().includes(inputItens.toLowerCase())
-    );
-  }, [itens, inputItens]);
+    return itens;
+  }, [itens]);
 
   // Solicitantes paginados
   const solicitantesPaginados = useCallback(() => {
@@ -162,6 +195,9 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
     setItensSelecionados((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
+    // Fechar o dropdown após selecionar
+    setShowItensDropdown(false);
+    setInputItens("");
   };
 
   // Submit do formulário
@@ -239,9 +275,7 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
                     ref={scrollRefSolicitantes}
                     onScroll={handleScrollSolicitantes}
                   >
-                    {loadingData ? (
-                      <div className="p-2 text-gray-500">Carregando...</div>
-                    ) : solicitantesPaginados().length === 0 ? (
+                    {solicitantesPaginados().length === 0 ? (
                       <div className="p-2 text-gray-500">Nenhum solicitante encontrado</div>
                     ) : (
                       solicitantesPaginados().map((s) => (
@@ -262,6 +296,15 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
                         Scroll para carregar mais
                       </div>
                     )}
+                  </div>
+                  <div className="border-t p-2 bg-gray-50 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowSolicitanteDropdown(false)}
+                      className="text-sm text-gray-600 hover:text-gray-800 font-semibold"
+                    >
+                      Fechar
+                    </button>
                   </div>
                 </div>
               )}
@@ -319,8 +362,8 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
                     ref={scrollRefItens}
                     onScroll={handleScrollItens}
                   >
-                    {loadingData ? (
-                      <div className="p-2 text-gray-500">Carregando...</div>
+                    {loadingItens ? (
+                      <div className="p-2 text-gray-500">Buscando itens...</div>
                     ) : itensPaginados().length === 0 ? (
                       <div className="p-2 text-gray-500">Nenhum item encontrado</div>
                     ) : (
@@ -347,6 +390,18 @@ export default function AddEmprestimoModal({ open, onClose }: AddEmprestimoModal
                         Scroll para carregar mais
                       </div>
                     )}
+                  </div>
+                  <div className="border-t p-2 bg-gray-50 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowItensDropdown(false);
+                        setInputItens("");
+                      }}
+                      className="text-sm text-gray-600 hover:text-gray-800 font-semibold"
+                    >
+                      Fechar
+                    </button>
                   </div>
                 </div>
               )}

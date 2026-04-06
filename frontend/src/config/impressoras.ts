@@ -17,9 +17,9 @@ export const IMPRESSORAS_DISPONIVEL: Record<string, Impressora> = {
     vidaUtiHoras: 8000,
     custoManutencaoMensal: 100,
   },
-  bambu_lab_k1_series: {
-    id: "bambu_lab_k1_series",
-    nome: "Bambu Lab K1 Series",
+  creality_k1_series: {
+    id: "creality_k1_series",
+    nome: "Creality K1 Series",
     precoCompra: 8999,
     consumoWatts: 350,
     vidaUtiHoras: 8500,

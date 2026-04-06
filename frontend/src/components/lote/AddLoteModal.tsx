@@ -189,7 +189,7 @@ export default function AddLoteModal({ open, onClose, onSuccess }: AddLoteModalP
 
           {/* Foto */}
           <div>
-            <label className="block mb-1 font-semibold">Foto (opcional)</label>
+            <label className="block mb-1 font-semibold">Foto</label>
             {preview && (
               <div className="bg-gray-100 rounded mb-2 p-2 flex items-center justify-center">
                 <img

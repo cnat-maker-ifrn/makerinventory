@@ -19,13 +19,15 @@ export async function createProdutoFracionado(data: FormData) {
 
 export async function getProdutosUnitarios(
   page = 1,
-  search = ""
+  search = "",
+  subcategoria = "todas"
 ): Promise<PaginatedResponse<ProdutoUnitario>> {
   try {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     
     if (search) params.append("search", search);
+    if (subcategoria && subcategoria !== "todas") params.append("subcategoria__nome", subcategoria);
 
     const resp = await api.get(`produtos-unitarios/?${params.toString()}`);
     return resp.data;
@@ -38,13 +40,15 @@ export async function getProdutosUnitarios(
 
 export async function getProdutosFracionados(
   page = 1,
-  search = ""
+  search = "",
+  subcategoria = "todas"
 ): Promise<PaginatedResponse<ProdutoFracionado>> {
   try {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     
     if (search) params.append("search", search);
+    if (subcategoria && subcategoria !== "todas") params.append("subcategoria__nome", subcategoria);
 
     const resp = await api.get(`produtos-fracionados/?${params.toString()}`);
     return resp.data;

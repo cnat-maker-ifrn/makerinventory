@@ -25,7 +25,7 @@ export default function CardEstoqueBaixo() {
   }
 
   return (
-    <div className="relative bg-[#FFE3E3] w-[100%] min-h-[45vh] p-4 rounded-md shadow-md overflow-hidden">
+    <div className="relative bg-[#FFE3E3] w-[100%] h-[40vh] p-4 rounded-md shadow-md overflow-hidden">
       <h2 className="flex text-[#DF0A0A] items-center gap-2 mb-4 text-xl font-semibold">
         <MdError size={28} />
         Estoque baixo

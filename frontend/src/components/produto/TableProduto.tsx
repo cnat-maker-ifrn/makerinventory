@@ -29,7 +29,7 @@ export default function TableProduto({
     hasPrevious,
     goToNextPage,
     goToPreviousPage,
-  } = useProdutos(search, tipo);
+  } = useProdutos(search, tipo, subcategoria);
 
   const handleEditClick = (p: ProdutoUnificado) => {
     setProdutoSelecionado(p);
@@ -62,10 +62,7 @@ export default function TableProduto({
     const matchTipo =
       tipo === "todos" || p.tipo === tipo;
 
-    const matchSubcategoria =
-      subcategoria === "todas" || p.subcategoria === subcategoria;
-
-    return matchBusca && matchTipo && matchSubcategoria;
+    return matchBusca && matchTipo;
   });
 
   return (

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { MdClose, MdDownload } from "react-icons/md";
-
-const API_BASE_URL = "http://192.168.0.54:8000";
+import api from "../../api/api";
+import { downloadQRCodeItem, downloadQRCodeLote } from "../../api/qrcodeApi";
 
 function buildImageUrl(imagePath: string | undefined | null): string | null {
   if (!imagePath) return null;
   if (imagePath.startsWith("http")) return imagePath;
-  return `${API_BASE_URL}${imagePath}`;
+  // Remover '/api/' da baseURL do axios para construir URL da mídia
+  const baseUrl = api.defaults.baseURL?.replace('/api/', '') || "http://localhost:8000";
+  return `${baseUrl}${imagePath}`;
 }
 
 interface QRCodeModalProps {
@@ -59,15 +61,19 @@ export default function QRCodeModal({
     }
   };
 
-  const handleDownloadQR = () => {
-    if (!qrcodeUrl) return;
+  const handleDownloadQR = async () => {
+    if (!item || !qrcodeUrl) return;
 
-    const link = document.createElement("a");
-    link.href = qrcodeUrl;
-    link.download = `qrcode_${item?.codigo}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      if (type === "item") {
+        await downloadQRCodeItem(item.id);
+      } else {
+        await downloadQRCodeLote(item.id);
+      }
+    } catch (err) {
+      console.error("Erro ao baixar QR code:", err);
+      alert("Erro ao baixar o QR code");
+    }
   };
 
   if (!item) return null;
@@ -97,9 +103,13 @@ export default function QRCodeModal({
             {item.foto && (
               <div className="flex justify-center">
                 <img
-                  src={item.foto}
+                  src={buildImageUrl(item.foto) || ""}
                   alt={item.nome}
                   className="w-32 h-32 object-cover rounded-md"
+                  onError={(e) => {
+                    console.error("Erro ao carregar imagem:", e);
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
                 />
               </div>
             )}

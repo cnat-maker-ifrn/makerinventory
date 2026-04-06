@@ -1,13 +1,12 @@
 import api from "../api/api";
 
-const API_BASE_URL = "http://192.168.0.54:8000";
-
 function buildImageUrl(imagePath: string | undefined | null): string | null {
   if (!imagePath) return null;
   // Se já começa com http/https, retorna como está
   if (imagePath.startsWith("http")) return imagePath;
-  // Caso contrário, constrói URL completa
-  return `${API_BASE_URL}${imagePath}`;
+  // Remover '/api/' da baseURL do axios para construir URL da mídia
+  const baseUrl = api.defaults.baseURL?.replace('/api/', '') || "http://localhost:8000";
+  return `${baseUrl}${imagePath}`;
 }
 
 export async function gerarQRCodeItem(itemId: number): Promise<string | null> {
@@ -95,5 +94,45 @@ export async function buscarLotePorCodigo(codigo: string): Promise<any | null> {
   } catch (error) {
     console.error("Erro ao buscar lote:", error);
     return null;
+  }
+}
+
+export async function downloadQRCodeItem(itemId: number): Promise<void> {
+  try {
+    const response = await api.get(`/itens/${itemId}/download-qrcode/`, {
+      responseType: 'blob'
+    });
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `qrcode_item_${itemId}.png`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Erro ao baixar QR code do item:", error);
+    throw error;
+  }
+}
+
+export async function downloadQRCodeLote(loteId: number): Promise<void> {
+  try {
+    const response = await api.get(`/lotes/${loteId}/download-qrcode/`, {
+      responseType: 'blob'
+    });
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `qrcode_lote_${loteId}.png`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Erro ao baixar QR code do lote:", error);
+    throw error;
   }
 }

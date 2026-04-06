@@ -2,11 +2,12 @@ from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from datetime import datetime, timedelta
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth
 from rest_framework.permissions import AllowAny
+from django.http import FileResponse
 from .permissions import IsAuthenticatedOrReadOnly
 
 from .models import (
@@ -61,7 +62,8 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
     queryset = ProdutoUnitario.objects.prefetch_related("itens").all()
     serializer_class = ProdutoUnitarioSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['nome', 'descricao']
+    search_fields = ['nome']
+    filterset_fields = ['subcategoria__nome']
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"], url_path="itens")
@@ -69,27 +71,6 @@ class ProdutoUnitarioViewSet(viewsets.ModelViewSet):
         produto = self.get_object()
         serializer = ItemSerializer(produto.itens.all(), many=True)
         return Response(serializer.data)
-    
-    @action(detail=False, methods=["get"], url_path="estoque-baixo")
-    def estoque_baixo(self, request):
-        produtos = ProdutoUnitario.objects.all()
-        resultado = []
-
-        for p in produtos:
-            qtd = p.quantidade_em_estoque
-            if qtd <= p.quantidade_minima:
-                resultado.append({
-                    "id": p.id,
-                    "nome": p.nome,
-                    "quantidade": qtd,
-                    "quantidade_minima": p.quantidade_minima,
-                    "tipo": "unitario",
-                    "unidade_de_medida": None,
-                    "foto": p.foto.url if p.foto else None,
-                    "subcategoria": p.subcategoria.nome
-                })
-
-        return Response(resultado)
     
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.select_related("produto").all().order_by("-data_entrada")
@@ -101,12 +82,10 @@ class ItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Filtro por data inicial
         data_inicio = self.request.query_params.get('data_inicio')
         if data_inicio:
             queryset = queryset.filter(data_entrada__gte=data_inicio)
         
-        # Filtro por data final
         data_fim = self.request.query_params.get('data_fim')
         if data_fim:
             queryset = queryset.filter(data_entrada__lte=f"{data_fim} 23:59:59")
@@ -130,40 +109,39 @@ class ItemViewSet(viewsets.ModelViewSet):
             "qrcode_url": item.qrcode.url if item.qrcode else None
         })
 
+    @action(detail=True, methods=["get"], url_path="download-qrcode")
+    def download_qrcode(self, request, pk=None):
+        item = self.get_object()
+        if not item.qrcode:
+            return Response({
+                "error": "QR Code não encontrado"
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            return FileResponse(
+                item.qrcode.open('rb'),
+                as_attachment=True,
+                filename=f"qrcode_{item.codigo}.png",
+                content_type="image/png"
+            )
+        except Exception as e:
+            return Response({
+                "error": f"Erro ao baixar QR Code: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class ProdutoFracionadoViewSet(viewsets.ModelViewSet):
     queryset = ProdutoFracionado.objects.prefetch_related("lotes").all()
     serializer_class = ProdutoFracionadoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['nome', 'descricao']
+    search_fields = ['nome']
+    filterset_fields = ['subcategoria__nome']
 
     @action(detail=True, methods=["get"], url_path="lotes")
     def lotes(self, request, pk=None):
         produto = self.get_object()
         serializer = LoteSerializer(produto.lotes.all(), many=True)
         return Response(serializer.data)
-
-    @action(detail=False, methods=["get"], url_path="estoque-baixo")
-    def estoque_baixo(self, request):
-        produtos = ProdutoFracionado.objects.all()
-        resultado = []
-
-        for p in produtos:
-            qtd = p.quantidade_em_estoque or 0
-            if qtd <= p.quantidade_minima:
-                resultado.append({
-                    "id": p.id,
-                    "nome": p.nome,
-                    "quantidade": qtd,
-                    "quantidade_minima": p.quantidade_minima,
-                    "tipo": "fracionado",
-                    "unidade_de_medida": p.unidade_de_medida,
-                    "foto": p.foto.url if p.foto else None,
-                    "subcategoria": p.subcategoria.nome
-                })
-
-        return Response(resultado)
-
 
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.select_related("produto").all().order_by("-data_entrada")
@@ -175,12 +153,10 @@ class LoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Filtro por data inicial
         data_inicio = self.request.query_params.get('data_inicio')
         if data_inicio:
             queryset = queryset.filter(data_entrada__gte=data_inicio)
         
-        # Filtro por data final
         data_fim = self.request.query_params.get('data_fim')
         if data_fim:
             queryset = queryset.filter(data_entrada__lte=f"{data_fim} 23:59:59")
@@ -224,6 +200,26 @@ class LoteViewSet(viewsets.ModelViewSet):
             "qrcode_url": lote.qrcode.url if lote.qrcode else None
         })
 
+    @action(detail=True, methods=["get"], url_path="download-qrcode")
+    def download_qrcode(self, request, pk=None):
+        lote = self.get_object()
+        if not lote.qrcode:
+            return Response({
+                "error": "QR Code não encontrado"
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            return FileResponse(
+                lote.qrcode.open('rb'),
+                as_attachment=True,
+                filename=f"qrcode_{lote.codigo}.png",
+                content_type="image/png"
+            )
+        except Exception as e:
+            return Response({
+                "error": f"Erro ao baixar QR Code: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class SolicitanteViewSet(viewsets.ModelViewSet):
     queryset = Solicitante.objects.all()
     serializer_class = SolicitanteSerializer
@@ -239,12 +235,10 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Filtro por data inicial
         data_inicio = self.request.query_params.get('data_inicio')
         if data_inicio:
             queryset = queryset.filter(data_emprestimo__gte=data_inicio)
-        
-        # Filtro por data final
+
         data_fim = self.request.query_params.get('data_fim')
         if data_fim:
             queryset = queryset.filter(data_emprestimo__lte=f"{data_fim} 23:59:59")
@@ -279,17 +273,14 @@ class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Filtro por data inicial
         data_inicio = self.request.query_params.get('data_inicio')
         if data_inicio:
             queryset = queryset.filter(data_movimentacao__gte=data_inicio)
         
-        # Filtro por data final
         data_fim = self.request.query_params.get('data_fim')
         if data_fim:
             queryset = queryset.filter(data_movimentacao__lte=f"{data_fim} 23:59:59")
         
-        # Filtro por tipo de movimentação
         tipo_movimentacao = self.request.query_params.get('tipo_movimentacao')
         if tipo_movimentacao:
             queryset = queryset.filter(tipo_movimentacao=tipo_movimentacao)
@@ -343,12 +334,10 @@ class SaidaViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Filtro por data inicial
         data_inicio = self.request.query_params.get('data_inicio')
         if data_inicio:
             queryset = queryset.filter(data_saida__gte=data_inicio)
         
-        # Filtro por data final
         data_fim = self.request.query_params.get('data_fim')
         if data_fim:
             queryset = queryset.filter(data_saida__lte=f"{data_fim} 23:59:59")
@@ -383,4 +372,39 @@ class SaidaViewSet(viewsets.ModelViewSet):
         qs = self.queryset.filter(lote__isnull=False)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def estoque_baixo(request):
+    """Retorna produtos com estoque baixo consolidados de unitários e fracionados"""
+    resultado = []
+    
+    for p in ProdutoUnitario.objects.all():
+        qtd = p.quantidade_em_estoque
+        if qtd <= p.quantidade_minima:
+            resultado.append({
+                "id": p.id,
+                "nome": p.nome,
+                "quantidade": qtd,
+                "quantidade_minima": p.quantidade_minima,
+                "tipo": "unitario",
+                "unidade_de_medida": None,
+                "foto": p.foto.url if p.foto else None,
+                "subcategoria": p.subcategoria.nome
+            })
+    
+    for p in ProdutoFracionado.objects.all():
+        qtd = p.quantidade_em_estoque or 0
+        if qtd <= p.quantidade_minima:
+            resultado.append({
+                "id": p.id,
+                "nome": p.nome,
+                "quantidade": qtd,
+                "quantidade_minima": p.quantidade_minima,
+                "tipo": "fracionado",
+                "unidade_de_medida": p.unidade_de_medida,
+                "foto": p.foto.url if p.foto else None,
+                "subcategoria": p.subcategoria.nome
+            })
+    
+    return Response(resultado)
 

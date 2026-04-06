@@ -1,0 +1,142 @@
+{% extends "admin/base.html" %}
+{% block branding %}
+<h1 id="site-name">Inventário Maker</h1>
+{% endblock %}
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* ── ESCURO (padrão/:root) ── */
+    :root {
+        --primary: #1a955e;
+        --secondary: #157a4d;
+        --accent: #1a955e;
+        --primary-fg: #ffffff;
+        --body-fg: #e8e8e8;
+        --body-bg: #121212;
+        --body-quiet-color: #aaaaaa;
+        --darkened-bg: #1e1e1e;
+        --selected-bg: #0d3d25;
+        --module-bg: #1e1e1e;
+        --content-bg: #1e1e1e;
+        --header-bg: #1a955e;
+        --header-color: #ffffff;
+        --header-link-color: #ffffff;
+        --link-fg: #4dbb8a;
+        /* verde claro — legível sobre fundo escuro */
+        --link-hover-color: #6dcca0;
+        --link-selected-fg: #4dbb8a;
+        --button-bg: #1a955e;
+        --button-hover-bg: #157a4d;
+    }
+
+    /* ── MÉDIO ── */
+    [data-theme="light"] {
+        --body-fg: #1a1a1a;
+        --body-bg: #f5f5f5;
+        --body-quiet-color: #444444;
+        --darkened-bg: #ebebeb;
+        --selected-bg: #d4edda;
+        --module-bg: #ffffff;
+        --content-bg: #ffffff;
+        --link-fg: #157a4d;
+        --link-hover-color: #0f5c38;
+        --link-selected-fg: #0f5c38;
+    }
+
+    /* ── CLARO ── */
+    @media (prefers-color-scheme: light) {
+        :root {
+            --body-fg: #1a1a1a;
+            --body-bg: #f5f5f5;
+            --body-quiet-color: #444444;
+            --darkened-bg: #ebebeb;
+            --selected-bg: #d4edda;
+            --module-bg: #ffffff;
+            --content-bg: #ffffff;
+            --link-fg: #157a4d;
+            --link-hover-color: #0f5c38;
+            --link-selected-fg: #0f5c38;
+            --button-bg: #1a955e;
+            --button-hover-bg: #157a4d;
+            --secondary: #157a4d;
+        }
+    }
+
+    /* ── HEADER (todos os modos) ── */
+    #header {
+        --primary: transparent;
+        background: #1a955e !important;
+        color: #ffffff !important;
+    }
+
+    #header a,
+    #header a:link,
+    #header a:visited,
+    #header a:hover {
+        color: #ffffff !important;
+    }
+
+    /* ── TÍTULO ── */
+    #branding h1,
+    #branding h1 a,
+    #branding h1 a:link,
+    #branding h1 a:visited {
+        color: #ffffff !important;
+    }
+
+    /* ── CABEÇALHOS DE MÓDULO ── */
+    .module caption,
+    .module>h2,
+    #content-main .module caption {
+        background: #1a955e !important;
+        color: #ffffff !important;
+    }
+
+    /* ── LINKS ── */
+    a:link {
+        color: var(--link-fg);
+    }
+
+    a:visited {
+        color: var(--link-fg);
+        opacity: 0.8;
+    }
+
+    a:hover {
+        color: var(--link-hover-color);
+    }
+
+    /* ── LINHAS DA TABELA ── */
+    .module tbody tr:nth-child(odd) td,
+    .module tbody tr:nth-child(odd) th {
+        background: var(--darkened-bg) !important;
+    }
+
+    .module tbody tr:nth-child(even) td,
+    .module tbody tr:nth-child(even) th {
+        background: var(--module-bg) !important;
+    }
+
+    /* ── BOTÕES ── */
+    .button,
+    input[type="submit"],
+    .submit-row input {
+        background: #1a955e !important;
+        border-color: #157a4d !important;
+        color: #ffffff !important;
+    }
+
+    .button:hover,
+    input[type="submit"]:hover {
+        background: #157a4d !important;
+    }
+
+    .button,
+    input[type="submit"],
+    .submit-row input {
+        background: #1a955e !important;
+        border-color: #157a4d !important;
+        color: #ffffff !important;
+    }
+</style>
+{% endblock %}

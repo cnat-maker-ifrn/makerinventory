@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUpdateProduto } from "../../hooks/produto/useUpdateProduto";
+import { useSubcategorias } from "../../hooks/subcategoria/useSubcategorias";
 import { type ProdutoUnificado } from "../../types/produtounificado";
 
 interface EditProdutoModalProps {
@@ -20,14 +21,17 @@ export default function EditProdutoModal({
   const [nome, setNome] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [subcategoria, setSubcategoria] = useState<string>("");
 
   const { atualizar, loading, erro } = useUpdateProduto();
+  const { dados: subcategorias, loading: subcatLoading } = useSubcategorias();
 
   useEffect(() => {
     if (open && produto) {
       setNome(produto.nome);
       setFoto(null);
       setPreview(produto.foto);
+      setSubcategoria(produto.subcategoria);
     }
   }, [open, produto]);
 
@@ -46,10 +50,18 @@ export default function EditProdutoModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!produto) return;
+    if (!produto || !subcategoria) return;
+
+    // Encontrar o ID da subcategoria pelo nome
+    const subcat = subcategorias.find((s) => s.nome === subcategoria);
+    if (!subcat) {
+      console.error("Subcategoria não encontrada");
+      return;
+    }
 
     const form = new FormData();
     form.append("nome", nome);
+    form.append("subcategoria", subcat.id.toString());
     if (foto) {
       form.append("foto", foto);
     }
@@ -86,6 +98,25 @@ export default function EditProdutoModal({
               onChange={(e) => setNome(e.target.value)}
               disabled={loading}
             />
+          </div>
+
+          {/* Subcategoria */}
+          <div>
+            <label className="block font-medium mb-1">Subcategoria</label>
+            <select
+              required
+              className="w-full border rounded px-3 py-2"
+              value={subcategoria}
+              onChange={(e) => setSubcategoria(e.target.value)}
+              disabled={loading || subcatLoading}
+            >
+              <option value="">Selecione uma subcategoria</option>
+              {subcategorias.map((sub) => (
+                <option key={sub.id} value={sub.nome}>
+                  {sub.nome}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Foto */}

@@ -4,7 +4,7 @@ import { type Emprestimo } from "../../types/emprestimo";
 import { type Item } from "../../types/item";
 import { useAuth } from "../../hooks/autenticacao/useAuth";
 import DevolverButton from "./DevolverButton";
-import { useItens } from "../../hooks/item/useItens";
+import { getItemById } from "../../api/itemApi";
 
 function safeDate(dateString?: string | null) {
   if (!dateString) return "—";
@@ -42,49 +42,43 @@ export default function TableEmprestimo({
 }: TableEmprestimoProps) {
   const { isAuthenticated } = useAuth();
   const [modalItem, setModalItem] = useState<ModalItem[] | null>(null);
+  const [loadingModal, setLoadingModal] = useState(false);
 
-  // Todos os itens carregados
-  const { dados: itens } = useItens();
-
-  // 🔍 FILTRO
+  // 🔍 FILTRO - apenas por solicitante
   const emprestimosFiltrados = useMemo(() => {
     const termo = search.toLowerCase();
-
     return emprestimos.filter((emp) => {
       const solicitante = emp.solicitante_nome?.toLowerCase() || "";
-
-      const nomesItens = itens
-        .filter((i) => emp.itens.includes(i.id))
-        .map((i) => i.nome.toLowerCase())
-        .join(" ");
-
-      return (
-        solicitante.includes(termo) ||
-        nomesItens.includes(termo)
-      );
+      return solicitante.includes(termo);
     });
-  }, [emprestimos, itens, search]);
+  }, [emprestimos, search]);
 
-  if (emprestimosFiltrados.length === 0) {
-    return (
-      <div className="overflow-x-auto shadow-md rounded-lg bg-white">
-        <div className="p-6 text-center text-gray-600">
-          Nenhum empréstimo encontrado.
-        </div>
-      </div>
-    );
-  }
-
-  function handleVisualizar(itensIds: number[]) {
-    const itensCompleto: ModalItem[] = itens
-      .filter((item) => itensIds.includes(item.id))
-      .map((item: Item) => ({
-        id: item.id,
-        nome: item.nome,
-        foto: item.foto ?? null,
-      }));
-
-    setModalItem(itensCompleto);
+  async function handleVisualizar(itensIds: number[]) {
+    setLoadingModal(true);
+    try {
+      const itensCompleto: ModalItem[] = [];
+      
+      // Buscar cada item individualmente para garantir que traz mesmo se não estiver na primeira página
+      for (const id of itensIds) {
+        try {
+          const item = await getItemById(id);
+          itensCompleto.push({
+            id: item.id,
+            nome: item.nome,
+            foto: item.foto ?? null,
+          });
+        } catch (err) {
+          console.error(`Erro ao buscar item ${id}:`, err);
+        }
+      }
+      
+      setModalItem(itensCompleto);
+    } catch (err) {
+      console.error("Erro ao carregar itens:", err);
+      setModalItem([]);
+    } finally {
+      setLoadingModal(false);
+    }
   }
 
   return (
@@ -102,44 +96,53 @@ export default function TableEmprestimo({
           </thead>
 
           <tbody className="bg-white">
-            {emprestimosFiltrados.map((emp) => (
-              <tr key={emp.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{emp.solicitante_nome}</td>
-                <td className="px-4 py-2">
-                  {safeDate(emp.data_emprestimo)}
-                </td>
-                <td className="px-4 py-2">
-                  {safeDate(emp.previsao_entrega)}
-                </td>
-                <td className="px-4 py-2">
-                  {safeDate(emp.data_entrega)}
-                </td>
-
-                <td className="px-4 py-2 flex gap-4">
-                  <button
-                    className="p-2 rounded-full hover:bg-gray-200"
-                    onClick={() => handleVisualizar(emp.itens)}
-                  >
-                    <MdVisibility size={28} className="text-[#29854A]" />
-                  </button>
-
-                  {isAuthenticated && (
-                    <DevolverButton
-                      emprestimoId={emp.id}
-                      itensIds={emp.itens}
-                      dataEntrega={emp.data_entrega}
-                      onSuccess={onRefresh}
-                    />
-                  )}
+            {emprestimosFiltrados.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="p-6 text-center text-gray-600">
+                  Nenhum empréstimo encontrado.
                 </td>
               </tr>
-            ))}
+            ) : (
+              emprestimosFiltrados.map((emp) => (
+                <tr key={emp.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{emp.solicitante_nome}</td>
+                  <td className="px-4 py-2">
+                    {safeDate(emp.data_emprestimo)}
+                  </td>
+                  <td className="px-4 py-2">
+                    {safeDate(emp.previsao_entrega)}
+                  </td>
+                  <td className="px-4 py-2">
+                    {safeDate(emp.data_entrega)}
+                  </td>
+
+                  <td className="px-4 py-2 flex gap-4">
+                    <button
+                      className="p-2 rounded-full hover:bg-gray-200"
+                      onClick={() => handleVisualizar(emp.itens)}
+                      disabled={loadingModal}
+                    >
+                      <MdVisibility size={28} className="text-[#29854A]" />
+                    </button>
+
+                    {isAuthenticated && (
+                      <DevolverButton
+                        emprestimoId={emp.id}
+                        itensIds={emp.itens}
+                        dataEntrega={emp.data_entrega}
+                        onSuccess={onRefresh}
+                      />
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* MODAL */}
-      {modalItem && (
+      {modalItem !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full relative">
             <button
@@ -153,26 +156,36 @@ export default function TableEmprestimo({
               Itens do Empréstimo
             </h2>
 
-            <div className="grid grid-cols-3 gap-4">
-              {modalItem.map((item) => (
-                <div key={item.id} className="flex flex-col items-center">
-                  {item.foto ? (
-                    <img
-                      src={item.foto}
-                      alt={item.nome}
-                      className="w-24 h-24 object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center text-sm text-gray-600">
-                      Foto
-                    </div>
-                  )}
-                  <span className="mt-2 text-center text-sm">
-                    {item.nome}
-                  </span>
-                </div>
-              ))}
-            </div>
+            {loadingModal ? (
+              <div className="flex justify-center p-8">
+                <div className="text-gray-500">Carregando itens...</div>
+              </div>
+            ) : modalItem.length === 0 ? (
+              <div className="p-4 text-center text-gray-500">
+                Nenhum item encontrado
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-4">
+                {modalItem.map((item) => (
+                  <div key={item.id} className="flex flex-col items-center">
+                    {item.foto ? (
+                      <img
+                        src={item.foto}
+                        alt={item.nome}
+                        className="w-24 h-24 object-cover rounded-md"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 bg-gray-200 rounded-md flex items-center justify-center text-sm text-gray-600">
+                        Foto
+                      </div>
+                    )}
+                    <span className="mt-2 text-center text-sm">
+                      {item.nome}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -13,7 +13,8 @@ interface PaginatedResponse<T> {
 
 export function useProdutos(
   search = "",
-  tipo: "todos" | "unitario" | "fracionado" = "todos"
+  tipo: "todos" | "unitario" | "fracionado" = "todos",
+  subcategoria = "todas"
 ) {
   const [dados, setDados] = useState<ProdutoUnificado[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,12 +44,12 @@ export function useProdutos(
 
         // Buscar unitários
         if (tipo === "unitario" || tipo === "todos") {
-          unitResponse = await getProdutosUnitarios(page, search);
+          unitResponse = await getProdutosUnitarios(page, search, subcategoria);
         }
 
         // Buscar fracionados
         if (tipo === "fracionado" || tipo === "todos") {
-          fracResponse = await getProdutosFracionados(page, search);
+          fracResponse = await getProdutosFracionados(page, search, subcategoria);
         }
 
         // Mapear para ProdutoUnificado com subcategoria normalizada
@@ -99,7 +100,7 @@ export function useProdutos(
     }
 
     carregar();
-  }, [page, search, tipo]);
+  }, [page, search, tipo, subcategoria]);
 
   const goToNextPage = () => setPage((p) => (hasNext ? p + 1 : p));
   const goToPreviousPage = () => setPage((p) => (hasPrevious ? Math.max(1, p - 1) : p));

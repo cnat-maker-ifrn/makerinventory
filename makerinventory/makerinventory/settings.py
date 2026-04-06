@@ -17,7 +17,10 @@ else:
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 
 DATABASES = {
-    'default': dj_database_url.parse(config('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -75,7 +78,7 @@ ROOT_URLCONF = 'makerinventory.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'estoque' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
