@@ -407,4 +407,3 @@ def estoque_baixo(request):
             })
     
     return Response(resultado)
-

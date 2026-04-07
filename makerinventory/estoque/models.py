@@ -413,4 +413,3 @@ class MovimentacaoEstoque(models.Model):
             f"em {self.data_movimentacao:%d/%m/%Y %H:%M}{origem_str}"
         )
 
-
