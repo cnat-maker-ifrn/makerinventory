@@ -17,11 +17,7 @@ else:
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 
 DATABASES = {
-    'default': config(
-        'DATABASE_URL',
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        cast=dj_database_url.parse
-    )
+    'default': config('DATABASE_URL', cast=dj_database_url.parse)
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
