@@ -11,16 +11,36 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
+    CORS_ALLOW_ALL_ORIGINS = True
 else:
     ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+    CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+LOGGING['root']['level'] = 'WARNING' if not DEBUG else 'INFO'
 
 DATABASES = {
-    'default': config('DATABASE_URL', cast=dj_database_url.parse)
+    'default': dj_database_url.parse(config('DATABASE_URL'))
 }
-
-CORS_ALLOW_ALL_ORIGINS = True
+DATABASES['default']['CONN_MAX_AGE'] = 600
 
 AUTH_USER_MODEL = "estoque.User"
 
@@ -60,8 +80,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
